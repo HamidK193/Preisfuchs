@@ -30,6 +30,13 @@ Die native iOS-App kann auf Windows nicht direkt gebaut oder im iOS-Simulator
 gestartet werden. Damit du Preisfuchs trotzdem sofort testen kannst, gibt es
 zusaetzlich eine Web/PWA-Version.
 
+Wenn die Web-App Supabase-Daten laden soll, lege zuerst `web/.env.local` an:
+
+```text
+VITE_SUPABASE_URL=https://eanggjsdpjjskqycvknx.supabase.co
+VITE_SUPABASE_ANON_KEY=DEIN_ANON_PUBLIC_KEY
+```
+
 Start auf deinem Windows-PC:
 
 ```powershell
