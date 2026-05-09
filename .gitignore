@@ -8,6 +8,7 @@ DerivedData/
 .env
 .env.*
 !.env.example
+!web/.env.local.example
 
 __pycache__/
 *.pyc
