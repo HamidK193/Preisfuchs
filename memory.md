@@ -20,13 +20,17 @@
 - Preise sind Beobachtungen mit Quelle und Zeitstempel.
 - Automatischer Import aus kaufDA-Angebotsseiten ist aktiv und schreibt
   `kaufDA Angebot` in `price_observations`.
+- Web-App laedt Filialdaten im Browser ueber OpenStreetMap/Overpass anhand von
+  PLZ und Radius. Preisbeobachtungen werden der naechsten passenden Filiale des
+  Haendlers zugeordnet.
 
 ## Offene Punkte
 
 - Privates GitHub-Repo erstellen, sobald GitHub-Remote-Erstellung verfuegbar ist.
 - Supabase-Projekt anlegen und Secrets im GitHub-Repo setzen.
 - Open-Prices-Response gegen echte API-Daten testen.
-- Optional OpenStreetMap/Overpass-Import fuer Marktstandorte in BW ergaenzen.
+- Optional Filialdaten spaeter in Supabase cachen, damit die Web-App nicht bei
+  jeder PLZ-Aenderung direkt Overpass abfragen muss.
 - Native iOS-App auf einem Mac mit Xcode bauen oder spaeter per TestFlight verteilen.
 - Supabase Cloud-Projekt ist erstellt und verbunden; letzter Test zeigte 10 Produkte,
   5 Haendler und 100 Preisbeobachtungen.

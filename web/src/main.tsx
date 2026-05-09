@@ -4,18 +4,22 @@ import {
   BadgeEuro,
   CalendarClock,
   CheckCircle2,
+  Clock3,
   DatabaseZap,
   ExternalLink,
   ListChecks,
   MapPin,
+  Navigation,
   Search,
   ShieldCheck,
   ShoppingCart,
+  SlidersHorizontal,
   Store,
   Tag
 } from "lucide-react";
-import { demoProducts, type GroceryProduct } from "./data";
+import { demoProducts, type GroceryProduct, type PriceObservation } from "./data";
 import { loadProducts, type ProductLoadResult } from "./supabase";
+import { findNearestStore, loadNearbyStores, type StoreInfo } from "./stores";
 import "./styles.css";
 
 const currency = new Intl.NumberFormat("de-DE", {
@@ -23,9 +27,20 @@ const currency = new Intl.NumberFormat("de-DE", {
   currency: "EUR"
 });
 
+type StoreLoadState = "idle" | "loading" | "loaded" | "failed";
+
+type PriceWithStore = PriceObservation & {
+  store?: StoreInfo;
+};
+
 function App() {
   const [query, setQuery] = useState("");
+  const [postcode, setPostcode] = useState("70173");
+  const [radiusKm, setRadiusKm] = useState(5);
   const [products, setProducts] = useState<GroceryProduct[]>(demoProducts);
+  const [stores, setStores] = useState<StoreInfo[]>([]);
+  const [storeState, setStoreState] = useState<StoreLoadState>("idle");
+  const [storeMessage, setStoreMessage] = useState("PLZ eingeben, um Maerkte in der Naehe zu laden.");
   const [loadResult, setLoadResult] = useState<ProductLoadResult>({
     products: demoProducts,
     source: "demo",
@@ -49,6 +64,41 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const normalizedPostcode = postcode.trim();
+    if (normalizedPostcode.length < 4) {
+      setStores([]);
+      setStoreState("idle");
+      setStoreMessage("PLZ eingeben, um Maerkte in der Naehe zu laden.");
+      return;
+    }
+
+    let isMounted = true;
+    setStoreState("loading");
+    setStoreMessage("Maerkte und Oeffnungszeiten werden geladen.");
+
+    const timeout = window.setTimeout(() => {
+      loadNearbyStores(normalizedPostcode, radiusKm)
+        .then((loadedStores) => {
+          if (!isMounted) return;
+          setStores(loadedStores);
+          setStoreState("loaded");
+          setStoreMessage(`${loadedStores.length} Maerkte im Umkreis von ${radiusKm} km gefunden.`);
+        })
+        .catch((error: Error) => {
+          if (!isMounted) return;
+          setStores([]);
+          setStoreState("failed");
+          setStoreMessage(error.message);
+        });
+    }, 450);
+
+    return () => {
+      isMounted = false;
+      window.clearTimeout(timeout);
+    };
+  }, [postcode, radiusKm]);
+
   const filteredProducts = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     if (!normalized) return products;
@@ -60,9 +110,11 @@ function App() {
   }, [products, query]);
 
   const activeProduct = products.find((product) => product.id === activeProductId) ?? products[0];
-  const cheapest = activeProduct ? getCheapest(activeProduct) : undefined;
+  const activePrices = useMemo(() => getDisplayPrices(activeProduct, stores), [activeProduct, stores]);
+  const cheapest = getCheapest(activePrices);
   const selectedProducts = products.filter((product) => selectedIds.has(product.id));
-  const basketTotal = selectedProducts.reduce((sum, product) => sum + (getCheapest(product)?.price ?? 0), 0);
+  const basketTotal = selectedProducts.reduce((sum, product) => sum + (getCheapest(getDisplayPrices(product, stores))?.price ?? 0), 0);
+  const nearestStoreCount = stores.length;
 
   function toggleProduct(productId: string) {
     setSelectedIds((current) => {
@@ -95,7 +147,7 @@ function App() {
           </div>
           <div>
             <h1>Preisfuchs</h1>
-            <p>Baden-Wuerttemberg</p>
+            <p>Lebensmittelpreise in deiner Naehe</p>
           </div>
         </div>
 
@@ -103,6 +155,41 @@ function App() {
           <DatabaseZap size={17} />
           <span>{loadResult.message}</span>
         </div>
+
+        <section className="location-card" aria-label="Standortfilter">
+          <div className="location-heading">
+            <SlidersHorizontal size={18} />
+            <strong>Standortfilter</strong>
+          </div>
+
+          <label className="field-label">
+            Postleitzahl
+            <input
+              value={postcode}
+              onChange={(event) => setPostcode(event.target.value.replace(/\D/g, "").slice(0, 5))}
+              inputMode="numeric"
+              placeholder="z.B. 70173"
+              type="text"
+            />
+          </label>
+
+          <label className="field-label">
+            Umkreis: {radiusKm} km
+            <input
+              value={radiusKm}
+              min={1}
+              max={30}
+              step={1}
+              onChange={(event) => setRadiusKm(Number(event.target.value))}
+              type="range"
+            />
+          </label>
+
+          <div className={`store-status ${storeState}`}>
+            <Navigation size={15} />
+            <span>{storeMessage}</span>
+          </div>
+        </section>
 
         <label className="search-field">
           <Search size={18} aria-hidden="true" />
@@ -116,7 +203,7 @@ function App() {
 
         <nav className="product-list" aria-label="Produkte">
           {filteredProducts.map((product) => {
-            const price = getCheapest(product);
+            const price = getCheapest(getDisplayPrices(product, stores));
             return (
               <button
                 className={product.id === activeProduct.id ? "product-button active" : "product-button"}
@@ -138,8 +225,11 @@ function App() {
       <section className="content" aria-live="polite">
         <header className="topbar">
           <div>
-            <p className="section-label">Lebensmittel-Preisvergleich</p>
+            <p className="section-label">Preisvergleich im Umkreis</p>
             <h2>{activeProduct.name}</h2>
+            <p className="topbar-subtitle">
+              {postcode ? `PLZ ${postcode} · ${radiusKm} km · ${nearestStoreCount} Maerkte gefunden` : "Standortfilter aktivieren"}
+            </p>
           </div>
           <a className="source-link" href="https://prices.openfoodfacts.org" target="_blank" rel="noreferrer">
             Open Prices <ExternalLink size={16} />
@@ -152,9 +242,9 @@ function App() {
               <Tag size={24} aria-hidden="true" />
             </div>
             <div>
-              <p>Bester beobachteter Preis</p>
+              <p>Bester Preis in deinem Umkreis</p>
               <strong>{cheapest ? currency.format(cheapest.price) : "offen"}</strong>
-              <span>{cheapest ? `${cheapest.retailer} · ${cheapest.storeLocation}` : "Noch keine Preisbeobachtung"}</span>
+              <span>{cheapest ? `${cheapest.retailer} · ${cheapest.store?.distanceKm.toFixed(1) ?? "?"} km` : "Noch keine passende Preisbeobachtung"}</span>
             </div>
           </article>
 
@@ -167,10 +257,10 @@ function App() {
           </article>
 
           <article className="trust-panel">
-            <DatabaseZap size={22} aria-hidden="true" />
+            <Store size={22} aria-hidden="true" />
             <div>
-              <strong>{loadResult.source === "supabase" ? "Supabase verbunden" : "Demo-Modus"}</strong>
-              <span>{loadResult.source === "supabase" ? "Live-Produkte aus deiner Datenbank" : "Browser-Key fehlt oder keine Daten"}</span>
+              <strong>Filialdaten</strong>
+              <span>{storeState === "loaded" ? "Adresse und Oeffnungszeiten aus OpenStreetMap" : "Wird ueber PLZ geladen"}</span>
             </div>
           </article>
         </section>
@@ -180,21 +270,23 @@ function App() {
             <div className="panel-heading">
               <div>
                 <p className="section-label">Marktvergleich</p>
-                <h3>Preise nach Markt</h3>
+                <h3>Preise, Filialen und Oeffnungszeiten</h3>
               </div>
               <Store size={22} aria-hidden="true" />
             </div>
 
             <div className="price-table">
-              {activeProduct.prices.length ? activeProduct.prices
+              {activePrices.length ? activePrices
                 .slice()
                 .sort((a, b) => a.price - b.price)
                 .map((price, index) => (
                   <div className="price-row" key={price.id}>
                     <div className="rank">{index === 0 ? <CheckCircle2 size={20} /> : index + 1}</div>
-                    <div>
+                    <div className="store-copy">
                       <strong>{price.retailer}</strong>
-                      <span><MapPin size={14} /> {price.storeLocation}</span>
+                      <span><MapPin size={14} /> {price.store?.name ?? "Filiale wird geladen"}</span>
+                      <small>{price.store?.address ?? price.storeLocation}</small>
+                      <small><Clock3 size={13} /> {price.store?.openingHours ?? "Oeffnungszeiten nicht geladen"}</small>
                     </div>
                     <div className="price-cell">
                       <strong>{currency.format(price.price)}</strong>
@@ -204,12 +296,12 @@ function App() {
                     </div>
                     <div className="freshness">
                       <CalendarClock size={15} />
-                      {freshnessText(price.observedAt)}
+                      <span>{price.store ? `${price.store.distanceKm.toFixed(1)} km · ` : ""}{freshnessText(price.observedAt)}</span>
                     </div>
                   </div>
                 )) : (
                   <div className="no-price-row">
-                    Für dieses Produkt gibt es noch keine Preisbeobachtung. Sobald Open Prices oder eigene Importe Daten liefern, erscheint hier der Marktvergleich.
+                    Fuer dieses Produkt gibt es in deinem Umkreis noch keine passende Preisbeobachtung. Erhoehe den Radius oder probiere eine andere PLZ.
                   </div>
                 )}
             </div>
@@ -230,13 +322,16 @@ function App() {
             </div>
 
             <div className="basket-list">
-              {products.map((product) => (
-                <button className="basket-item" key={product.id} onClick={() => toggleProduct(product.id)} type="button">
-                  <ListChecks size={18} className={selectedIds.has(product.id) ? "selected" : ""} />
-                  <span>{product.name}</span>
-                  <b>{getCheapest(product) ? currency.format(getCheapest(product)!.price) : "offen"}</b>
-                </button>
-              ))}
+              {products.map((product) => {
+                const price = getCheapest(getDisplayPrices(product, stores));
+                return (
+                  <button className="basket-item" key={product.id} onClick={() => toggleProduct(product.id)} type="button">
+                    <ListChecks size={18} className={selectedIds.has(product.id) ? "selected" : ""} />
+                    <span>{product.name}</span>
+                    <b>{price ? currency.format(price.price) : "offen"}</b>
+                  </button>
+                );
+              })}
             </div>
           </article>
         </section>
@@ -245,8 +340,21 @@ function App() {
   );
 }
 
-function getCheapest(product: GroceryProduct) {
-  return product.prices.slice().sort((a, b) => a.price - b.price)[0];
+function getDisplayPrices(product: GroceryProduct, stores: StoreInfo[]): PriceWithStore[] {
+  if (!stores.length) {
+    return product.prices;
+  }
+
+  return product.prices
+    .map((price) => ({
+      ...price,
+      store: findNearestStore(price.retailer, stores)
+    }))
+    .filter((price) => Boolean(price.store));
+}
+
+function getCheapest<T extends PriceObservation>(prices: T[]) {
+  return prices.slice().sort((a, b) => a.price - b.price)[0];
 }
 
 function freshnessText(value: string) {

@@ -59,6 +59,18 @@ http://192.168.178.92:5173
 Falls das Handy die Seite nicht oeffnet, muss Windows den Node/Vite-Server in
 der Firewall fuer private Netzwerke erlauben.
 
+## Standortfilter
+
+Die Web-App kann nach Postleitzahl und Umkreis filtern. Dafuer werden
+Filialdaten aus OpenStreetMap/Overpass im Browser geladen:
+
+- Adresse
+- Entfernung in km
+- Oeffnungszeiten, sofern in OpenStreetMap gepflegt
+
+Die Preisbeobachtungen sind aktuell meist haendlerbezogen. Preisfuchs ordnet sie
+deshalb der naechsten passenden Filiale im gewaehlten Umkreis zu.
+
 ### Native iOS-App
 
 1. Oeffne `ios/Preisfuchs/Preisfuchs.xcodeproj` in Xcode.
