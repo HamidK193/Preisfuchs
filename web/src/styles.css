@@ -310,6 +310,15 @@ button {
   background: #fbfcfa;
 }
 
+.no-price-row {
+  padding: 16px;
+  border: 1px dashed rgba(23, 34, 27, 0.2);
+  border-radius: 8px;
+  background: #fbfcfa;
+  color: #617068;
+  line-height: 1.45;
+}
+
 .rank {
   display: grid;
   place-items: center;

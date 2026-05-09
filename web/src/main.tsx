@@ -62,7 +62,7 @@ function App() {
   const activeProduct = products.find((product) => product.id === activeProductId) ?? products[0];
   const cheapest = activeProduct ? getCheapest(activeProduct) : undefined;
   const selectedProducts = products.filter((product) => selectedIds.has(product.id));
-  const basketTotal = selectedProducts.reduce((sum, product) => sum + getCheapest(product).price, 0);
+  const basketTotal = selectedProducts.reduce((sum, product) => sum + (getCheapest(product)?.price ?? 0), 0);
 
   function toggleProduct(productId: string) {
     setSelectedIds((current) => {
@@ -76,7 +76,7 @@ function App() {
     });
   }
 
-  if (!activeProduct || !cheapest) {
+  if (!activeProduct) {
     return (
       <main className="empty-state">
         <BadgeEuro size={40} />
@@ -128,7 +128,7 @@ function App() {
                   <strong>{product.name}</strong>
                   <small>{product.category} · {product.packageSize}</small>
                 </span>
-                <b>{currency.format(price.price)}</b>
+                <b>{price ? currency.format(price.price) : "offen"}</b>
               </button>
             );
           })}
@@ -153,8 +153,8 @@ function App() {
             </div>
             <div>
               <p>Bester beobachteter Preis</p>
-              <strong>{currency.format(cheapest.price)}</strong>
-              <span>{cheapest.retailer} · {cheapest.storeLocation}</span>
+              <strong>{cheapest ? currency.format(cheapest.price) : "offen"}</strong>
+              <span>{cheapest ? `${cheapest.retailer} · ${cheapest.storeLocation}` : "Noch keine Preisbeobachtung"}</span>
             </div>
           </article>
 
@@ -162,7 +162,7 @@ function App() {
             <ShieldCheck size={22} aria-hidden="true" />
             <div>
               <strong>Quelle sichtbar</strong>
-              <span>{cheapest.source} · {freshnessText(cheapest.observedAt)}</span>
+              <span>{cheapest ? `${cheapest.source} · ${freshnessText(cheapest.observedAt)}` : "Wird angezeigt, sobald Preise vorliegen"}</span>
             </div>
           </article>
 
@@ -186,7 +186,7 @@ function App() {
             </div>
 
             <div className="price-table">
-              {activeProduct.prices
+              {activeProduct.prices.length ? activeProduct.prices
                 .slice()
                 .sort((a, b) => a.price - b.price)
                 .map((price, index) => (
@@ -207,7 +207,11 @@ function App() {
                       {freshnessText(price.observedAt)}
                     </div>
                   </div>
-                ))}
+                )) : (
+                  <div className="no-price-row">
+                    Für dieses Produkt gibt es noch keine Preisbeobachtung. Sobald Open Prices oder eigene Importe Daten liefern, erscheint hier der Marktvergleich.
+                  </div>
+                )}
             </div>
           </article>
 
@@ -230,7 +234,7 @@ function App() {
                 <button className="basket-item" key={product.id} onClick={() => toggleProduct(product.id)} type="button">
                   <ListChecks size={18} className={selectedIds.has(product.id) ? "selected" : ""} />
                   <span>{product.name}</span>
-                  <b>{currency.format(getCheapest(product).price)}</b>
+                  <b>{getCheapest(product) ? currency.format(getCheapest(product)!.price) : "offen"}</b>
                 </button>
               ))}
             </div>
