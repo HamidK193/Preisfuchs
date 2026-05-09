@@ -1,0 +1,182 @@
+[
+  {
+    "id": "milk_15",
+    "name": "Milch 1,5%",
+    "category": "Molkerei",
+    "packageSize": "1 l",
+    "symbolName": "carton",
+    "prices": [
+      {
+        "id": "milk_aldi_demo",
+        "retailer": "Aldi Sued",
+        "storeLocation": "Baden-Wuerttemberg",
+        "price": 0.99,
+        "unitPrice": 0.99,
+        "unit": "l",
+        "observedAt": "2026-05-09T06:00:00Z",
+        "source": "Demo-Daten",
+        "sourceDetail": "MVP-Beispiel",
+        "confidence": 0.4
+      },
+      {
+        "id": "milk_lidl_demo",
+        "retailer": "Lidl",
+        "storeLocation": "Baden-Wuerttemberg",
+        "price": 1.05,
+        "unitPrice": 1.05,
+        "unit": "l",
+        "observedAt": "2026-05-08T06:00:00Z",
+        "source": "Demo-Daten",
+        "sourceDetail": "MVP-Beispiel",
+        "confidence": 0.4
+      },
+      {
+        "id": "milk_rewe_demo",
+        "retailer": "Rewe",
+        "storeLocation": "Baden-Wuerttemberg",
+        "price": 1.19,
+        "unitPrice": 1.19,
+        "unit": "l",
+        "observedAt": "2026-05-07T06:00:00Z",
+        "source": "Demo-Daten",
+        "sourceDetail": "MVP-Beispiel",
+        "confidence": 0.4
+      }
+    ]
+  },
+  {
+    "id": "butter_250",
+    "name": "Butter",
+    "category": "Molkerei",
+    "packageSize": "250 g",
+    "symbolName": "cube.box",
+    "prices": [
+      {
+        "id": "butter_lidl_demo",
+        "retailer": "Lidl",
+        "storeLocation": "Baden-Wuerttemberg",
+        "price": 1.79,
+        "unitPrice": 7.16,
+        "unit": "kg",
+        "observedAt": "2026-05-09T06:00:00Z",
+        "source": "Demo-Daten",
+        "sourceDetail": "MVP-Beispiel",
+        "confidence": 0.4
+      },
+      {
+        "id": "butter_kaufland_demo",
+        "retailer": "Kaufland",
+        "storeLocation": "Baden-Wuerttemberg",
+        "price": 1.89,
+        "unitPrice": 7.56,
+        "unit": "kg",
+        "observedAt": "2026-05-08T06:00:00Z",
+        "source": "Demo-Daten",
+        "sourceDetail": "MVP-Beispiel",
+        "confidence": 0.4
+      },
+      {
+        "id": "butter_edeka_demo",
+        "retailer": "Edeka",
+        "storeLocation": "Baden-Wuerttemberg",
+        "price": 2.29,
+        "unitPrice": 9.16,
+        "unit": "kg",
+        "observedAt": "2026-05-06T06:00:00Z",
+        "source": "Demo-Daten",
+        "sourceDetail": "MVP-Beispiel",
+        "confidence": 0.4
+      }
+    ]
+  },
+  {
+    "id": "pasta_500",
+    "name": "Nudeln",
+    "category": "Trockenware",
+    "packageSize": "500 g",
+    "symbolName": "takeoutbag.and.cup.and.straw",
+    "prices": [
+      {
+        "id": "pasta_aldi_demo",
+        "retailer": "Aldi Sued",
+        "storeLocation": "Baden-Wuerttemberg",
+        "price": 0.89,
+        "unitPrice": 1.78,
+        "unit": "kg",
+        "observedAt": "2026-05-09T06:00:00Z",
+        "source": "Demo-Daten",
+        "sourceDetail": "MVP-Beispiel",
+        "confidence": 0.4
+      },
+      {
+        "id": "pasta_rewe_demo",
+        "retailer": "Rewe",
+        "storeLocation": "Baden-Wuerttemberg",
+        "price": 1.19,
+        "unitPrice": 2.38,
+        "unit": "kg",
+        "observedAt": "2026-05-08T06:00:00Z",
+        "source": "Demo-Daten",
+        "sourceDetail": "MVP-Beispiel",
+        "confidence": 0.4
+      },
+      {
+        "id": "pasta_kaufland_demo",
+        "retailer": "Kaufland",
+        "storeLocation": "Baden-Wuerttemberg",
+        "price": 0.99,
+        "unitPrice": 1.98,
+        "unit": "kg",
+        "observedAt": "2026-05-07T06:00:00Z",
+        "source": "Demo-Daten",
+        "sourceDetail": "MVP-Beispiel",
+        "confidence": 0.4
+      }
+    ]
+  },
+  {
+    "id": "bananas_1kg",
+    "name": "Bananen",
+    "category": "Obst",
+    "packageSize": "1 kg",
+    "symbolName": "leaf",
+    "prices": [
+      {
+        "id": "bananas_edeka_demo",
+        "retailer": "Edeka",
+        "storeLocation": "Baden-Wuerttemberg",
+        "price": 1.49,
+        "unitPrice": 1.49,
+        "unit": "kg",
+        "observedAt": "2026-05-09T06:00:00Z",
+        "source": "Demo-Daten",
+        "sourceDetail": "MVP-Beispiel",
+        "confidence": 0.4
+      },
+      {
+        "id": "bananas_lidl_demo",
+        "retailer": "Lidl",
+        "storeLocation": "Baden-Wuerttemberg",
+        "price": 1.39,
+        "unitPrice": 1.39,
+        "unit": "kg",
+        "observedAt": "2026-05-08T06:00:00Z",
+        "source": "Demo-Daten",
+        "sourceDetail": "MVP-Beispiel",
+        "confidence": 0.4
+      },
+      {
+        "id": "bananas_rewe_demo",
+        "retailer": "Rewe",
+        "storeLocation": "Baden-Wuerttemberg",
+        "price": 1.69,
+        "unitPrice": 1.69,
+        "unit": "kg",
+        "observedAt": "2026-05-06T06:00:00Z",
+        "source": "Demo-Daten",
+        "sourceDetail": "MVP-Beispiel",
+        "confidence": 0.4
+      }
+    ]
+  }
+]

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "milk_15",
+    "name": "Milch 1,5%",
+    "category": "Molkerei",
+    "package_size": "1 l",
+    "search_terms": ["milch 1.5", "h-milch fettarm", "frischmilch 1.5"],
+    "barcodes": []
+  },
+  {
+    "id": "butter_250",
+    "name": "Butter",
+    "category": "Molkerei",
+    "package_size": "250 g",
+    "search_terms": ["deutsche markenbutter", "butter 250g"],
+    "barcodes": []
+  },
+  {
+    "id": "eggs_10",
+    "name": "Eier",
+    "category": "Grundnahrungsmittel",
+    "package_size": "10 Stueck",
+    "search_terms": ["eier 10er", "bodenhaltung eier", "freiland eier"],
+    "barcodes": []
+  },
+  {
+    "id": "pasta_500",
+    "name": "Nudeln",
+    "category": "Trockenware",
+    "package_size": "500 g",
+    "search_terms": ["spaghetti 500g", "penne 500g", "nudeln 500g"],
+    "barcodes": []
+  },
+  {
+    "id": "rice_1kg",
+    "name": "Reis",
+    "category": "Trockenware",
+    "package_size": "1 kg",
+    "search_terms": ["reis 1kg", "langkornreis", "basmati reis"],
+    "barcodes": []
+  },
+  {
+    "id": "flour_1kg",
+    "name": "Mehl Type 405",
+    "category": "Backen",
+    "package_size": "1 kg",
+    "search_terms": ["mehl 405", "weizenmehl 1kg"],
+    "barcodes": []
+  },
+  {
+    "id": "sugar_1kg",
+    "name": "Zucker",
+    "category": "Backen",
+    "package_size": "1 kg",
+    "search_terms": ["zucker 1kg", "raffinade zucker"],
+    "barcodes": []
+  },
+  {
+    "id": "coffee_500",
+    "name": "Kaffee",
+    "category": "Getraenke",
+    "package_size": "500 g",
+    "search_terms": ["filterkaffee 500g", "kaffee gemahlen"],
+    "barcodes": []
+  },
+  {
+    "id": "bananas_1kg",
+    "name": "Bananen",
+    "category": "Obst",
+    "package_size": "1 kg",
+    "search_terms": ["bananen", "banane kg"],
+    "barcodes": []
+  },
+  {
+    "id": "tomatoes_500",
+    "name": "Tomaten",
+    "category": "Gemuese",
+    "package_size": "500 g",
+    "search_terms": ["tomaten 500g", "rispentomaten", "strauchtomaten"],
+    "barcodes": []
+  }
+]
