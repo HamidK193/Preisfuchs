@@ -1,0 +1,17 @@
+{
+  "name": "Preisfuchs",
+  "short_name": "Preisfuchs",
+  "description": "Lebensmittelpreise in Baden-Wuerttemberg vergleichen.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8faf7",
+  "theme_color": "#147342",
+  "icons": [
+    {
+      "src": "/preisfuchs-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

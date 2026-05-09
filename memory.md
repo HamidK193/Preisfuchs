@@ -13,6 +13,7 @@
 ## Architektur
 
 - iOS-App liest im ersten Schritt lokale Demo-Daten.
+- Web/PWA-Testversion unter `web/` erlaubt Tests auf Windows und Handy-Browser.
 - Backend-Jobs bereiten taegliche Aktualisierung ueber offene Quellen vor.
 - Supabase speichert Produkte, Haendler, Filialen, Preisbeobachtungen und
   Update-Laeufe.
@@ -24,3 +25,4 @@
 - Supabase-Projekt anlegen und Secrets im GitHub-Repo setzen.
 - Open-Prices-Response gegen echte API-Daten testen.
 - Optional OpenStreetMap/Overpass-Import fuer Marktstandorte in BW ergaenzen.
+- Native iOS-App auf einem Mac mit Xcode bauen oder spaeter per TestFlight verteilen.

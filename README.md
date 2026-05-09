@@ -24,6 +24,36 @@ docs/MVP_PLAN.md                Umsetzungsplan
 
 ## Lokaler Start
 
+### Windows-Testversion im Browser
+
+Die native iOS-App kann auf Windows nicht direkt gebaut oder im iOS-Simulator
+gestartet werden. Damit du Preisfuchs trotzdem sofort testen kannst, gibt es
+zusaetzlich eine Web/PWA-Version.
+
+Start auf deinem Windows-PC:
+
+```powershell
+cd A:\Codex\Preisfuchs
+.\start-web.ps1
+```
+
+Danach im Browser oeffnen:
+
+```text
+http://localhost:5173
+```
+
+Test auf deinem Handy im gleichen WLAN:
+
+```text
+http://192.168.178.92:5173
+```
+
+Falls das Handy die Seite nicht oeffnet, muss Windows den Node/Vite-Server in
+der Firewall fuer private Netzwerke erlauben.
+
+### Native iOS-App
+
 1. Oeffne `ios/Preisfuchs/Preisfuchs.xcodeproj` in Xcode.
 2. Waehle ein iPhone-Simulator-Ziel.
 3. Starte die App.
