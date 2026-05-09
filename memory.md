@@ -26,3 +26,4 @@
 - Open-Prices-Response gegen echte API-Daten testen.
 - Optional OpenStreetMap/Overpass-Import fuer Marktstandorte in BW ergaenzen.
 - Native iOS-App auf einem Mac mit Xcode bauen oder spaeter per TestFlight verteilen.
+- Supabase Cloud-Projekt ist noch nicht erstellt; Schema und Testskript sind vorbereitet.

@@ -64,9 +64,20 @@ Xcode ausfuehren.
 
 ## Supabase Setup
 
+Die genaue Anleitung liegt in `docs/SUPABASE_SETUP.md`.
+
+Kurzfassung:
+
 1. Neues Supabase-Projekt anlegen.
 2. `backend/supabase/schema.sql` im SQL Editor ausfuehren.
-3. Diese GitHub-Secrets spaeter im privaten Repo eintragen:
+3. Lokale `.env` mit Supabase-Werten anlegen.
+4. Verbindung testen:
+
+```powershell
+.\.venv\Scripts\python.exe backend\jobs\test_supabase_connection.py
+```
+
+5. Diese GitHub-Secrets spaeter im privaten Repo eintragen:
 
 ```text
 SUPABASE_URL
@@ -75,6 +86,16 @@ SUPABASE_SERVICE_ROLE_KEY
 
 Der Update-Job laeuft auch ohne Secrets im Dry-Run und schreibt dann nichts in
 die Datenbank.
+
+## Lokaler Projekttest
+
+```powershell
+cd A:\Codex\Preisfuchs
+.\test-local.ps1
+```
+
+Der Test baut die Web-App, startet den Backend-Dry-Run und prueft Supabase,
+falls eine `.env` vorhanden ist.
 
 ## GitHub Actions
 
