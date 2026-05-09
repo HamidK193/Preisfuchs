@@ -1,8 +1,8 @@
 import { StrictMode, useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
-  BadgeEuro,
   CalendarClock,
+  ChevronDown,
   CheckCircle2,
   Clock3,
   DatabaseZap,
@@ -49,6 +49,7 @@ function App() {
   const [activeCategoryId, setActiveCategoryId] = useState(categories[0].id);
   const [activeProductId, setActiveProductId] = useState(demoProducts[0].id);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(["milk_15", "butter_250", "pasta_500"]));
+  const [isBasketOpen, setIsBasketOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -105,23 +106,25 @@ function App() {
     };
   }, [postcode, radiusKm]);
 
+  const pricedProducts = useMemo(() => products.filter((product) => product.prices.length > 0), [products]);
+
   const productCounts = useMemo(() => {
     const counts = new Map<string, number>();
-    products.forEach((product) => counts.set(product.category, (counts.get(product.category) ?? 0) + 1));
+    pricedProducts.forEach((product) => counts.set(product.category, (counts.get(product.category) ?? 0) + 1));
     return counts;
-  }, [products]);
+  }, [pricedProducts]);
 
   const visibleProducts = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     if (normalized) {
-      return products.filter(
+      return pricedProducts.filter(
         (product) =>
           product.name.toLowerCase().includes(normalized) ||
           product.category.toLowerCase().includes(normalized)
       );
     }
-    return products.filter((product) => product.category === activeCategoryId);
-  }, [activeCategoryId, products, query]);
+    return pricedProducts.filter((product) => product.category === activeCategoryId);
+  }, [activeCategoryId, pricedProducts, query]);
 
   useEffect(() => {
     if (!visibleProducts.length) return;
@@ -130,18 +133,19 @@ function App() {
     }
   }, [activeProductId, visibleProducts]);
 
-  const activeProduct = products.find((product) => product.id === activeProductId) ?? visibleProducts[0] ?? products[0];
+  const activeProduct = pricedProducts.find((product) => product.id === activeProductId) ?? visibleProducts[0] ?? pricedProducts[0];
   const activeCategory = categories.find((category) => category.id === activeProduct?.category) ?? categories[0];
-  const activePrices = useMemo(() => getDisplayPrices(activeProduct, stores), [activeProduct, stores]);
-  const cheapest = getCheapest(activePrices);
-  const selectedProducts = products.filter((product) => selectedIds.has(product.id));
-  const basketTotal = selectedProducts.reduce((sum, product) => sum + (getCheapest(getDisplayPrices(product, stores))?.price ?? 0), 0);
+  const activePrices = useMemo(() => activeProduct ? getDisplayPrices(activeProduct, stores) : [], [activeProduct, stores]);
+  const activePriceRows: PriceWithStore[] = activePrices.length ? activePrices : activeProduct?.prices ?? [];
+  const cheapest = getCheapest(activePriceRows);
+  const selectedProducts = pricedProducts.filter((product) => selectedIds.has(product.id));
+  const basketTotal = selectedProducts.reduce((sum, product) => sum + (getCheapest(product.prices)?.price ?? 0), 0);
   const nearestStoreCount = stores.length;
 
   function chooseCategory(categoryId: string) {
     setQuery("");
     setActiveCategoryId(categoryId);
-    const firstProduct = products.find((product) => product.category === categoryId);
+    const firstProduct = pricedProducts.find((product) => product.category === categoryId);
     if (firstProduct) setActiveProductId(firstProduct.id);
   }
 
@@ -160,9 +164,9 @@ function App() {
   if (!activeProduct) {
     return (
       <main className="empty-state">
-        <BadgeEuro size={40} />
+        <FoxLogo />
         <h1>Preisfuchs</h1>
-        <p>Keine Produkte gefunden.</p>
+        <p>Keine Produkte mit echten Preisbeobachtungen gefunden.</p>
       </main>
     );
   }
@@ -172,7 +176,7 @@ function App() {
       <aside className="sidebar" aria-label="Kategorien">
         <div className="brand-row">
           <div className="brand-mark">
-            <BadgeEuro size={24} aria-hidden="true" />
+            <FoxLogo />
           </div>
           <div>
             <h1>Preisfuchs</h1>
@@ -259,9 +263,31 @@ function App() {
               {postcode ? `PLZ ${postcode} - ${radiusKm} km - ${nearestStoreCount} Maerkte gefunden` : "Standortfilter aktivieren"}
             </p>
           </div>
-          <a className="source-link" href="https://prices.openfoodfacts.org" target="_blank" rel="noreferrer">
-            Datenquelle <ExternalLink size={16} />
-          </a>
+          <div className="topbar-actions">
+            <a className="source-link" href="https://prices.openfoodfacts.org" target="_blank" rel="noreferrer">
+              Datenquelle <ExternalLink size={16} />
+            </a>
+            <div className="basket-menu">
+              <button className="basket-toggle" onClick={() => setIsBasketOpen((current) => !current)} type="button">
+                <ShoppingCart size={18} aria-hidden="true" />
+                <span>
+                  <strong>{selectedProducts.length}</strong>
+                  Einkaufsliste
+                </span>
+                <b>{currency.format(basketTotal)}</b>
+                <ChevronDown className={isBasketOpen ? "open" : ""} size={18} aria-hidden="true" />
+              </button>
+              {isBasketOpen ? (
+                <BasketDropdown
+                  products={visibleProducts}
+                  selectedIds={selectedIds}
+                  selectedProducts={selectedProducts}
+                  total={basketTotal}
+                  onToggle={toggleProduct}
+                />
+              ) : null}
+            </div>
+          </div>
         </header>
 
         <section
@@ -274,7 +300,7 @@ function App() {
             <p>{activeProduct.packageSize} - Preise aus Angeboten und Preisbeobachtungen in Baden-Wuerttemberg.</p>
             <div className="hero-price">
               <small>Guensigster Preis</small>
-              <strong>{cheapest ? currency.format(cheapest.price) : "offen"}</strong>
+              <strong>{cheapest ? currency.format(cheapest.price) : "Keine Daten"}</strong>
             </div>
           </div>
           <img src={activeProduct.imageUrl ?? activeCategory.imageUrl} alt={activeProduct.name} />
@@ -290,7 +316,7 @@ function App() {
 
           <div className="product-card-grid">
             {visibleProducts.map((product) => {
-              const price = getCheapest(getDisplayPrices(product, stores));
+              const price = getCheapest(product.prices);
               return (
                 <button
                   className={product.id === activeProduct.id ? "product-card active" : "product-card"}
@@ -303,7 +329,7 @@ function App() {
                     <strong>{product.name}</strong>
                     <small>{product.packageSize}</small>
                   </span>
-                  <b>{price ? currency.format(price.price) : "offen"}</b>
+                  <b>{price ? currency.format(price.price) : "Keine Daten"}</b>
                 </button>
               );
             })}
@@ -317,7 +343,7 @@ function App() {
             </div>
             <div>
               <p>Bester Preis in deinem Umkreis</p>
-              <strong>{cheapest ? currency.format(cheapest.price) : "offen"}</strong>
+              <strong>{cheapest ? currency.format(cheapest.price) : "Keine Daten"}</strong>
               <span>{cheapest ? `${cheapest.retailer} - ${cheapest.store?.distanceKm.toFixed(1) ?? "?"} km` : "Noch keine passende Preisbeobachtung"}</span>
             </div>
           </article>
@@ -350,12 +376,13 @@ function App() {
             </div>
 
             <div className="price-table">
-              {activePrices.length ? activePrices
+              {activePriceRows.length ? activePriceRows
                 .slice()
                 .sort((a, b) => a.price - b.price)
                 .map((price, index) => (
                   <div className="price-row" key={price.id}>
                     <div className="rank">{index === 0 ? <CheckCircle2 size={20} /> : index + 1}</div>
+                    <RetailerLogo name={price.retailer} />
                     <div className="store-copy">
                       <strong>{price.retailer}</strong>
                       <span><MapPin size={14} /> {price.store?.name ?? "Filiale wird geladen"}</span>
@@ -381,37 +408,95 @@ function App() {
             </div>
           </article>
 
-          <article className="basket-panel">
-            <div className="panel-heading">
-              <div>
-                <p className="section-label">Einkaufsliste</p>
-                <h3>Test-Warenkorb</h3>
-              </div>
-              <ShoppingCart size={22} aria-hidden="true" />
-            </div>
-
-            <div className="basket-total">
-              <span>Geschaetztes Minimum</span>
-              <strong>{currency.format(basketTotal)}</strong>
-            </div>
-
-            <div className="basket-list">
-              {visibleProducts.map((product) => {
-                const price = getCheapest(getDisplayPrices(product, stores));
-                return (
-                  <button className="basket-item" key={product.id} onClick={() => toggleProduct(product.id)} type="button">
-                    <ListChecks size={18} className={selectedIds.has(product.id) ? "selected" : ""} />
-                    <span>{product.name}</span>
-                    <b>{price ? currency.format(price.price) : "offen"}</b>
-                  </button>
-                );
-              })}
-            </div>
-          </article>
         </section>
       </section>
     </main>
   );
+}
+
+function FoxLogo() {
+  return (
+    <svg className="fox-logo" viewBox="0 0 64 64" role="img" aria-label="Preisfuchs Logo">
+      <path className="fox-ear" d="M12 7l16 9-15 13z" />
+      <path className="fox-ear right" d="M52 7l-16 9 15 13z" />
+      <path className="fox-head" d="M10 25l12-11 10 5 10-5 12 11-6 21-16 11-16-11z" />
+      <path className="fox-face" d="M19 31l13 21 13-21-13 5z" />
+      <path className="fox-muzzle" d="M25 43h14l-7 9z" />
+      <circle cx="24" cy="32" r="2.4" />
+      <circle cx="40" cy="32" r="2.4" />
+      <path className="fox-nose" d="M28 42h8l-4 4z" />
+    </svg>
+  );
+}
+
+function RetailerLogo({ name }: { name: string }) {
+  const brand = retailerBrand(name);
+  return (
+    <div className={`retailer-logo ${brand.className}`} aria-label={`${brand.label} Logo`}>
+      <span>{brand.shortLabel}</span>
+    </div>
+  );
+}
+
+function BasketDropdown({
+  products,
+  selectedIds,
+  selectedProducts,
+  total,
+  onToggle
+}: {
+  products: GroceryProduct[];
+  selectedIds: Set<string>;
+  selectedProducts: GroceryProduct[];
+  total: number;
+  onToggle: (productId: string) => void;
+}) {
+  return (
+    <div className="basket-popover">
+      <div className="basket-popover-total">
+        <span>Gesamtsumme min.</span>
+        <strong>{currency.format(total)}</strong>
+      </div>
+
+      <div className="basket-section">
+        <p>Ausgewaehlt</p>
+        {selectedProducts.length ? selectedProducts.map((product) => {
+          const price = getCheapest(product.prices);
+          return (
+            <button className="basket-item" key={product.id} onClick={() => onToggle(product.id)} type="button">
+              <ListChecks size={18} className="selected" />
+              <span>{product.name}</span>
+              <b>{price ? currency.format(price.price) : "Keine Daten"}</b>
+            </button>
+          );
+        }) : <small>Noch keine Produkte in der Einkaufsliste.</small>}
+      </div>
+
+      <div className="basket-section">
+        <p>Aus dieser Kategorie</p>
+        {products.map((product) => {
+          const price = getCheapest(product.prices);
+          return (
+            <button className="basket-item" key={product.id} onClick={() => onToggle(product.id)} type="button">
+              <ListChecks size={18} className={selectedIds.has(product.id) ? "selected" : ""} />
+              <span>{product.name}</span>
+              <b>{price ? currency.format(price.price) : "Keine Daten"}</b>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function retailerBrand(name: string) {
+  const normalized = name.toLowerCase();
+  if (normalized.includes("lidl")) return { label: "Lidl", shortLabel: "LIDL", className: "lidl" };
+  if (normalized.includes("rewe")) return { label: "Rewe", shortLabel: "REWE", className: "rewe" };
+  if (normalized.includes("edeka")) return { label: "Edeka", shortLabel: "EDEKA", className: "edeka" };
+  if (normalized.includes("kaufland")) return { label: "Kaufland", shortLabel: "K", className: "kaufland" };
+  if (normalized.includes("aldi")) return { label: "Aldi Sued", shortLabel: "ALDI", className: "aldi" };
+  return { label: name, shortLabel: name.slice(0, 4).toUpperCase(), className: "generic" };
 }
 
 function getDisplayPrices(product: GroceryProduct, stores: StoreInfo[]): PriceWithStore[] {

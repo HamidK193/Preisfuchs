@@ -26,6 +26,10 @@
   Haendlers zugeordnet.
 - Web-App nutzt links Kategorie-Kacheln mit Lebensmittelbildern. Produktwahl
   erfolgt im Hauptbereich ueber Bildkarten und aktiven Produkt-Hero.
+- Web-App zeigt ein Fuchs-Logo, Haendler-Logo-Badges in Preiszeilen und eine
+  aufklappbare Einkaufsliste oben rechts.
+- Web-App filtert Produkte ohne echte Preisbeobachtung aus der Hauptauswahl,
+  damit keine Platzhalterpreise angezeigt werden.
 
 ## Offene Punkte
 
@@ -34,4 +38,5 @@
   jeder PLZ-Aenderung direkt Overpass abfragen muss.
 - Native iOS-App auf einem Mac mit Xcode bauen oder spaeter per TestFlight verteilen.
 - Supabase Cloud-Projekt ist erstellt und verbunden; letzter Import schrieb
-  51 Produkte und 388 Preisbeobachtungen.
+  51 Produkte und 549 Preisbeobachtungen. Fuer 48 Produkte liegen aktuell echte
+  Preisbeobachtungen vor.

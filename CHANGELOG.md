@@ -16,4 +16,10 @@
 - Standard-Produktliste auf 51 Lebensmittel in neun Kategorien erweitert.
 - Web/PWA-Design mit Kategorie-Navigation, Lebensmittelbildern, Produkt-Hero und
   Bildkarten ueberarbeitet.
-- Supabase mit erweitertem Produktkatalog und 388 Preisbeobachtungen aktualisiert.
+- Supabase mit erweitertem Produktkatalog und 549 Preisbeobachtungen aktualisiert.
+- Fuchs-Logo, Haendler-Logo-Badges und aufklappbare Einkaufsliste oben rechts
+  ergaenzt.
+- Web/PWA laedt bis zu 5000 Preisbeobachtungen aus Supabase und zeigt in der
+  Hauptauswahl nur Produkte mit echten importierten Preisen.
+- kaufDA-Import um mehrere Suchbegriffe und Haendler-Alias-Erkennung erweitert;
+  letzter Import: 549 Preisbeobachtungen fuer 48 Produkte.

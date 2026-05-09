@@ -59,7 +59,7 @@ export async function loadProducts(): Promise<ProductLoadResult> {
     .from("price_observations")
     .select("id,product_id,product_name,retailer_name,price,unit_price,unit,observed_at,source,source_url,confidence")
     .order("observed_at", { ascending: false })
-    .limit(250);
+    .limit(5000);
 
   const products = mapProducts(productRows, priceError ? [] : priceRows ?? []);
 
@@ -68,7 +68,7 @@ export async function loadProducts(): Promise<ProductLoadResult> {
     source: "supabase",
     message: priceRows?.length
       ? "Produkte und Preisbeobachtungen aus Supabase geladen."
-      : "Produkte aus Supabase geladen. Bis echte Preise da sind, nutzt Preisfuchs Demo-Preise."
+      : "Produkte aus Supabase geladen. Noch keine echten Preisbeobachtungen gefunden."
   };
 }
 
@@ -78,8 +78,6 @@ function mapProducts(productRows: ProductRow[], priceRows: PriceObservationRow[]
       .filter((price) => price.product_id === product.id)
       .map(mapPriceObservation);
 
-    const fallbackPrices = demoProducts.find((demoProduct) => demoProduct.id === product.id)?.prices ?? [];
-
     return {
       id: product.id,
       name: product.name,
@@ -88,7 +86,7 @@ function mapProducts(productRows: ProductRow[], priceRows: PriceObservationRow[]
       symbolName: symbolForCategory(product.category),
       imageUrl: imageForProduct(product.id, product.category, product.name),
       accentColor: accentForCategory(product.category),
-      prices: matchingPrices.length ? matchingPrices : fallbackPrices
+      prices: matchingPrices
     };
   });
 }

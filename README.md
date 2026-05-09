@@ -42,6 +42,10 @@ Tomaten, Milch, Nudeln, Schokolade, Tiefkuehlpizza und viele weitere
 Alltagsprodukte. Produkte werden in der Web-App mit passenden Lebensmittelbildern
 angezeigt.
 
+In der Hauptansicht werden nur Produkte angezeigt, fuer die echte importierte
+Preisbeobachtungen vorhanden sind. Produkte ohne aktuelle Quelle bleiben in der
+Datenbank, werden aber nicht als Platzhalterpreis angezeigt.
+
 ## Lokaler Start
 
 ### Windows-Testversion im Browser
@@ -137,6 +141,11 @@ Die kaufDA-Daten werden als `kaufDA Angebot` gespeichert. Das sind
 Angebotspreise aus oeffentlichen Angebotsseiten, keine garantierten
 Normalpreise. Wenn einzelne Sortimentsseiten nicht existieren, wird das Produkt
 uebersprungen und der Job importiert die uebrigen Treffer weiter.
+
+Der Import probiert pro Produkt mehrere Suchbegriffe und erkennt verschiedene
+Haendler-Schreibweisen wie `Aldi Sued` und die kaufDA-Schreibweise mit Umlaut.
+Der letzte lokale Import hat 549 Preisbeobachtungen fuer 48 von 51 Produkten
+verfuegbar gemacht.
 
 ## Lokaler Projekttest
 

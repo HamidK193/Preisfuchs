@@ -33,6 +33,14 @@ RETAILER_SLUGS = {
     "kaufland": ("Kaufland", "Kaufland"),
 }
 
+RETAILER_ALIASES = {
+    "Aldi Sued": ["aldi sued", "aldi sud", "aldi"],
+    "Lidl": ["lidl"],
+    "Rewe": ["rewe"],
+    "Edeka": ["edeka"],
+    "Kaufland": ["kaufland"],
+}
+
 PRODUCT_QUERY_OVERRIDES = {
     "milk_15": "Milch",
     "butter_250": "Butter",
@@ -64,17 +72,17 @@ PRODUCT_QUERY_OVERRIDES = {
     "apples_1kg": "Aepfel",
     "oranges_1kg": "Orangen",
     "strawberries_500": "Erdbeeren",
-    "grapes_500": "Trauben",
+    "grapes_500": "Weintrauben",
     "pears_1kg": "Birnen",
     "lemons_500": "Zitronen",
     "tomatoes_500": "Tomaten",
-    "cucumber_each": "Gurke",
+    "cucumber_each": "Gurken",
     "carrots_1kg": "Karotten",
     "potatoes_25kg": "Kartoffeln",
     "onions_1kg": "Zwiebeln",
     "bell_peppers_500": "Paprika",
     "salad_each": "Salat",
-    "broccoli_500": "Brokkoli",
+    "broccoli_500": "Broccoli",
     "chocolate_100": "Schokolade",
     "gummy_bears_200": "Fruchtgummi",
     "cookies_200": "Kekse",
@@ -83,7 +91,7 @@ PRODUCT_QUERY_OVERRIDES = {
     "frozen_pizza_each": "Tiefkuehlpizza",
     "fries_750": "Pommes",
     "icecream_500": "Eis",
-    "frozen_vegetables_750": "TK Gemuese",
+    "frozen_vegetables_750": "Gemuese",
     "fish_sticks_450": "Fischstaebchen",
 }
 
@@ -170,7 +178,7 @@ def parse_kaufda_offers(
         if price is None:
             continue
 
-        if retailer_name.lower() not in " ".join(texts).lower():
+        if not matches_retailer(texts, retailer_name):
             continue
 
         brand = texts[0] if texts else ""
@@ -220,7 +228,7 @@ def parse_kaufda_offers(
 
 def first_price_text(texts: list[str]) -> str | None:
     for text in texts:
-        if re.fullmatch(r"\d{1,3},\d{2}\s*€?", text) or re.fullmatch(r"\d{1,3},\d{2}", text):
+        if re.fullmatch(r"\d{1,3},\d{2}\s*(€|â‚¬)?", text) or re.fullmatch(r"\d{1,3},\d{2}", text):
             return text
     return None
 
@@ -241,7 +249,7 @@ def find_offer_name(texts: list[str], retailer_name: str) -> str | None:
     candidates = []
     for text in texts[:8]:
         lowered = text.lower()
-        if lowered in ignored or "€" in text or re.fullmatch(r"\d{1,3},\d{2}", text):
+        if lowered in ignored or "€" in text or "â‚¬" in text or re.fullmatch(r"\d{1,3},\d{2}", text):
             continue
         if re.search(r"\b(kg|l|g|ml)\b", text, re.I):
             continue
@@ -249,6 +257,34 @@ def find_offer_name(texts: list[str], retailer_name: str) -> str | None:
     if len(candidates) >= 2:
         return candidates[1]
     return candidates[0] if candidates else None
+
+
+def matches_retailer(texts: list[str], retailer_name: str) -> bool:
+    haystack = normalize_text(" ".join(texts))
+    return any(alias in haystack for alias in RETAILER_ALIASES.get(retailer_name, [normalize_text(retailer_name)]))
+
+
+def normalize_text(value: str) -> str:
+    return (
+        value.lower()
+        .replace("ü", "u")
+        .replace("ä", "a")
+        .replace("ö", "o")
+        .replace("ß", "ss")
+    )
+
+
+def query_candidates(product: ProductSeed) -> list[str]:
+    candidates = [PRODUCT_QUERY_OVERRIDES.get(product.id, product.name), product.name, *product.search_terms]
+    seen: set[str] = set()
+    unique_candidates = []
+    for candidate in candidates:
+        normalized = normalize_text(candidate).strip()
+        if not normalized or normalized in seen:
+            continue
+        seen.add(normalized)
+        unique_candidates.append(candidate)
+    return unique_candidates[:4]
 
 
 def parse_unit_price(value: str | None) -> tuple[str | None, str | None]:
@@ -362,22 +398,23 @@ def main() -> None:
                     normalized_rows.append(row)
 
     for product in products:
-        query = PRODUCT_QUERY_OVERRIDES.get(product.id, product.name)
         for retailer_id, (retailer_name, retailer_slug) in RETAILER_SLUGS.items():
-            try:
-                source_url, html = fetch_kaufda_html(retailer_slug, query)
-                normalized_rows.extend(
-                    parse_kaufda_offers(
+            for query in query_candidates(product):
+                try:
+                    source_url, html = fetch_kaufda_html(retailer_slug, query)
+                    rows = parse_kaufda_offers(
                         product=product,
                         retailer_id=retailer_id,
                         retailer_name=retailer_name,
                         source_url=source_url,
                         html=html,
                     )
-                )
-            except requests.RequestException as error:
-                print(f"Skipped kaufDA {retailer_name}/{query}: {error}")
-            time.sleep(0.25)
+                    normalized_rows.extend(rows)
+                    if rows:
+                        break
+                except requests.RequestException as error:
+                    print(f"Skipped kaufDA {retailer_name}/{query}: {error}")
+                time.sleep(0.25)
 
     if client is None:
         print("Dry-run: Supabase secrets not configured.")
