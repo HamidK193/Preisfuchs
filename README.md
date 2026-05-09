@@ -69,7 +69,7 @@ Die genaue Anleitung liegt in `docs/SUPABASE_SETUP.md`.
 Kurzfassung:
 
 1. Neues Supabase-Projekt anlegen.
-2. `backend/supabase/schema.sql` im SQL Editor ausfuehren.
+2. `backend/supabase/schema.sql` im SQL Editor ausfuehren oder GitHub-Integration mit Working directory `.` aktivieren.
 3. Lokale `.env` mit Supabase-Werten anlegen.
 4. Verbindung testen:
 

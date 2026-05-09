@@ -9,6 +9,8 @@
 
 ## 2. Datenbank-Schema ausfuehren
 
+### Schnellster Weg fuer den ersten Test
+
 1. Oeffne im Supabase-Projekt den SQL Editor
 2. Kopiere den Inhalt aus `backend/supabase/schema.sql`
 3. Fuehre das SQL aus
@@ -20,6 +22,28 @@ Danach existieren Tabellen fuer:
 - `stores`
 - `price_observations`
 - `update_runs`
+
+### GitHub-Integration fuer spaeter
+
+Die Supabase-GitHub-Integration ist sinnvoll, damit Datenbank-Migrationen aus
+dem Repo nachvollziehbar laufen. Das Repo enthaelt dafuer jetzt:
+
+```text
+supabase/config.toml
+supabase/migrations/202605090001_initial_schema.sql
+```
+
+In Supabase:
+
+1. Project Settings
+2. Integrations
+3. GitHub Integration autorisieren
+4. Repository `HamidK193/Preisfuchs` auswaehlen
+5. Working directory: `.`
+6. Integration aktivieren
+
+Fuer den allerersten Test ist der SQL Editor trotzdem oft schneller und
+leichter zu kontrollieren.
 
 ## 3. Lokale `.env` anlegen
 
