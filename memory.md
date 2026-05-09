@@ -18,6 +18,8 @@
 - Supabase speichert Produkte, Haendler, Filialen, Preisbeobachtungen und
   Update-Laeufe.
 - Preise sind Beobachtungen mit Quelle und Zeitstempel.
+- Automatischer Import aus kaufDA-Angebotsseiten ist aktiv und schreibt
+  `kaufDA Angebot` in `price_observations`.
 
 ## Offene Punkte
 
@@ -26,4 +28,5 @@
 - Open-Prices-Response gegen echte API-Daten testen.
 - Optional OpenStreetMap/Overpass-Import fuer Marktstandorte in BW ergaenzen.
 - Native iOS-App auf einem Mac mit Xcode bauen oder spaeter per TestFlight verteilen.
-- Supabase Cloud-Projekt ist noch nicht erstellt; Schema und Testskript sind vorbereitet.
+- Supabase Cloud-Projekt ist erstellt und verbunden; letzter Test zeigte 10 Produkte,
+  5 Haendler und 100 Preisbeobachtungen.

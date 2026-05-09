@@ -10,4 +10,5 @@
 - Supabase-Smoke-Test und Setup-Anleitung ergaenzt.
 - Supabase-Migrationsordner fuer GitHub-Integration ergaenzt.
 - Taeglichen GitHub-Actions-Workflow fuer Preisupdates vorbereitet.
+- Automatischen kaufDA-Angebotsimport in den taeglichen Preisjob integriert.
 - Standard-Produktliste fuer Lebensmittel-MVP erstellt.

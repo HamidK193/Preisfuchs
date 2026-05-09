@@ -94,6 +94,17 @@ SUPABASE_SERVICE_ROLE_KEY
 Der Update-Job laeuft auch ohne Secrets im Dry-Run und schreibt dann nichts in
 die Datenbank.
 
+## Automatische Preisquellen
+
+Der taegliche Job `backend/jobs/price_update_job.py` importiert aktuell:
+
+- Open Prices, falls fuer Produkte Barcodes hinterlegt sind
+- kaufDA-Angebotsseiten fuer die Standardprodukte und Kernhaendler
+
+Die kaufDA-Daten werden als `kaufDA Angebot` gespeichert. Das sind
+Angebotspreise aus oeffentlichen Angebotsseiten, keine garantierten
+Normalpreise.
+
 ## Lokaler Projekttest
 
 ```powershell

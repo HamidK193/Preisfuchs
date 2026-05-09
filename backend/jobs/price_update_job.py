@@ -2,12 +2,17 @@ from __future__ import annotations
 
 import json
 import os
+import re
+import time
+import uuid
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote
 
 import requests
+from bs4 import BeautifulSoup
 
 try:
     from supabase import create_client
@@ -19,6 +24,27 @@ ROOT = Path(__file__).resolve().parents[2]
 PRODUCTS_FILE = ROOT / "data" / "standard_products.json"
 OPEN_PRICES_BASE_URL = os.getenv("OPEN_PRICES_BASE_URL", "https://prices.openfoodfacts.org").rstrip("/")
 USER_AGENT = "Preisfuchs-MVP/0.1 (contact: local-development)"
+
+RETAILER_SLUGS = {
+    "aldi_sued": ("Aldi Sued", "Aldi-Sued"),
+    "lidl": ("Lidl", "Lidl"),
+    "rewe": ("Rewe", "REWE"),
+    "edeka": ("Edeka", "Edeka"),
+    "kaufland": ("Kaufland", "Kaufland"),
+}
+
+PRODUCT_QUERY_OVERRIDES = {
+    "milk_15": "Milch",
+    "butter_250": "Butter",
+    "eggs_10": "Eier",
+    "pasta_500": "Nudeln",
+    "rice_1kg": "Reis",
+    "flour_1kg": "Mehl",
+    "sugar_1kg": "Zucker",
+    "coffee_500": "Kaffee",
+    "bananas_1kg": "Bananen",
+    "tomatoes_500": "Tomaten",
+}
 
 
 def load_dotenv() -> None:
@@ -70,6 +96,155 @@ def fetch_open_prices_for_barcode(barcode: str) -> list[dict[str, Any]]:
     return payload if isinstance(payload, list) else []
 
 
+def fetch_kaufda_html(retailer_slug: str, query: str) -> tuple[str, str]:
+    url = f"https://www.kaufda.de/{retailer_slug}/Sortiment/{quote(query)}"
+    response = requests.get(
+        url,
+        headers={"User-Agent": USER_AGENT, "Accept": "text/html"},
+        timeout=30,
+    )
+    response.raise_for_status()
+    return response.url, response.text
+
+
+def parse_kaufda_offers(
+    *,
+    product: ProductSeed,
+    retailer_id: str,
+    retailer_name: str,
+    source_url: str,
+    html: str,
+) -> list[dict[str, Any]]:
+    soup = BeautifulSoup(html, "html.parser")
+    valid_until = parse_valid_until(soup.get_text("\n"))
+    rows: list[dict[str, Any]] = []
+
+    for item in soup.select('[role="listitem"]'):
+        texts = [text.strip() for text in item.stripped_strings if text.strip()]
+        price_text = first_price_text(texts)
+        if not price_text:
+            continue
+
+        price = parse_euro_price(price_text)
+        if price is None:
+            continue
+
+        if retailer_name.lower() not in " ".join(texts).lower():
+            continue
+
+        brand = texts[0] if texts else ""
+        offer_name = find_offer_name(texts, retailer_name)
+        if not offer_name:
+            continue
+
+        unit_text = next((text for text in texts if re.search(r"\b(kg|l|g|ml)\b", text, re.I)), None)
+        unit_price, unit = parse_unit_price(unit_text)
+        full_name = f"{brand} {offer_name}".strip()
+        observed = datetime.now(UTC).isoformat()
+        row_id = stable_price_id(
+            "kaufda",
+            product.id,
+            retailer_id,
+            full_name,
+            str(price),
+            valid_until.isoformat() if valid_until else date.today().isoformat(),
+        )
+
+        rows.append(
+            {
+                "id": row_id,
+                "product_id": product.id,
+                "retailer_id": retailer_id,
+                "product_name": full_name[:240],
+                "retailer_name": retailer_name,
+                "price": price,
+                "currency": "EUR",
+                "unit_price": unit_price,
+                "unit": unit,
+                "observed_at": observed,
+                "valid_until": valid_until.isoformat() if valid_until else None,
+                "source": "kaufDA Angebot",
+                "source_url": source_url,
+                "source_license": "unknown",
+                "confidence": 0.58,
+                "raw_payload": {
+                    "texts": texts[:20],
+                    "academic_mvp_source": True,
+                },
+            }
+        )
+
+    return dedupe_rows(rows)[:8]
+
+
+def first_price_text(texts: list[str]) -> str | None:
+    for text in texts:
+        if re.fullmatch(r"\d{1,3},\d{2}\s*€?", text) or re.fullmatch(r"\d{1,3},\d{2}", text):
+            return text
+    return None
+
+
+def parse_euro_price(value: str) -> str | None:
+    match = re.search(r"(\d{1,3}),(\d{2})", value)
+    if not match:
+        return None
+    return f"{match.group(1)}.{match.group(2)}"
+
+
+def find_offer_name(texts: list[str], retailer_name: str) -> str | None:
+    ignored = {
+        retailer_name.lower(),
+        "uvp",
+        "mehr angebote",
+    }
+    candidates = []
+    for text in texts[:8]:
+        lowered = text.lower()
+        if lowered in ignored or "€" in text or re.fullmatch(r"\d{1,3},\d{2}", text):
+            continue
+        if re.search(r"\b(kg|l|g|ml)\b", text, re.I):
+            continue
+        candidates.append(text)
+    if len(candidates) >= 2:
+        return candidates[1]
+    return candidates[0] if candidates else None
+
+
+def parse_unit_price(value: str | None) -> tuple[str | None, str | None]:
+    if not value:
+        return None, None
+    match = re.search(r"(\d{1,3})[,.](\d{2}).*?\b(kg|l|g|ml)\b", value, re.I)
+    if not match:
+        return None, None
+    return f"{match.group(1)}.{match.group(2)}", match.group(3).lower()
+
+
+def parse_valid_until(text: str) -> date | None:
+    match = re.search(r"Gültig bis\s+(\d{1,2})\.(\d{1,2})\.(\d{4})", text)
+    if not match:
+        return None
+    day, month, year = (int(part) for part in match.groups())
+    try:
+        return date(year, month, day)
+    except ValueError:
+        return None
+
+
+def stable_price_id(*parts: str) -> str:
+    return str(uuid.uuid5(uuid.NAMESPACE_URL, "|".join(parts)))
+
+
+def dedupe_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    seen: set[str] = set()
+    unique_rows = []
+    for row in rows:
+        if row["id"] in seen:
+            continue
+        seen.add(row["id"])
+        unique_rows.append(row)
+    return unique_rows
+
+
 def normalize_open_price(product: ProductSeed, item: dict[str, Any]) -> dict[str, Any] | None:
     price = item.get("price") or item.get("price_value")
     if price is None:
@@ -87,6 +262,7 @@ def normalize_open_price(product: ProductSeed, item: dict[str, Any]) -> dict[str
     observed_at = item.get("date") or item.get("created") or datetime.now(UTC).date().isoformat()
 
     return {
+        "id": stable_price_id("open-prices", product.id, str(retailer_name), str(price), str(observed_at)),
         "product_id": product.id,
         "product_name": product.name,
         "retailer_name": str(retailer_name),
@@ -128,7 +304,7 @@ def upsert_products(client, products: list[ProductSeed]) -> None:
 
 def insert_prices(client, rows: list[dict[str, Any]]) -> None:
     if rows:
-        client.table("price_observations").insert(rows).execute()
+        client.table("price_observations").upsert(rows).execute()
 
 
 def main() -> None:
@@ -143,6 +319,24 @@ def main() -> None:
                 row = normalize_open_price(product, item)
                 if row:
                     normalized_rows.append(row)
+
+    for product in products:
+        query = PRODUCT_QUERY_OVERRIDES.get(product.id, product.name)
+        for retailer_id, (retailer_name, retailer_slug) in RETAILER_SLUGS.items():
+            try:
+                source_url, html = fetch_kaufda_html(retailer_slug, query)
+                normalized_rows.extend(
+                    parse_kaufda_offers(
+                        product=product,
+                        retailer_id=retailer_id,
+                        retailer_name=retailer_name,
+                        source_url=source_url,
+                        html=html,
+                    )
+                )
+            except requests.RequestException as error:
+                print(f"Skipped kaufDA {retailer_name}/{query}: {error}")
+            time.sleep(0.25)
 
     if client is None:
         print("Dry-run: Supabase secrets not configured.")
