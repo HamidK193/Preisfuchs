@@ -5,7 +5,8 @@
 - App-Name: Preisfuchs
 - Zielregion: Baden-Wuerttemberg
 - Erste Maerkte: Aldi Sued, Lidl, Rewe, Edeka, Kaufland
-- Produkte: Standard-Lebensmittel
+- Produkte: 51 Standard-Lebensmittel, gruppiert nach Kategorien statt langer
+  Linkliste
 - Cloud-Empfehlung: Supabase
 - GitHub-Repo: privat
 - OpenAI: spaeter, nicht im ersten MVP
@@ -23,14 +24,14 @@
 - Web-App laedt Filialdaten im Browser ueber OpenStreetMap/Overpass anhand von
   PLZ und Radius. Preisbeobachtungen werden der naechsten passenden Filiale des
   Haendlers zugeordnet.
+- Web-App nutzt links Kategorie-Kacheln mit Lebensmittelbildern. Produktwahl
+  erfolgt im Hauptbereich ueber Bildkarten und aktiven Produkt-Hero.
 
 ## Offene Punkte
 
-- Privates GitHub-Repo erstellen, sobald GitHub-Remote-Erstellung verfuegbar ist.
-- Supabase-Projekt anlegen und Secrets im GitHub-Repo setzen.
 - Open-Prices-Response gegen echte API-Daten testen.
 - Optional Filialdaten spaeter in Supabase cachen, damit die Web-App nicht bei
   jeder PLZ-Aenderung direkt Overpass abfragen muss.
 - Native iOS-App auf einem Mac mit Xcode bauen oder spaeter per TestFlight verteilen.
-- Supabase Cloud-Projekt ist erstellt und verbunden; letzter Test zeigte 10 Produkte,
-  5 Haendler und 100 Preisbeobachtungen.
+- Supabase Cloud-Projekt ist erstellt und verbunden; letzter Import schrieb
+  51 Produkte und 388 Preisbeobachtungen.

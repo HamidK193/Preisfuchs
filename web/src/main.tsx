@@ -17,7 +17,7 @@ import {
   Store,
   Tag
 } from "lucide-react";
-import { demoProducts, type GroceryProduct, type PriceObservation } from "./data";
+import { categories, demoProducts, type GroceryProduct, type PriceObservation } from "./data";
 import { loadProducts, type ProductLoadResult } from "./supabase";
 import { findNearestStore, loadNearbyStores, type StoreInfo } from "./stores";
 import "./styles.css";
@@ -46,6 +46,7 @@ function App() {
     source: "demo",
     message: "Daten werden geladen."
   });
+  const [activeCategoryId, setActiveCategoryId] = useState(categories[0].id);
   const [activeProductId, setActiveProductId] = useState(demoProducts[0].id);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(["milk_15", "butter_250", "pasta_500"]));
 
@@ -56,7 +57,12 @@ function App() {
       if (!isMounted) return;
       setProducts(result.products);
       setLoadResult(result);
-      setActiveProductId((current) => result.products.some((product) => product.id === current) ? current : result.products[0]?.id ?? "");
+      setActiveProductId((current) =>
+        result.products.some((product) => product.id === current) ? current : result.products[0]?.id ?? ""
+      );
+      setActiveCategoryId((current) =>
+        result.products.some((product) => product.category === current) ? current : result.products[0]?.category ?? categories[0].id
+      );
     });
 
     return () => {
@@ -99,22 +105,45 @@ function App() {
     };
   }, [postcode, radiusKm]);
 
-  const filteredProducts = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    if (!normalized) return products;
-    return products.filter(
-      (product) =>
-        product.name.toLowerCase().includes(normalized) ||
-        product.category.toLowerCase().includes(normalized)
-    );
-  }, [products, query]);
+  const productCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    products.forEach((product) => counts.set(product.category, (counts.get(product.category) ?? 0) + 1));
+    return counts;
+  }, [products]);
 
-  const activeProduct = products.find((product) => product.id === activeProductId) ?? products[0];
+  const visibleProducts = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    if (normalized) {
+      return products.filter(
+        (product) =>
+          product.name.toLowerCase().includes(normalized) ||
+          product.category.toLowerCase().includes(normalized)
+      );
+    }
+    return products.filter((product) => product.category === activeCategoryId);
+  }, [activeCategoryId, products, query]);
+
+  useEffect(() => {
+    if (!visibleProducts.length) return;
+    if (!visibleProducts.some((product) => product.id === activeProductId)) {
+      setActiveProductId(visibleProducts[0].id);
+    }
+  }, [activeProductId, visibleProducts]);
+
+  const activeProduct = products.find((product) => product.id === activeProductId) ?? visibleProducts[0] ?? products[0];
+  const activeCategory = categories.find((category) => category.id === activeProduct?.category) ?? categories[0];
   const activePrices = useMemo(() => getDisplayPrices(activeProduct, stores), [activeProduct, stores]);
   const cheapest = getCheapest(activePrices);
   const selectedProducts = products.filter((product) => selectedIds.has(product.id));
   const basketTotal = selectedProducts.reduce((sum, product) => sum + (getCheapest(getDisplayPrices(product, stores))?.price ?? 0), 0);
   const nearestStoreCount = stores.length;
+
+  function chooseCategory(categoryId: string) {
+    setQuery("");
+    setActiveCategoryId(categoryId);
+    const firstProduct = products.find((product) => product.category === categoryId);
+    if (firstProduct) setActiveProductId(firstProduct.id);
+  }
 
   function toggleProduct(productId: string) {
     setSelectedIds((current) => {
@@ -140,7 +169,7 @@ function App() {
 
   return (
     <main className="app-shell">
-      <aside className="sidebar" aria-label="Produktnavigation">
+      <aside className="sidebar" aria-label="Kategorien">
         <div className="brand-row">
           <div className="brand-mark">
             <BadgeEuro size={24} aria-hidden="true" />
@@ -201,21 +230,21 @@ function App() {
           />
         </label>
 
-        <nav className="product-list" aria-label="Produkte">
-          {filteredProducts.map((product) => {
-            const price = getCheapest(getDisplayPrices(product, stores));
+        <nav className="category-list" aria-label="Produktkategorien">
+          {categories.map((category) => {
+            const count = productCounts.get(category.id) ?? 0;
             return (
               <button
-                className={product.id === activeProduct.id ? "product-button active" : "product-button"}
-                key={product.id}
-                onClick={() => setActiveProductId(product.id)}
+                className={activeCategoryId === category.id && !query ? "category-button active" : "category-button"}
+                key={category.id}
+                onClick={() => chooseCategory(category.id)}
                 type="button"
               >
+                <img src={category.imageUrl} alt="" loading="lazy" />
                 <span>
-                  <strong>{product.name}</strong>
-                  <small>{product.category} · {product.packageSize}</small>
+                  <strong>{category.label}</strong>
+                  <small>{count} Produkte</small>
                 </span>
-                <b>{price ? currency.format(price.price) : "offen"}</b>
               </button>
             );
           })}
@@ -225,16 +254,61 @@ function App() {
       <section className="content" aria-live="polite">
         <header className="topbar">
           <div>
-            <p className="section-label">Preisvergleich im Umkreis</p>
-            <h2>{activeProduct.name}</h2>
+            <h2>Lebensmittel clever vergleichen</h2>
             <p className="topbar-subtitle">
-              {postcode ? `PLZ ${postcode} · ${radiusKm} km · ${nearestStoreCount} Maerkte gefunden` : "Standortfilter aktivieren"}
+              {postcode ? `PLZ ${postcode} - ${radiusKm} km - ${nearestStoreCount} Maerkte gefunden` : "Standortfilter aktivieren"}
             </p>
           </div>
           <a className="source-link" href="https://prices.openfoodfacts.org" target="_blank" rel="noreferrer">
-            Open Prices <ExternalLink size={16} />
+            Datenquelle <ExternalLink size={16} />
           </a>
         </header>
+
+        <section
+          className="active-product-hero"
+          style={{ borderColor: `${activeProduct.accentColor ?? activeCategory.accentColor}55` }}
+        >
+          <div className="product-hero-copy">
+            <span>{activeCategory.label}</span>
+            <h3>{activeProduct.name}</h3>
+            <p>{activeProduct.packageSize} - Preise aus Angeboten und Preisbeobachtungen in Baden-Wuerttemberg.</p>
+            <div className="hero-price">
+              <small>Guensigster Preis</small>
+              <strong>{cheapest ? currency.format(cheapest.price) : "offen"}</strong>
+            </div>
+          </div>
+          <img src={activeProduct.imageUrl ?? activeCategory.imageUrl} alt={activeProduct.name} />
+        </section>
+
+        <section className="product-strip" aria-label={query ? "Suchergebnisse" : `Produkte in ${activeCategory.label}`}>
+          <div className="strip-heading">
+            <div>
+              <p className="section-label">{query ? "Suchergebnisse" : activeCategory.label}</p>
+              <h3>{query ? `${visibleProducts.length} Treffer` : "Produkte auswaehlen"}</h3>
+            </div>
+          </div>
+
+          <div className="product-card-grid">
+            {visibleProducts.map((product) => {
+              const price = getCheapest(getDisplayPrices(product, stores));
+              return (
+                <button
+                  className={product.id === activeProduct.id ? "product-card active" : "product-card"}
+                  key={product.id}
+                  onClick={() => setActiveProductId(product.id)}
+                  type="button"
+                >
+                  <img src={product.imageUrl ?? activeCategory.imageUrl} alt="" loading="lazy" />
+                  <span>
+                    <strong>{product.name}</strong>
+                    <small>{product.packageSize}</small>
+                  </span>
+                  <b>{price ? currency.format(price.price) : "offen"}</b>
+                </button>
+              );
+            })}
+          </div>
+        </section>
 
         <section className="summary-grid">
           <article className="best-price-panel">
@@ -244,7 +318,7 @@ function App() {
             <div>
               <p>Bester Preis in deinem Umkreis</p>
               <strong>{cheapest ? currency.format(cheapest.price) : "offen"}</strong>
-              <span>{cheapest ? `${cheapest.retailer} · ${cheapest.store?.distanceKm.toFixed(1) ?? "?"} km` : "Noch keine passende Preisbeobachtung"}</span>
+              <span>{cheapest ? `${cheapest.retailer} - ${cheapest.store?.distanceKm.toFixed(1) ?? "?"} km` : "Noch keine passende Preisbeobachtung"}</span>
             </div>
           </article>
 
@@ -252,7 +326,7 @@ function App() {
             <ShieldCheck size={22} aria-hidden="true" />
             <div>
               <strong>Quelle sichtbar</strong>
-              <span>{cheapest ? `${cheapest.source} · ${freshnessText(cheapest.observedAt)}` : "Wird angezeigt, sobald Preise vorliegen"}</span>
+              <span>{cheapest ? `${cheapest.source} - ${freshnessText(cheapest.observedAt)}` : "Wird angezeigt, sobald Preise vorliegen"}</span>
             </div>
           </article>
 
@@ -296,7 +370,7 @@ function App() {
                     </div>
                     <div className="freshness">
                       <CalendarClock size={15} />
-                      <span>{price.store ? `${price.store.distanceKm.toFixed(1)} km · ` : ""}{freshnessText(price.observedAt)}</span>
+                      <span>{price.store ? `${price.store.distanceKm.toFixed(1)} km - ` : ""}{freshnessText(price.observedAt)}</span>
                     </div>
                   </div>
                 )) : (
@@ -322,7 +396,7 @@ function App() {
             </div>
 
             <div className="basket-list">
-              {products.map((product) => {
+              {visibleProducts.map((product) => {
                 const price = getCheapest(getDisplayPrices(product, stores));
                 return (
                   <button className="basket-item" key={product.id} onClick={() => toggleProduct(product.id)} type="button">

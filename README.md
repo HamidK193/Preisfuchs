@@ -1,8 +1,8 @@
 # Preisfuchs
 
-Preisfuchs ist ein iOS-MVP fuer Lebensmittel-Preisvergleich in
+Preisfuchs ist ein iOS- und Web-MVP fuer Lebensmittel-Preisvergleich in
 Baden-Wuerttemberg. Die App zeigt fuer Standard-Lebensmittel beobachtete Preise,
-Maerkte, Quellen und Aktualitaet an.
+Maerkte, Quellen, Aktualitaet, Filialadressen und Oeffnungszeiten an.
 
 Der erste kostenlose Ansatz kombiniert:
 
@@ -10,7 +10,7 @@ Der erste kostenlose Ansatz kombiniert:
 - Supabase als Datenbank/API
 - GitHub Actions als taeglichen Update-Job
 - Open Prices / Open Food Facts als offene Datenquelle
-- spaeter OpenStreetMap/Overpass fuer Marktstandorte
+- OpenStreetMap/Overpass fuer Marktstandorte im PLZ-Umkreis
 
 ## Projektstruktur
 
@@ -21,6 +21,26 @@ backend/jobs/                   Preis-Update-Job
 data/standard_products.json     Standard-Lebensmittel fuer den MVP
 docs/MVP_PLAN.md                Umsetzungsplan
 ```
+
+## Produktauswahl
+
+Die Web-App startet nicht mehr mit einer langen Produktliste, sondern mit
+Kategorien:
+
+- Obst
+- Gemuese
+- Frische
+- Molkerei
+- Vorrat
+- Getraenke
+- Suessigkeiten
+- Tiefkuehl
+- Backen
+
+Die aktuelle Stammdatenliste enthaelt 51 Lebensmittel, darunter Bananen, Eier,
+Tomaten, Milch, Nudeln, Schokolade, Tiefkuehlpizza und viele weitere
+Alltagsprodukte. Produkte werden in der Web-App mit passenden Lebensmittelbildern
+angezeigt.
 
 ## Lokaler Start
 
@@ -115,7 +135,8 @@ Der taegliche Job `backend/jobs/price_update_job.py` importiert aktuell:
 
 Die kaufDA-Daten werden als `kaufDA Angebot` gespeichert. Das sind
 Angebotspreise aus oeffentlichen Angebotsseiten, keine garantierten
-Normalpreise.
+Normalpreise. Wenn einzelne Sortimentsseiten nicht existieren, wird das Produkt
+uebersprungen und der Job importiert die uebrigen Treffer weiter.
 
 ## Lokaler Projekttest
 

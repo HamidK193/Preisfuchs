@@ -13,3 +13,7 @@
 - Taeglichen GitHub-Actions-Workflow fuer Preisupdates vorbereitet.
 - Automatischen kaufDA-Angebotsimport in den taeglichen Preisjob integriert.
 - Standard-Produktliste fuer Lebensmittel-MVP erstellt.
+- Standard-Produktliste auf 51 Lebensmittel in neun Kategorien erweitert.
+- Web/PWA-Design mit Kategorie-Navigation, Lebensmittelbildern, Produkt-Hero und
+  Bildkarten ueberarbeitet.
+- Supabase mit erweitertem Produktkatalog und 388 Preisbeobachtungen aktualisiert.

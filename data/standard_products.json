@@ -18,9 +18,169 @@
   {
     "id": "eggs_10",
     "name": "Eier",
-    "category": "Grundnahrungsmittel",
+    "category": "Frische",
     "package_size": "10 Stueck",
     "search_terms": ["eier 10er", "bodenhaltung eier", "freiland eier"],
+    "barcodes": []
+  },
+  {
+    "id": "yogurt_500",
+    "name": "Naturjoghurt",
+    "category": "Molkerei",
+    "package_size": "500 g",
+    "search_terms": ["naturjoghurt 500g", "joghurt natur"],
+    "barcodes": []
+  },
+  {
+    "id": "cheese_slices_400",
+    "name": "Scheibenkaese",
+    "category": "Molkerei",
+    "package_size": "400 g",
+    "search_terms": ["kaese scheiben 400g", "gouda scheiben"],
+    "barcodes": []
+  },
+  {
+    "id": "quark_500",
+    "name": "Magerquark",
+    "category": "Molkerei",
+    "package_size": "500 g",
+    "search_terms": ["magerquark 500g", "speisequark"],
+    "barcodes": []
+  },
+  {
+    "id": "cream_200",
+    "name": "Schlagsahne",
+    "category": "Molkerei",
+    "package_size": "200 g",
+    "search_terms": ["schlagsahne 200g", "sahne"],
+    "barcodes": []
+  },
+  {
+    "id": "mozzarella_125",
+    "name": "Mozzarella",
+    "category": "Molkerei",
+    "package_size": "125 g",
+    "search_terms": ["mozzarella 125g"],
+    "barcodes": []
+  },
+  {
+    "id": "bananas_1kg",
+    "name": "Bananen",
+    "category": "Obst",
+    "package_size": "1 kg",
+    "search_terms": ["bananen", "banane kg"],
+    "barcodes": []
+  },
+  {
+    "id": "apples_1kg",
+    "name": "Aepfel",
+    "category": "Obst",
+    "package_size": "1 kg",
+    "search_terms": ["aepfel", "apfel kg", "elstar"],
+    "barcodes": []
+  },
+  {
+    "id": "oranges_1kg",
+    "name": "Orangen",
+    "category": "Obst",
+    "package_size": "1 kg",
+    "search_terms": ["orangen", "orange kg"],
+    "barcodes": []
+  },
+  {
+    "id": "strawberries_500",
+    "name": "Erdbeeren",
+    "category": "Obst",
+    "package_size": "500 g",
+    "search_terms": ["erdbeeren 500g", "erdbeeren schale"],
+    "barcodes": []
+  },
+  {
+    "id": "grapes_500",
+    "name": "Trauben",
+    "category": "Obst",
+    "package_size": "500 g",
+    "search_terms": ["trauben 500g", "weintrauben"],
+    "barcodes": []
+  },
+  {
+    "id": "pears_1kg",
+    "name": "Birnen",
+    "category": "Obst",
+    "package_size": "1 kg",
+    "search_terms": ["birnen", "birne kg"],
+    "barcodes": []
+  },
+  {
+    "id": "lemons_500",
+    "name": "Zitronen",
+    "category": "Obst",
+    "package_size": "500 g",
+    "search_terms": ["zitronen", "bio zitronen"],
+    "barcodes": []
+  },
+  {
+    "id": "tomatoes_500",
+    "name": "Tomaten",
+    "category": "Gemuese",
+    "package_size": "500 g",
+    "search_terms": ["tomaten 500g", "rispentomaten", "strauchtomaten"],
+    "barcodes": []
+  },
+  {
+    "id": "cucumber_each",
+    "name": "Gurke",
+    "category": "Gemuese",
+    "package_size": "1 Stueck",
+    "search_terms": ["gurke", "salatgurke"],
+    "barcodes": []
+  },
+  {
+    "id": "carrots_1kg",
+    "name": "Karotten",
+    "category": "Gemuese",
+    "package_size": "1 kg",
+    "search_terms": ["karotten 1kg", "moehren 1kg"],
+    "barcodes": []
+  },
+  {
+    "id": "potatoes_25kg",
+    "name": "Kartoffeln",
+    "category": "Gemuese",
+    "package_size": "2,5 kg",
+    "search_terms": ["kartoffeln 2.5kg", "speisekartoffeln"],
+    "barcodes": []
+  },
+  {
+    "id": "onions_1kg",
+    "name": "Zwiebeln",
+    "category": "Gemuese",
+    "package_size": "1 kg",
+    "search_terms": ["zwiebeln 1kg", "speisezwiebeln"],
+    "barcodes": []
+  },
+  {
+    "id": "bell_peppers_500",
+    "name": "Paprika",
+    "category": "Gemuese",
+    "package_size": "500 g",
+    "search_terms": ["paprika 500g", "paprika mix"],
+    "barcodes": []
+  },
+  {
+    "id": "salad_each",
+    "name": "Kopfsalat",
+    "category": "Gemuese",
+    "package_size": "1 Stueck",
+    "search_terms": ["kopfsalat", "salat"],
+    "barcodes": []
+  },
+  {
+    "id": "broccoli_500",
+    "name": "Brokkoli",
+    "category": "Gemuese",
+    "package_size": "500 g",
+    "search_terms": ["brokkoli", "broccoli"],
     "barcodes": []
   },
   {
@@ -40,6 +200,38 @@
     "barcodes": []
   },
   {
+    "id": "oats_500",
+    "name": "Haferflocken",
+    "category": "Trockenware",
+    "package_size": "500 g",
+    "search_terms": ["haferflocken 500g", "zarte haferflocken"],
+    "barcodes": []
+  },
+  {
+    "id": "lentils_500",
+    "name": "Linsen",
+    "category": "Trockenware",
+    "package_size": "500 g",
+    "search_terms": ["linsen 500g", "rote linsen"],
+    "barcodes": []
+  },
+  {
+    "id": "canned_tomatoes_400",
+    "name": "Dosentomaten",
+    "category": "Trockenware",
+    "package_size": "400 g",
+    "search_terms": ["dosentomaten 400g", "tomaten dose"],
+    "barcodes": []
+  },
+  {
+    "id": "tuna_195",
+    "name": "Thunfisch",
+    "category": "Trockenware",
+    "package_size": "195 g",
+    "search_terms": ["thunfisch dose", "thunfisch 195g"],
+    "barcodes": []
+  },
+  {
     "id": "flour_1kg",
     "name": "Mehl Type 405",
     "category": "Backen",
@@ -56,6 +248,38 @@
     "barcodes": []
   },
   {
+    "id": "oil_1l",
+    "name": "Sonnenblumenoel",
+    "category": "Backen",
+    "package_size": "1 l",
+    "search_terms": ["sonnenblumenoel 1l", "speiseoel"],
+    "barcodes": []
+  },
+  {
+    "id": "baking_powder",
+    "name": "Backpulver",
+    "category": "Backen",
+    "package_size": "3er Pack",
+    "search_terms": ["backpulver", "backpulver 3er"],
+    "barcodes": []
+  },
+  {
+    "id": "cocoa_250",
+    "name": "Backkakao",
+    "category": "Backen",
+    "package_size": "250 g",
+    "search_terms": ["backkakao 250g", "kakao"],
+    "barcodes": []
+  },
+  {
+    "id": "yeast",
+    "name": "Hefe",
+    "category": "Backen",
+    "package_size": "1 Wuerfel",
+    "search_terms": ["hefe", "frische hefe"],
+    "barcodes": []
+  },
+  {
     "id": "coffee_500",
     "name": "Kaffee",
     "category": "Getraenke",
@@ -64,19 +288,123 @@
     "barcodes": []
   },
   {
-    "id": "bananas_1kg",
-    "name": "Bananen",
-    "category": "Obst",
-    "package_size": "1 kg",
-    "search_terms": ["bananen", "banane kg"],
+    "id": "water_15l",
+    "name": "Mineralwasser",
+    "category": "Getraenke",
+    "package_size": "1,5 l",
+    "search_terms": ["mineralwasser 1.5l", "wasser"],
     "barcodes": []
   },
   {
-    "id": "tomatoes_500",
-    "name": "Tomaten",
-    "category": "Gemuese",
-    "package_size": "500 g",
-    "search_terms": ["tomaten 500g", "rispentomaten", "strauchtomaten"],
+    "id": "orange_juice_1l",
+    "name": "Orangensaft",
+    "category": "Getraenke",
+    "package_size": "1 l",
+    "search_terms": ["orangensaft 1l", "o-saft"],
+    "barcodes": []
+  },
+  {
+    "id": "cola_125l",
+    "name": "Cola",
+    "category": "Getraenke",
+    "package_size": "1,25 l",
+    "search_terms": ["cola 1.25l", "cola"],
+    "barcodes": []
+  },
+  {
+    "id": "tea_20",
+    "name": "Tee",
+    "category": "Getraenke",
+    "package_size": "20 Beutel",
+    "search_terms": ["tee 20 beutel", "kraeutertee"],
+    "barcodes": []
+  },
+  {
+    "id": "beer_05",
+    "name": "Pils",
+    "category": "Getraenke",
+    "package_size": "0,5 l",
+    "search_terms": ["pils 0.5l", "bier 0.5l"],
+    "barcodes": []
+  },
+  {
+    "id": "chocolate_100",
+    "name": "Schokolade",
+    "category": "Suessigkeiten",
+    "package_size": "100 g",
+    "search_terms": ["schokolade 100g", "vollmilch schokolade"],
+    "barcodes": []
+  },
+  {
+    "id": "gummy_bears_200",
+    "name": "Gummibaerchen",
+    "category": "Suessigkeiten",
+    "package_size": "200 g",
+    "search_terms": ["gummibaerchen 200g", "fruchtgummi"],
+    "barcodes": []
+  },
+  {
+    "id": "cookies_200",
+    "name": "Kekse",
+    "category": "Suessigkeiten",
+    "package_size": "200 g",
+    "search_terms": ["kekse 200g", "butterkekse"],
+    "barcodes": []
+  },
+  {
+    "id": "chips_175",
+    "name": "Chips",
+    "category": "Suessigkeiten",
+    "package_size": "175 g",
+    "search_terms": ["chips 175g", "kartoffelchips"],
+    "barcodes": []
+  },
+  {
+    "id": "nuts_200",
+    "name": "Nuesse",
+    "category": "Suessigkeiten",
+    "package_size": "200 g",
+    "search_terms": ["nuesse 200g", "studentenfutter"],
+    "barcodes": []
+  },
+  {
+    "id": "frozen_pizza_each",
+    "name": "Tiefkuehlpizza",
+    "category": "Tiefkuehl",
+    "package_size": "1 Stueck",
+    "search_terms": ["tiefkuehlpizza", "pizza tiefkuehl"],
+    "barcodes": []
+  },
+  {
+    "id": "fries_750",
+    "name": "Pommes",
+    "category": "Tiefkuehl",
+    "package_size": "750 g",
+    "search_terms": ["pommes 750g", "tiefkuehl pommes"],
+    "barcodes": []
+  },
+  {
+    "id": "icecream_500",
+    "name": "Eiscreme",
+    "category": "Tiefkuehl",
+    "package_size": "500 ml",
+    "search_terms": ["eiscreme 500ml", "eis"],
+    "barcodes": []
+  },
+  {
+    "id": "frozen_vegetables_750",
+    "name": "TK-Gemuese",
+    "category": "Tiefkuehl",
+    "package_size": "750 g",
+    "search_terms": ["tk gemuese 750g", "tiefkuehl gemuese"],
+    "barcodes": []
+  },
+  {
+    "id": "fish_sticks_450",
+    "name": "Fischstaebchen",
+    "category": "Tiefkuehl",
+    "package_size": "450 g",
+    "search_terms": ["fischstaebchen 450g", "fischstaebchen"],
     "barcodes": []
   }
 ]
