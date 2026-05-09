@@ -14,12 +14,12 @@ def load_dotenv() -> None:
     if not ENV_FILE.exists():
         return
 
-    for line in ENV_FILE.read_text(encoding="utf-8").splitlines():
+    for line in ENV_FILE.read_text(encoding="utf-8-sig").splitlines():
         line = line.strip()
         if not line or line.startswith("#") or "=" not in line:
             continue
         key, value = line.split("=", 1)
-        os.environ.setdefault(key.strip(), value.strip().strip('"'))
+        os.environ.setdefault(key.strip().lstrip("\ufeff"), value.strip().strip('"'))
 
 
 def require_env(name: str) -> str:

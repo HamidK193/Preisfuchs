@@ -21,6 +21,19 @@ OPEN_PRICES_BASE_URL = os.getenv("OPEN_PRICES_BASE_URL", "https://prices.openfoo
 USER_AGENT = "Preisfuchs-MVP/0.1 (contact: local-development)"
 
 
+def load_dotenv() -> None:
+    env_file = ROOT / ".env"
+    if not env_file.exists():
+        return
+
+    for line in env_file.read_text(encoding="utf-8-sig").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip().lstrip("\ufeff"), value.strip().strip('"'))
+
+
 @dataclass(frozen=True)
 class ProductSeed:
     id: str
@@ -119,6 +132,7 @@ def insert_prices(client, rows: list[dict[str, Any]]) -> None:
 
 
 def main() -> None:
+    load_dotenv()
     products = load_products()
     client = get_supabase_client()
     normalized_rows: list[dict[str, Any]] = []
