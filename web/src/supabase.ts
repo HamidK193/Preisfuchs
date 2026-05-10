@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { categories, demoProducts, type GroceryProduct, type PriceObservation } from "./data";
+import { productImageOverrides } from "./productImages";
 
 type ProductRow = {
   id: string;
@@ -30,17 +31,16 @@ export type ProductLoadResult = {
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
 export async function loadProducts(): Promise<ProductLoadResult> {
-  if (!supabaseUrl || !supabaseAnonKey) {
+  if (!supabase) {
     return {
-      products: demoProducts,
+      products: await enrichProductImages(demoProducts),
       source: "demo",
       message: "Supabase Browser-Key fehlt. Demo-Daten aktiv."
     };
   }
-
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
   const { data: productRows, error: productError } = await supabase
     .from("products")
@@ -49,7 +49,7 @@ export async function loadProducts(): Promise<ProductLoadResult> {
 
   if (productError || !productRows?.length) {
     return {
-      products: demoProducts,
+      products: await enrichProductImages(demoProducts),
       source: "demo",
       message: productError?.message ?? "Keine Produkte in Supabase gefunden. Demo-Daten aktiv."
     };
@@ -61,7 +61,7 @@ export async function loadProducts(): Promise<ProductLoadResult> {
     .order("observed_at", { ascending: false })
     .limit(5000);
 
-  const products = mapProducts(productRows, priceError ? [] : priceRows ?? []);
+  const products = await enrichProductImages(mapProducts(productRows, priceError ? [] : priceRows ?? []));
 
   return {
     products,
@@ -125,6 +125,113 @@ function accentForCategory(category: string) {
   return categories.find((item) => item.id === category)?.accentColor ?? "#55a95d";
 }
 
+async function enrichProductImages(products: GroceryProduct[]) {
+  const cache = readProductImageCache();
+  const nextCache = { ...cache };
+
+  const enriched = await Promise.all(
+    products.map(async (product) => {
+      if (productImageOverrides[product.id]) {
+        return { ...product, imageUrl: productImageOverrides[product.id] };
+      }
+
+      if (cache[product.id]) {
+        return { ...product, imageUrl: cache[product.id] };
+      }
+
+      if (!shouldFetchOpenFoodFactsImage(product)) {
+        return product;
+      }
+
+      const imageUrl = await fetchOpenFoodFactsImage(product);
+      if (!imageUrl) return product;
+
+      nextCache[product.id] = imageUrl;
+      return { ...product, imageUrl };
+    })
+  );
+
+  writeProductImageCache(nextCache);
+  return enriched;
+}
+
+function shouldFetchOpenFoodFactsImage(product: GroceryProduct) {
+  return !["obst", "gemuese", "frische"].includes(product.category.toLowerCase());
+}
+
+function readProductImageCache() {
+  try {
+    const raw = window.localStorage.getItem("preisfuchs-product-images-v2");
+    return raw ? (JSON.parse(raw) as Record<string, string>) : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeProductImageCache(cache: Record<string, string>) {
+  try {
+    window.localStorage.setItem("preisfuchs-product-images-v2", JSON.stringify(cache));
+  } catch {
+    // Browser storage may be disabled; product cards still use fallback images.
+  }
+}
+
+async function fetchOpenFoodFactsImage(product: GroceryProduct) {
+  const searchTerms = imageSearchTerm(product);
+  const params = new URLSearchParams({
+    search_terms: searchTerms,
+    search_simple: "1",
+    action: "process",
+    json: "1",
+    page_size: "5",
+    fields: "code,product_name,brands,countries_tags,image_front_url,image_url,image_small_url"
+  });
+
+  try {
+    const response = await fetch(`https://world.openfoodfacts.org/cgi/search.pl?${params.toString()}`, {
+      headers: { Accept: "application/json" }
+    });
+    if (!response.ok) return undefined;
+
+    const payload = (await response.json()) as {
+      products?: Array<{
+        image_front_url?: string;
+        image_url?: string;
+        image_small_url?: string;
+        countries_tags?: string[];
+      }>;
+    };
+
+    const products = payload.products ?? [];
+    const germanProduct = products.find((item) => item.countries_tags?.includes("en:germany"));
+    const match = germanProduct ?? products[0];
+    return match?.image_front_url ?? match?.image_url ?? match?.image_small_url;
+  } catch {
+    return undefined;
+  }
+}
+
+function imageSearchTerm(product: GroceryProduct) {
+  const overrides: Record<string, string> = {
+    milk_15: "Milch 1,5 Deutschland",
+    pasta_500: "Spaghetti Deutschland",
+    gummy_bears_200: "Haribo Goldbaeren",
+    frozen_pizza_each: "Tiefkuehlpizza Deutschland",
+    cola_125l: "Cola 1,25 Deutschland",
+    orange_juice_1l: "Orangensaft Deutschland",
+    water_15l: "Mineralwasser Deutschland",
+    coffee_500: "Kaffee gemahlen Deutschland",
+    chocolate_100: "Schokolade Vollmilch Deutschland",
+    chips_175: "Chips Deutschland",
+    detergent_20: "Waschmittel Deutschland",
+    diapers_4: "Windeln Deutschland",
+    cat_food_400: "Katzenfutter Deutschland",
+    dog_food_1kg: "Hundefutter Deutschland"
+  };
+
+  return overrides[product.id] ?? `${product.name} ${product.packageSize} Deutschland`;
+}
+
 function imageForProduct(id: string, category: string, name: string) {
   const knownImages: Record<string, string> = {
     milk_15: "https://images.unsplash.com/photo-1628088062854-d1870b4553da?auto=format&fit=crop&w=480&q=80",
@@ -180,6 +287,7 @@ function imageForProduct(id: string, category: string, name: string) {
     yeast: "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?auto=format&fit=crop&w=480&q=80",
   };
 
+  if (productImageOverrides[id]) return productImageOverrides[id];
   if (knownImages[id]) return knownImages[id];
   if (name.toLowerCase().includes("banane")) return knownImages.bananas_1kg;
   if (name.toLowerCase().includes("ei")) return knownImages.eggs_10;

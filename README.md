@@ -37,14 +37,38 @@ Kategorien:
 - Tiefkuehl
 - Backen
 
-Die aktuelle Stammdatenliste enthaelt 51 Lebensmittel, darunter Bananen, Eier,
-Tomaten, Milch, Nudeln, Schokolade, Tiefkuehlpizza und viele weitere
-Alltagsprodukte. Produkte werden in der Web-App mit passenden Lebensmittelbildern
-angezeigt.
+Die aktuelle Stammdatenliste enthaelt 76 Lebensmittel und Alltagsprodukte,
+darunter Bananen, Eier, Tomaten, Milch, Nudeln, Schokolade, Tiefkuehlpizza,
+Toastbrot, Muesli, Fleisch/Wurst, Drogerieartikel, Babyprodukte und Tierbedarf.
+Produkte werden in der Web-App bevorzugt mit kuratierten echten Produkt- und
+Packungsbildern angezeigt. Fuer bekannte Packshots nutzt die App Open Food
+Facts, fuer frische Ware und Artikel ohne sauberen Packshot kuratierte
+Lebensmittel-/Produktfotos. Erst danach faellt sie auf Kategorie-Bilder
+zurueck.
 
 In der Hauptansicht werden nur Produkte angezeigt, fuer die echte importierte
 Preisbeobachtungen vorhanden sind. Produkte ohne aktuelle Quelle bleiben in der
 Datenbank, werden aber nicht als Platzhalterpreis angezeigt.
+
+## Shopping- und Warenkorb-Flow
+
+Die Web-App ist als Einkaufsoberflaeche aufgebaut:
+
+- Angebots-Hero mit aktuellem guenstigem Produkt
+- Haendler-Leiste fuer Lidl, Aldi Sued, Rewe, Edeka und Kaufland
+- Angebotskarten aus importierten Preisbeobachtungen und kaufDA-Angeboten
+- Produktkarten mit echten Produktbildern, `Hinzufuegen` und Mengensteuerung
+- Warenkorb mit Zwischensumme und Artikelverwaltung
+- Checkout-Vergleich mit zwei Optionen:
+  - nur ein Laden: guenstigster Gesamtpreis, wenn alles im selben Laden gekauft wird
+  - maximal sparen: guenstigste Aufteilung der Produkte ueber mehrere Laeden
+- obere Shop-Leiste mit Suche, PLZ, Umkreis und klickbarem Warenkorb
+- linke Shop-Navigation mit Bereichen und Filtern
+- eigener `Prospekte & Deals`-Tab und eigene Kassenansicht
+
+Haendler werden als klare markenfarbige Badges angezeigt, nicht als
+nachgebaute oder falsche Logo-Bilder. Im Marktvergleich wird pro Produkt nur
+der beste Preis je Haendler angezeigt.
 
 ## Lokaler Start
 
@@ -137,6 +161,13 @@ Der taegliche Job `backend/jobs/price_update_job.py` importiert aktuell:
 - Open Prices, falls fuer Produkte Barcodes hinterlegt sind
 - kaufDA-Angebotsseiten fuer die Standardprodukte und Kernhaendler
 
+Die Open-Prices-API wurde am 2026-05-10 gegen das offizielle Schema unter
+`https://prices.openfoodfacts.org/api/schema` geprueft. Der Preis-Endpunkt
+unterstuetzt `product_code` und `size`, aber keinen `country`-Filter. Live-
+Aufrufe mit `product_code` lieferten beim Test serverseitig HTTP 500; der Job
+ueberspringt solche Open-Prices-Ausfaelle pro Barcode und importiert die
+uebrigen Quellen weiter.
+
 Die kaufDA-Daten werden als `kaufDA Angebot` gespeichert. Das sind
 Angebotspreise aus oeffentlichen Angebotsseiten, keine garantierten
 Normalpreise. Wenn einzelne Sortimentsseiten nicht existieren, wird das Produkt
@@ -144,8 +175,10 @@ uebersprungen und der Job importiert die uebrigen Treffer weiter.
 
 Der Import probiert pro Produkt mehrere Suchbegriffe und erkennt verschiedene
 Haendler-Schreibweisen wie `Aldi Sued` und die kaufDA-Schreibweise mit Umlaut.
-Der letzte lokale Import hat 549 Preisbeobachtungen fuer 48 von 51 Produkten
-verfuegbar gemacht.
+Der letzte gezielte Import hat den Supabase-Stand um 25 Produkte und 144
+Preisbeobachtungen erweitert. Insgesamt liegen damit rund 693 importierte
+Preisbeobachtungen vor; fuer mindestens 69 von 76 Produkten sind aktuell echte
+Preisbeobachtungen verfuegbar.
 
 ## Lokaler Projekttest
 

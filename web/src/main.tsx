@@ -1,21 +1,36 @@
 import { StrictMode, useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
+  ArrowRight,
+  Apple,
+  Baby,
+  BadgePercent,
   CalendarClock,
-  ChevronDown,
   CheckCircle2,
   Clock3,
+  Croissant,
   DatabaseZap,
-  ExternalLink,
-  ListChecks,
+  Home,
+  Leaf,
   MapPin,
+  Milk,
+  Minus,
   Navigation,
+  PackageCheck,
+  PawPrint,
+  Plus,
   Search,
   ShieldCheck,
+  ShoppingBag,
   ShoppingCart,
   SlidersHorizontal,
+  Sparkles,
   Store,
-  Tag
+  Tag,
+  Trash2,
+  Wheat,
+  Wine,
+  type LucideIcon
 } from "lucide-react";
 import { categories, demoProducts, type GroceryProduct, type PriceObservation } from "./data";
 import { loadProducts, type ProductLoadResult } from "./supabase";
@@ -33,6 +48,55 @@ type PriceWithStore = PriceObservation & {
   store?: StoreInfo;
 };
 
+type Cart = Record<string, number>;
+
+type CartLine = {
+  product: GroceryProduct;
+  quantity: number;
+  bestPrice?: PriceWithStore;
+};
+
+type SingleStorePlan = {
+  retailer: string;
+  total: number;
+  availableCount: number;
+  missingCount: number;
+  rows: Array<{
+    product: GroceryProduct;
+    quantity: number;
+    price?: PriceWithStore;
+    lineTotal?: number;
+  }>;
+};
+
+type AppView = "home" | "checkout";
+type MainTab = "deals" | "products";
+
+const featuredRetailers = ["Lidl", "Aldi Sued", "Rewe", "Edeka", "Kaufland"];
+
+const sidebarLinks: Array<{ id: string; label: string; icon: LucideIcon; categoryId?: string }> = [
+  { id: "home", label: "Startseite", icon: Home },
+  { id: "produce", label: "Obst & Gemuese", icon: Apple, categoryId: "Obst" },
+  { id: "dairy", label: "Milchprodukte", icon: Milk, categoryId: "Molkerei" },
+  { id: "bakery", label: "Backwaren", icon: Croissant, categoryId: "Backen" },
+  { id: "fresh", label: "Fleisch & Wurst", icon: Store, categoryId: "Fleisch" },
+  { id: "frozen", label: "Tiefkuehlkost", icon: Sparkles, categoryId: "Tiefkuehl" },
+  { id: "drinks", label: "Getraenke", icon: Wine, categoryId: "Getraenke" },
+  { id: "pasta", label: "Nudeln & Reis", icon: Wheat, categoryId: "Trockenware" },
+  { id: "snacks", label: "Suessigkeiten & Snacks", icon: Tag, categoryId: "Suessigkeiten" },
+  { id: "drugstore", label: "Drogerie & Haushalt", icon: PackageCheck, categoryId: "Drogerie" },
+  { id: "baby", label: "Baby & Kind", icon: Baby, categoryId: "Baby" },
+  { id: "pets", label: "Tierbedarf", icon: PawPrint, categoryId: "Tierbedarf" }
+];
+
+const filterOptions = [
+  { id: "deals", label: "Angebote anzeigen", enabled: true, icon: BadgePercent },
+  { id: "availability", label: "Nur Verfuegbarkeit", enabled: false, icon: PackageCheck },
+  { id: "bio", label: "Bio-Produkte", enabled: false, icon: Leaf },
+  { id: "privateLabel", label: "Eigenmarken", enabled: false, icon: Store },
+  { id: "nearby", label: "Nur in der Naehe", enabled: true, icon: MapPin }
+];
+
 function App() {
   const [query, setQuery] = useState("");
   const [postcode, setPostcode] = useState("70173");
@@ -48,8 +112,9 @@ function App() {
   });
   const [activeCategoryId, setActiveCategoryId] = useState(categories[0].id);
   const [activeProductId, setActiveProductId] = useState(demoProducts[0].id);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(["milk_15", "butter_250", "pasta_500"]));
-  const [isBasketOpen, setIsBasketOpen] = useState(false);
+  const [cart, setCart] = useState<Cart>({ bananas_1kg: 1, pears_1kg: 1, milk_15: 1, pasta_500: 1 });
+  const [view, setView] = useState<AppView>("home");
+  const [activeTab, setActiveTab] = useState<MainTab>("deals");
 
   useEffect(() => {
     let isMounted = true;
@@ -62,7 +127,9 @@ function App() {
         result.products.some((product) => product.id === current) ? current : result.products[0]?.id ?? ""
       );
       setActiveCategoryId((current) =>
-        result.products.some((product) => product.category === current) ? current : result.products[0]?.category ?? categories[0].id
+        result.products.some((product) => product.category === current)
+          ? current
+          : result.products[0]?.category ?? categories[0].id
       );
     });
 
@@ -133,30 +200,51 @@ function App() {
     }
   }, [activeProductId, visibleProducts]);
 
-  const activeProduct = pricedProducts.find((product) => product.id === activeProductId) ?? visibleProducts[0] ?? pricedProducts[0];
+  const activeProduct =
+    pricedProducts.find((product) => product.id === activeProductId) ?? visibleProducts[0] ?? pricedProducts[0];
   const activeCategory = categories.find((category) => category.id === activeProduct?.category) ?? categories[0];
-  const activePrices = useMemo(() => activeProduct ? getDisplayPrices(activeProduct, stores) : [], [activeProduct, stores]);
-  const activePriceRows: PriceWithStore[] = activePrices.length ? activePrices : activeProduct?.prices ?? [];
+  const activePriceRows = useMemo(
+    () => (activeProduct ? getBestRetailerPrices(activeProduct, stores) : []),
+    [activeProduct, stores]
+  );
   const cheapest = getCheapest(activePriceRows);
-  const selectedProducts = pricedProducts.filter((product) => selectedIds.has(product.id));
-  const basketTotal = selectedProducts.reduce((sum, product) => sum + (getCheapest(product.prices)?.price ?? 0), 0);
-  const nearestStoreCount = stores.length;
+  const cartLines = useMemo(() => buildCartLines(cart, pricedProducts, stores), [cart, pricedProducts, stores]);
+  const splitPlan = useMemo(() => buildSplitPlan(cartLines), [cartLines]);
+  const singleStorePlans = useMemo(() => buildSingleStorePlans(cartLines, stores), [cartLines, stores]);
+  const bestSingleStore = singleStorePlans[0];
+  const featuredOffers = useMemo(() => getFeaturedOffers(pricedProducts, stores), [pricedProducts, stores]);
+  const cartTotal = splitPlan.total;
 
   function chooseCategory(categoryId: string) {
     setQuery("");
+    setView("home");
+    setActiveTab("products");
     setActiveCategoryId(categoryId);
     const firstProduct = pricedProducts.find((product) => product.category === categoryId);
     if (firstProduct) setActiveProductId(firstProduct.id);
   }
 
-  function toggleProduct(productId: string) {
-    setSelectedIds((current) => {
-      const next = new Set(current);
-      if (next.has(productId)) {
-        next.delete(productId);
+  function addToCart(productId: string) {
+    setCart((current) => ({ ...current, [productId]: (current[productId] ?? 0) + 1 }));
+  }
+
+  function updateQuantity(productId: string, delta: number) {
+    setCart((current) => {
+      const nextQuantity = (current[productId] ?? 0) + delta;
+      const next = { ...current };
+      if (nextQuantity <= 0) {
+        delete next[productId];
       } else {
-        next.add(productId);
+        next[productId] = nextQuantity;
       }
+      return next;
+    });
+  }
+
+  function removeFromCart(productId: string) {
+    setCart((current) => {
+      const next = { ...current };
+      delete next[productId];
       return next;
     });
   }
@@ -172,245 +260,494 @@ function App() {
   }
 
   return (
-    <main className="app-shell">
-      <aside className="sidebar" aria-label="Kategorien">
+    <main className="shop-shell">
+      <aside className="sidebar" aria-label="Kategorien und Filter">
         <div className="brand-row">
           <div className="brand-mark">
             <FoxLogo />
           </div>
           <div>
             <h1>Preisfuchs</h1>
-            <p>Lebensmittelpreise in deiner Naehe</p>
+            <p>Angebote vergleichen und Einkauf planen</p>
           </div>
         </div>
 
-        <div className={loadResult.source === "supabase" ? "data-status live" : "data-status"}>
-          <DatabaseZap size={17} />
-          <span>{loadResult.message}</span>
-        </div>
-
-        <section className="location-card" aria-label="Standortfilter">
-          <div className="location-heading">
-            <SlidersHorizontal size={18} />
-            <strong>Standortfilter</strong>
-          </div>
-
-          <label className="field-label">
-            Postleitzahl
-            <input
-              value={postcode}
-              onChange={(event) => setPostcode(event.target.value.replace(/\D/g, "").slice(0, 5))}
-              inputMode="numeric"
-              placeholder="z.B. 70173"
-              type="text"
-            />
-          </label>
-
-          <label className="field-label">
-            Umkreis: {radiusKm} km
-            <input
-              value={radiusKm}
-              min={1}
-              max={30}
-              step={1}
-              onChange={(event) => setRadiusKm(Number(event.target.value))}
-              type="range"
-            />
-          </label>
-
-          <div className={`store-status ${storeState}`}>
-            <Navigation size={15} />
-            <span>{storeMessage}</span>
-          </div>
-        </section>
-
-        <label className="search-field">
-          <Search size={18} aria-hidden="true" />
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Lebensmittel suchen"
-            type="search"
-          />
-        </label>
-
-        <nav className="category-list" aria-label="Produktkategorien">
-          {categories.map((category) => {
-            const count = productCounts.get(category.id) ?? 0;
+        <nav className="side-nav" aria-label="Shopbereiche">
+          {sidebarLinks.map((item) => {
+            const Icon = item.icon;
+            const isActive =
+              (item.id === "home" && view === "home" && activeTab === "deals") ||
+              (item.categoryId ? activeCategoryId === item.categoryId && activeTab === "products" : false);
             return (
               <button
-                className={activeCategoryId === category.id && !query ? "category-button active" : "category-button"}
-                key={category.id}
-                onClick={() => chooseCategory(category.id)}
+                className={isActive ? "side-nav-button active" : "side-nav-button"}
+                key={item.id}
+                onClick={() => {
+                  if (item.id === "home") {
+                    setView("home");
+                    setActiveTab("deals");
+                    setQuery("");
+                    return;
+                  }
+                  if (item.categoryId) chooseCategory(item.categoryId);
+                }}
                 type="button"
               >
-                <img src={category.imageUrl} alt="" loading="lazy" />
-                <span>
-                  <strong>{category.label}</strong>
-                  <small>{count} Produkte</small>
-                </span>
+                <Icon size={19} />
+                <span>{item.label}</span>
               </button>
             );
           })}
         </nav>
+
+        <section className="filter-panel" aria-label="Filter">
+          <h2>Filter</h2>
+          {filterOptions.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div className="filter-row" key={item.id}>
+                <Icon size={18} />
+                <span>{item.label}</span>
+                <button className={item.enabled ? "filter-toggle active" : "filter-toggle"} type="button">
+                  <span />
+                </button>
+              </div>
+            );
+          })}
+        </section>
+
+        <div className={loadResult.source === "supabase" ? "data-source-card live" : "data-source-card"}>
+          <ShieldCheck size={18} />
+          <strong>Datenquelle</strong>
+          <span>Preise aus Open Prices, kaufDA-Angeboten und Supabase.</span>
+          <small>{loadResult.message}</small>
+        </div>
       </aside>
 
-      <section className="content" aria-live="polite">
-        <header className="topbar">
-          <div>
-            <h2>Lebensmittel clever vergleichen</h2>
-            <p className="topbar-subtitle">
-              {postcode ? `PLZ ${postcode} - ${radiusKm} km - ${nearestStoreCount} Maerkte gefunden` : "Standortfilter aktivieren"}
-            </p>
-          </div>
-          <div className="topbar-actions">
-            <a className="source-link" href="https://prices.openfoodfacts.org" target="_blank" rel="noreferrer">
-              Datenquelle <ExternalLink size={16} />
-            </a>
-            <div className="basket-menu">
-              <button className="basket-toggle" onClick={() => setIsBasketOpen((current) => !current)} type="button">
-                <ShoppingCart size={18} aria-hidden="true" />
-                <span>
-                  <strong>{selectedProducts.length}</strong>
-                  Einkaufsliste
-                </span>
-                <b>{currency.format(basketTotal)}</b>
-                <ChevronDown className={isBasketOpen ? "open" : ""} size={18} aria-hidden="true" />
-              </button>
-              {isBasketOpen ? (
-                <BasketDropdown
-                  products={visibleProducts}
-                  selectedIds={selectedIds}
-                  selectedProducts={selectedProducts}
-                  total={basketTotal}
-                  onToggle={toggleProduct}
-                />
-              ) : null}
-            </div>
-          </div>
+      <section className="shop-content" aria-live="polite">
+        <header className="market-topbar">
+          <label className="market-search">
+            <input
+              value={query}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setView("home");
+                setActiveTab("products");
+              }}
+              placeholder="Produkte, Marken oder Kategorien suchen..."
+              type="search"
+            />
+            <Search size={23} aria-hidden="true" />
+          </label>
+
+          <label className="top-select">
+            <MapPin size={18} />
+            <input
+              value={postcode}
+              onChange={(event) => setPostcode(event.target.value.replace(/\D/g, "").slice(0, 5))}
+              inputMode="numeric"
+              aria-label="Postleitzahl"
+            />
+            <span>Stuttgart</span>
+          </label>
+
+          <label className="top-select radius">
+            <select value={radiusKm} onChange={(event) => setRadiusKm(Number(event.target.value))} aria-label="Umkreis">
+              {[2, 5, 10, 15, 30].map((value) => (
+                <option key={value} value={value}>{value} km</option>
+              ))}
+            </select>
+          </label>
+
+          <button className="topbar-cart-pill" onClick={() => setView("checkout")} type="button">
+            <ShoppingCart size={20} />
+            <span>Warenkorb</span>
+            <strong>{currency.format(cartTotal)}</strong>
+          </button>
         </header>
 
-        <section
-          className="active-product-hero"
-          style={{ borderColor: `${activeProduct.accentColor ?? activeCategory.accentColor}55` }}
-        >
-          <div className="product-hero-copy">
-            <span>{activeCategory.label}</span>
-            <h3>{activeProduct.name}</h3>
-            <p>{activeProduct.packageSize} - Preise aus Angeboten und Preisbeobachtungen in Baden-Wuerttemberg.</p>
-            <div className="hero-price">
-              <small>Guensigster Preis</small>
-              <strong>{cheapest ? currency.format(cheapest.price) : "Keine Daten"}</strong>
+        {view === "checkout" ? (
+          <CheckoutPage
+            cartLines={cartLines}
+            splitPlan={splitPlan}
+            bestSingleStore={bestSingleStore}
+            activeCategory={activeCategory}
+            cartTotal={cartTotal}
+            onBack={() => setView("home")}
+            onQuantity={updateQuantity}
+            onRemove={removeFromCart}
+          />
+        ) : (
+          <>
+        <section className="deal-hero">
+          <div className="deal-hero-copy">
+            <h3>Die besten Angebote</h3>
+            <h4>aus deiner Naehe - diese Woche sparen!</h4>
+            <p>
+              Lege Bananen, Birnen, Milch und Co. in den Warenkorb. Preisfuchs zeigt dir den besten Laden oder
+              die guenstigste Aufteilung ueber mehrere Maerkte.
+            </p>
+            <div className="hero-actions">
+              <button onClick={() => setActiveTab("deals")} type="button">
+                Alle Angebote ansehen
+              </button>
             </div>
           </div>
-          <img src={activeProduct.imageUrl ?? activeCategory.imageUrl} alt={activeProduct.name} />
-        </section>
-
-        <section className="product-strip" aria-label={query ? "Suchergebnisse" : `Produkte in ${activeCategory.label}`}>
-          <div className="strip-heading">
-            <div>
-              <p className="section-label">{query ? "Suchergebnisse" : activeCategory.label}</p>
-              <h3>{query ? `${visibleProducts.length} Treffer` : "Produkte auswaehlen"}</h3>
-            </div>
-          </div>
-
-          <div className="product-card-grid">
-            {visibleProducts.map((product) => {
-              const price = getCheapest(product.prices);
-              return (
-                <button
-                  className={product.id === activeProduct.id ? "product-card active" : "product-card"}
-                  key={product.id}
-                  onClick={() => setActiveProductId(product.id)}
-                  type="button"
-                >
-                  <img src={product.imageUrl ?? activeCategory.imageUrl} alt="" loading="lazy" />
-                  <span>
-                    <strong>{product.name}</strong>
-                    <small>{product.packageSize}</small>
-                  </span>
-                  <b>{price ? currency.format(price.price) : "Keine Daten"}</b>
-                </button>
-              );
-            })}
+          <div className="hero-produce">
+            <img src={activeProduct.imageUrl ?? activeCategory.imageUrl} alt={activeProduct.name} />
+            <div className="discount-tag">%</div>
           </div>
         </section>
 
-        <section className="summary-grid">
-          <article className="best-price-panel">
-            <div className="panel-icon">
-              <Tag size={24} aria-hidden="true" />
-            </div>
-            <div>
-              <p>Bester Preis in deinem Umkreis</p>
-              <strong>{cheapest ? currency.format(cheapest.price) : "Keine Daten"}</strong>
-              <span>{cheapest ? `${cheapest.retailer} - ${cheapest.store?.distanceKm.toFixed(1) ?? "?"} km` : "Noch keine passende Preisbeobachtung"}</span>
-            </div>
-          </article>
+        <div className="main-tabs" role="tablist" aria-label="Hauptbereiche">
+          <button className={activeTab === "deals" ? "active" : ""} onClick={() => setActiveTab("deals")} type="button">
+            Prospekte & Deals
+          </button>
+          <button className={activeTab === "products" ? "active" : ""} onClick={() => setActiveTab("products")} type="button">
+            Beliebte Produkte
+          </button>
+          <button onClick={() => setView("checkout")} type="button">
+            Kasse & Sparoptionen
+          </button>
+        </div>
 
-          <article className="trust-panel">
-            <ShieldCheck size={22} aria-hidden="true" />
-            <div>
-              <strong>Quelle sichtbar</strong>
-              <span>{cheapest ? `${cheapest.source} - ${freshnessText(cheapest.observedAt)}` : "Wird angezeigt, sobald Preise vorliegen"}</span>
+        {activeTab === "deals" ? (
+          <section className="deal-tab-panel" aria-label="Prospekte und Deals">
+            <div className="deal-carousel">
+              {featuredOffers.slice(0, 5).map(({ product, price }) => (
+                <article className="prospect-card" key={`${product.id}-${price.id}`}>
+                  <div className="prospect-retailer">
+                    <RetailerBadge name={price.retailer} logo />
+                    <strong>{price.retailer}</strong>
+                  </div>
+                  <img src={product.imageUrl ?? activeCategory.imageUrl} alt={product.name} loading="lazy" />
+                  <h3>{product.name}</h3>
+                  <span>{product.packageSize}</span>
+                  <div className="prospect-price">
+                    <strong>{currency.format(price.price)}</strong>
+                    <small>-{Math.max(10, Math.round((1 - price.price / (price.price + 0.4)) * 100))}%</small>
+                  </div>
+                  <small>Gueltig bis {validUntilText(price.observedAt)}</small>
+                  <button onClick={() => addToCart(product.id)} type="button">
+                    <ShoppingCart size={17} /> In den Warenkorb
+                  </button>
+                </article>
+              ))}
             </div>
-          </article>
+          </section>
+        ) : null}
 
-          <article className="trust-panel">
-            <Store size={22} aria-hidden="true" />
-            <div>
-              <strong>Filialdaten</strong>
-              <span>{storeState === "loaded" ? "Adresse und Oeffnungszeiten aus OpenStreetMap" : "Wird ueber PLZ geladen"}</span>
-            </div>
-          </article>
-        </section>
-
-        <section className="comparison-layout">
-          <article className="comparison-panel">
-            <div className="panel-heading">
-              <div>
-                <p className="section-label">Marktvergleich</p>
-                <h3>Preise, Filialen und Oeffnungszeiten</h3>
+        <section className="shopping-layout">
+          <div className="product-area">
+            <section className="product-strip" aria-label={query ? "Suchergebnisse" : `Produkte in ${activeCategory.label}`}>
+              <div className="section-heading">
+                <div>
+                  <p className="section-label">{query ? "Suchergebnisse" : activeCategory.label}</p>
+                  <h3>{query ? `${visibleProducts.length} Treffer` : "Beliebte Produkte"}</h3>
+                </div>
+                <div className="product-sort-actions">
+                  <button type="button">Sortieren: Beste Treffer</button>
+                  <button type="button">Angebote zuerst</button>
+                </div>
               </div>
-              <Store size={22} aria-hidden="true" />
+
+              <div className="product-card-grid">
+                {visibleProducts.map((product) => {
+                  const price = getCheapest(getBestRetailerPrices(product, stores));
+                  const quantity = cart[product.id] ?? 0;
+                  return (
+                    <article className={product.id === activeProduct.id ? "product-card active" : "product-card"} key={product.id}>
+                      <button className="product-image-button" onClick={() => setActiveProductId(product.id)} type="button">
+                        <img src={product.imageUrl ?? activeCategory.imageUrl} alt={product.name} loading="lazy" />
+                      </button>
+                      <div className="product-card-copy">
+                        <h4>{product.name}</h4>
+                        <small>{product.packageSize}</small>
+                      </div>
+                      <div className="product-price-row">
+                        <div>
+                          <strong>{price ? currency.format(price.price) : "Keine Daten"}</strong>
+                          {price?.unitPrice && price.unit ? <small>{currency.format(price.unitPrice)} / {price.unit}</small> : null}
+                        </div>
+                        {price ? <RetailerBadge name={price.retailer} compact logo /> : null}
+                      </div>
+                      {quantity ? (
+                        <div className="quantity-stepper">
+                          <button onClick={() => updateQuantity(product.id, -1)} type="button" aria-label={`${product.name} entfernen`}>
+                            <Minus size={16} />
+                          </button>
+                          <span>{quantity}</span>
+                          <button onClick={() => updateQuantity(product.id, 1)} type="button" aria-label={`${product.name} hinzufuegen`}>
+                            <Plus size={16} />
+                          </button>
+                        </div>
+                      ) : (
+                        <button className="add-button" onClick={() => addToCart(product.id)} type="button">
+                          <ShoppingCart size={17} /> In den Warenkorb
+                        </button>
+                      )}
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+
+            <section className="comparison-panel">
+              <div className="section-heading">
+                <div>
+                  <p className="section-label">Marktvergleich</p>
+                  <h3>{activeProduct.name}: Preise und Filialen</h3>
+                </div>
+                <Store size={22} aria-hidden="true" />
+              </div>
+
+              <div className="price-table">
+                {activePriceRows.length ? activePriceRows
+                  .slice()
+                  .sort((a, b) => a.price - b.price)
+                  .map((price, index) => (
+                    <div className="price-row" key={price.id}>
+                      <div className="rank">{index === 0 ? <CheckCircle2 size={20} /> : index + 1}</div>
+                      <RetailerBadge name={price.retailer} logo />
+                      <div className="store-copy">
+                        <strong>{price.retailer}</strong>
+                        <span><MapPin size={14} /> {price.store?.name ?? "Naechste passende Filiale"}</span>
+                        <small>{price.store?.address ?? price.storeLocation}</small>
+                        <small><Clock3 size={13} /> {price.store?.openingHours ?? "Oeffnungszeiten nicht geladen"}</small>
+                      </div>
+                      <div className="price-cell">
+                        <strong>{currency.format(price.price)}</strong>
+                        {price.unitPrice && price.unit ? (
+                          <span>{currency.format(price.unitPrice)} / {price.unit}</span>
+                        ) : null}
+                      </div>
+                      <div className="freshness">
+                        <CalendarClock size={15} />
+                        <span>{price.store ? `${price.store.distanceKm.toFixed(1)} km - ` : ""}{freshnessText(price.observedAt)}</span>
+                      </div>
+                    </div>
+                  )) : (
+                    <div className="no-price-row">
+                      Fuer dieses Produkt gibt es in deinem Umkreis noch keine passende Preisbeobachtung.
+                    </div>
+                  )}
+              </div>
+            </section>
+          </div>
+
+          <aside className="cart-panel compact-cart" id="checkout" aria-label="Warenkorb und Kasse">
+            <div className="cart-panel-header">
+              <div>
+                <p className="section-label">Warenkorb</p>
+                <h3>Dein Einkauf</h3>
+              </div>
+              <strong>{currency.format(cartTotal)}</strong>
             </div>
 
-            <div className="price-table">
-              {activePriceRows.length ? activePriceRows
-                .slice()
-                .sort((a, b) => a.price - b.price)
-                .map((price, index) => (
-                  <div className="price-row" key={price.id}>
-                    <div className="rank">{index === 0 ? <CheckCircle2 size={20} /> : index + 1}</div>
-                    <RetailerLogo name={price.retailer} />
-                    <div className="store-copy">
-                      <strong>{price.retailer}</strong>
-                      <span><MapPin size={14} /> {price.store?.name ?? "Filiale wird geladen"}</span>
-                      <small>{price.store?.address ?? price.storeLocation}</small>
-                      <small><Clock3 size={13} /> {price.store?.openingHours ?? "Oeffnungszeiten nicht geladen"}</small>
-                    </div>
-                    <div className="price-cell">
-                      <strong>{currency.format(price.price)}</strong>
-                      {price.unitPrice && price.unit ? (
-                        <span>{currency.format(price.unitPrice)} / {price.unit}</span>
-                      ) : null}
-                    </div>
-                    <div className="freshness">
-                      <CalendarClock size={15} />
-                      <span>{price.store ? `${price.store.distanceKm.toFixed(1)} km - ` : ""}{freshnessText(price.observedAt)}</span>
-                    </div>
+            <div className="cart-list">
+              {cartLines.length ? cartLines.map((line) => (
+                <div className="cart-item" key={line.product.id}>
+                  <img src={line.product.imageUrl ?? activeCategory.imageUrl} alt="" loading="lazy" />
+                  <div>
+                    <strong>{line.product.name}</strong>
+                    <span>{line.quantity} x {line.bestPrice ? currency.format(line.bestPrice.price) : "Keine Daten"}</span>
+                    {line.bestPrice ? <small>{line.bestPrice.retailer} - {line.bestPrice.source}</small> : null}
                   </div>
-                )) : (
-                  <div className="no-price-row">
-                    Fuer dieses Produkt gibt es in deinem Umkreis noch keine passende Preisbeobachtung. Erhoehe den Radius oder probiere eine andere PLZ.
+                  <div className="cart-item-actions">
+                    <button onClick={() => updateQuantity(line.product.id, -1)} type="button" aria-label="Menge reduzieren">
+                      <Minus size={15} />
+                    </button>
+                    <span>{line.quantity}</span>
+                    <button onClick={() => updateQuantity(line.product.id, 1)} type="button" aria-label="Menge erhoehen">
+                      <Plus size={15} />
+                    </button>
+                    <button onClick={() => removeFromCart(line.product.id)} type="button" aria-label="Artikel entfernen">
+                      <Trash2 size={15} />
+                    </button>
                   </div>
+                </div>
+              )) : (
+                <div className="cart-empty">Fuege Produkte hinzu, um den guenstigsten Einkauf zu berechnen.</div>
+              )}
+            </div>
+
+            <div className="checkout-options">
+              <article className="checkout-card">
+                <div className="checkout-card-title">
+                  <Store size={19} />
+                  <strong>Nur ein Laden</strong>
+                </div>
+                {bestSingleStore ? (
+                  <>
+                    <div className="checkout-total">
+                      <RetailerBadge name={bestSingleStore.retailer} compact />
+                      <strong>{currency.format(bestSingleStore.total)}</strong>
+                    </div>
+                    <span>
+                      {bestSingleStore.missingCount
+                        ? `${bestSingleStore.availableCount} von ${cartLines.length} Artikeln verfuegbar`
+                        : "Alle Artikel in einem Laden am guenstigsten"}
+                    </span>
+                  </>
+                ) : (
+                  <span>Keine Laden-Kombination berechenbar.</span>
                 )}
-            </div>
-          </article>
+              </article>
 
+              <article className="checkout-card best">
+                <div className="checkout-card-title">
+                  <Tag size={19} />
+                  <strong>Maximal sparen</strong>
+                </div>
+                <div className="checkout-total">
+                  <span>{splitPlan.retailerCount} Laeden</span>
+                  <strong>{currency.format(splitPlan.total)}</strong>
+                </div>
+                <div className="split-list">
+                  {splitPlan.rows.map((row) => (
+                    <div key={row.product.id}>
+                      <span>{row.product.name}</span>
+                      <b>{row.price ? `${row.price.retailer} - ${currency.format(row.lineTotal)}` : "Keine Daten"}</b>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </div>
+
+            <button className="checkout-button" type="button">
+              Zur Kasse vergleichen <ArrowRight size={18} />
+            </button>
+
+            <div className="trust-note">
+              <ShieldCheck size={18} />
+              <span>Quellen und Aktualitaet bleiben sichtbar. Preisfuchs behauptet keine Live-Filialpreise.</span>
+            </div>
+          </aside>
         </section>
+        </>
+        )}
       </section>
     </main>
+  );
+}
+
+function CheckoutPage({
+  cartLines,
+  splitPlan,
+  bestSingleStore,
+  activeCategory,
+  cartTotal,
+  onBack,
+  onQuantity,
+  onRemove
+}: {
+  cartLines: CartLine[];
+  splitPlan: ReturnType<typeof buildSplitPlan>;
+  bestSingleStore?: SingleStorePlan;
+  activeCategory: { imageUrl: string };
+  cartTotal: number;
+  onBack: () => void;
+  onQuantity: (productId: string, delta: number) => void;
+  onRemove: (productId: string) => void;
+}) {
+  return (
+    <section className="checkout-page" aria-label="Kasse">
+      <div className="checkout-hero">
+        <button onClick={onBack} type="button">Zurueck zum Shop</button>
+        <h2>Kasse & Sparoptionen</h2>
+        <p>Vergleiche deinen Warenkorb als Ein-Laden-Einkauf oder als guenstigste Route ueber mehrere Maerkte.</p>
+      </div>
+
+      <div className="checkout-page-grid">
+        <article className="cart-panel checkout-cart">
+          <div className="cart-panel-header">
+            <div>
+              <p className="section-label">Warenkorb</p>
+              <h3>Dein Einkauf</h3>
+            </div>
+            <strong>{currency.format(cartTotal)}</strong>
+          </div>
+
+          <div className="cart-list">
+            {cartLines.length ? cartLines.map((line) => (
+              <div className="cart-item" key={line.product.id}>
+                <img src={line.product.imageUrl ?? activeCategory.imageUrl} alt="" loading="lazy" />
+                <div>
+                  <strong>{line.product.name}</strong>
+                  <span>{line.quantity} x {line.bestPrice ? currency.format(line.bestPrice.price) : "Keine Daten"}</span>
+                  {line.bestPrice ? <small>{line.bestPrice.retailer} - {line.bestPrice.source}</small> : null}
+                </div>
+                <div className="cart-item-actions">
+                  <button onClick={() => onQuantity(line.product.id, -1)} type="button" aria-label="Menge reduzieren">
+                    <Minus size={15} />
+                  </button>
+                  <span>{line.quantity}</span>
+                  <button onClick={() => onQuantity(line.product.id, 1)} type="button" aria-label="Menge erhoehen">
+                    <Plus size={15} />
+                  </button>
+                  <button onClick={() => onRemove(line.product.id)} type="button" aria-label="Artikel entfernen">
+                    <Trash2 size={15} />
+                  </button>
+                </div>
+              </div>
+            )) : (
+              <div className="cart-empty">Fuege Produkte hinzu, um den guenstigsten Einkauf zu berechnen.</div>
+            )}
+          </div>
+        </article>
+
+        <section className="savings-page-panel">
+          <article className="savings-card single">
+            <div className="checkout-card-title">
+              <Store size={20} />
+              <strong>Ein Laden</strong>
+            </div>
+            {bestSingleStore ? (
+              <>
+                <div className="savings-total">
+                  <RetailerBadge name={bestSingleStore.retailer} logo />
+                  <strong>{currency.format(bestSingleStore.total)}</strong>
+                </div>
+                <span>
+                  {bestSingleStore.missingCount
+                    ? `${bestSingleStore.availableCount} von ${cartLines.length} Artikeln verfuegbar`
+                    : "Alle Artikel in einem Laden am guenstigsten"}
+                </span>
+                <div className="split-list">
+                  {bestSingleStore.rows.map((row) => (
+                    <div key={row.product.id}>
+                      <span>{row.product.name}</span>
+                      <b>{row.price ? currency.format(row.lineTotal ?? 0) : "fehlt"}</b>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <span>Keine Laden-Kombination berechenbar.</span>
+            )}
+          </article>
+
+          <article className="savings-card best">
+            <div className="checkout-card-title">
+              <Tag size={20} />
+              <strong>Maximal sparen</strong>
+            </div>
+            <div className="savings-total">
+              <span>{splitPlan.retailerCount} Laeden</span>
+              <strong>{currency.format(splitPlan.total)}</strong>
+            </div>
+            <div className="split-list">
+              {splitPlan.rows.map((row) => (
+                <div key={row.product.id}>
+                  <span>{row.product.name}</span>
+                  <b>{row.price ? `${row.price.retailer} - ${currency.format(row.lineTotal)}` : "Keine Daten"}</b>
+                </div>
+              ))}
+            </div>
+          </article>
+        </section>
+      </div>
+    </section>
   );
 }
 
@@ -429,74 +766,23 @@ function FoxLogo() {
   );
 }
 
-function RetailerLogo({ name }: { name: string }) {
+function RetailerBadge({ name, compact = false, logo = false }: { name: string; compact?: boolean; logo?: boolean }) {
   const brand = retailerBrand(name);
   return (
-    <div className={`retailer-logo ${brand.className}`} aria-label={`${brand.label} Logo`}>
-      <span>{brand.shortLabel}</span>
-    </div>
-  );
-}
-
-function BasketDropdown({
-  products,
-  selectedIds,
-  selectedProducts,
-  total,
-  onToggle
-}: {
-  products: GroceryProduct[];
-  selectedIds: Set<string>;
-  selectedProducts: GroceryProduct[];
-  total: number;
-  onToggle: (productId: string) => void;
-}) {
-  return (
-    <div className="basket-popover">
-      <div className="basket-popover-total">
-        <span>Gesamtsumme min.</span>
-        <strong>{currency.format(total)}</strong>
-      </div>
-
-      <div className="basket-section">
-        <p>Ausgewaehlt</p>
-        {selectedProducts.length ? selectedProducts.map((product) => {
-          const price = getCheapest(product.prices);
-          return (
-            <button className="basket-item" key={product.id} onClick={() => onToggle(product.id)} type="button">
-              <ListChecks size={18} className="selected" />
-              <span>{product.name}</span>
-              <b>{price ? currency.format(price.price) : "Keine Daten"}</b>
-            </button>
-          );
-        }) : <small>Noch keine Produkte in der Einkaufsliste.</small>}
-      </div>
-
-      <div className="basket-section">
-        <p>Aus dieser Kategorie</p>
-        {products.map((product) => {
-          const price = getCheapest(product.prices);
-          return (
-            <button className="basket-item" key={product.id} onClick={() => onToggle(product.id)} type="button">
-              <ListChecks size={18} className={selectedIds.has(product.id) ? "selected" : ""} />
-              <span>{product.name}</span>
-              <b>{price ? currency.format(price.price) : "Keine Daten"}</b>
-            </button>
-          );
-        })}
-      </div>
+    <div className={`${compact ? "retailer-badge compact" : "retailer-badge"} ${logo ? "logo" : ""} ${brand.className}`}>
+      {brand.label}
     </div>
   );
 }
 
 function retailerBrand(name: string) {
-  const normalized = name.toLowerCase();
-  if (normalized.includes("lidl")) return { label: "Lidl", shortLabel: "LIDL", className: "lidl" };
-  if (normalized.includes("rewe")) return { label: "Rewe", shortLabel: "REWE", className: "rewe" };
-  if (normalized.includes("edeka")) return { label: "Edeka", shortLabel: "EDEKA", className: "edeka" };
-  if (normalized.includes("kaufland")) return { label: "Kaufland", shortLabel: "K", className: "kaufland" };
-  if (normalized.includes("aldi")) return { label: "Aldi Sued", shortLabel: "ALDI", className: "aldi" };
-  return { label: name, shortLabel: name.slice(0, 4).toUpperCase(), className: "generic" };
+  const normalized = normalizeRetailer(name);
+  if (normalized.includes("lidl")) return { label: "Lidl", className: "lidl" };
+  if (normalized.includes("rewe")) return { label: "REWE", className: "rewe" };
+  if (normalized.includes("edeka")) return { label: "EDEKA", className: "edeka" };
+  if (normalized.includes("kaufland")) return { label: "Kaufland", className: "kaufland" };
+  if (normalized.includes("aldi")) return { label: "ALDI SUD", className: "aldi" };
+  return { label: name, className: "generic" };
 }
 
 function getDisplayPrices(product: GroceryProduct, stores: StoreInfo[]): PriceWithStore[] {
@@ -512,8 +798,122 @@ function getDisplayPrices(product: GroceryProduct, stores: StoreInfo[]): PriceWi
     .filter((price) => Boolean(price.store));
 }
 
-function getCheapest<T extends PriceObservation>(prices: T[]) {
+function getBestRetailerPrices(product: GroceryProduct, stores: StoreInfo[]) {
+  const displayPrices = getDisplayPrices(product, stores);
+  const sourcePrices = displayPrices.length ? displayPrices : product.prices;
+  const bestByRetailer = new Map<string, PriceWithStore>();
+
+  sourcePrices.forEach((price) => {
+    const key = normalizeRetailer(price.retailer);
+    const current = bestByRetailer.get(key);
+    if (!current || price.price < current.price) {
+      bestByRetailer.set(key, price);
+    }
+  });
+
+  return Array.from(bestByRetailer.values());
+}
+
+function buildCartLines(cart: Cart, products: GroceryProduct[], stores: StoreInfo[]): CartLine[] {
+  return Object.entries(cart)
+    .map<CartLine | null>(([productId, quantity]) => {
+      const product = products.find((item) => item.id === productId);
+      if (!product || quantity <= 0) return null;
+      return {
+        product,
+        quantity,
+        bestPrice: getCheapest(getBestRetailerPrices(product, stores))
+      };
+    })
+    .filter((line): line is CartLine => line !== null);
+}
+
+function buildSplitPlan(cartLines: CartLine[]) {
+  const rows = cartLines.map((line) => ({
+    product: line.product,
+    quantity: line.quantity,
+    price: line.bestPrice,
+    lineTotal: (line.bestPrice?.price ?? 0) * line.quantity
+  }));
+  const retailers = new Set(rows.map((row) => row.price?.retailer).filter(Boolean));
+
+  return {
+    rows,
+    total: rows.reduce((sum, row) => sum + row.lineTotal, 0),
+    retailerCount: retailers.size
+  };
+}
+
+function buildSingleStorePlans(cartLines: CartLine[], stores: StoreInfo[]): SingleStorePlan[] {
+  const retailerKeys = new Set<string>();
+  cartLines.forEach((line) => {
+    getBestRetailerPrices(line.product, stores).forEach((price) => retailerKeys.add(normalizeRetailer(price.retailer)));
+  });
+
+  return Array.from(retailerKeys)
+    .map((retailerKey) => {
+      const rows = cartLines.map((line) => {
+        const price = getBestRetailerPrices(line.product, stores).find((candidate) =>
+          sameRetailer(candidate.retailer, retailerKey)
+        );
+        return {
+          product: line.product,
+          quantity: line.quantity,
+          price,
+          lineTotal: price ? price.price * line.quantity : undefined
+        };
+      });
+      const availableRows = rows.filter((row) => row.price);
+      return {
+        retailer: availableRows[0]?.price?.retailer ?? retailerKey,
+        total: availableRows.reduce((sum, row) => sum + (row.lineTotal ?? 0), 0),
+        availableCount: availableRows.length,
+        missingCount: rows.length - availableRows.length,
+        rows
+      };
+    })
+    .sort((a, b) => {
+      if (a.missingCount !== b.missingCount) return a.missingCount - b.missingCount;
+      return a.total - b.total;
+    });
+}
+
+function getFeaturedOffers(products: GroceryProduct[], stores: StoreInfo[]) {
+  return products
+    .map((product) => ({ product, price: getCheapest(getBestRetailerPrices(product, stores)) }))
+    .filter((item): item is { product: GroceryProduct; price: PriceWithStore } => Boolean(item.price))
+    .sort((a, b) => {
+      const sourceScore = Number(b.price.source.toLowerCase().includes("angebot")) - Number(a.price.source.toLowerCase().includes("angebot"));
+      return sourceScore || a.price.price - b.price.price;
+    })
+    .slice(0, 6);
+}
+
+function getCheapest<T extends PriceObservation>(prices: T[]): T | undefined {
   return prices.slice().sort((a, b) => a.price - b.price)[0];
+}
+
+function sameRetailer(left: string, right: string) {
+  return normalizeRetailer(left) === normalizeRetailer(right);
+}
+
+function normalizeRetailer(value: string) {
+  const normalized = value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/Ã¼/g, "u")
+    .replace(/ÃŸ/g, "ss")
+    .replace(/[^a-z0-9 ]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (normalized.includes("aldi")) return "aldi";
+  if (normalized.includes("lidl")) return "lidl";
+  if (normalized.includes("rewe")) return "rewe";
+  if (normalized.includes("edeka") || normalized.includes("e center")) return "edeka";
+  if (normalized.includes("kaufland")) return "kaufland";
+  return normalized;
 }
 
 function freshnessText(value: string) {
@@ -524,6 +924,12 @@ function freshnessText(value: string) {
   if (diff === 0) return "heute aktualisiert";
   if (diff === 1) return "gestern aktualisiert";
   return `vor ${diff} Tagen aktualisiert`;
+}
+
+function validUntilText(value: string) {
+  const date = new Date(value);
+  date.setDate(date.getDate() + 5);
+  return new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "2-digit" }).format(date);
 }
 
 createRoot(document.getElementById("root")!).render(

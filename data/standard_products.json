@@ -406,5 +406,205 @@
     "package_size": "450 g",
     "search_terms": ["fischstaebchen 450g", "fischstaebchen"],
     "barcodes": []
+  },
+  {
+    "id": "toast_500",
+    "name": "Toastbrot",
+    "category": "Backen",
+    "package_size": "500 g",
+    "search_terms": ["toastbrot 500g", "buttertoast"],
+    "barcodes": []
+  },
+  {
+    "id": "bread_rolls_6",
+    "name": "Aufbackbroetchen",
+    "category": "Backen",
+    "package_size": "6 Stueck",
+    "search_terms": ["aufbackbroetchen", "broetchen 6er"],
+    "barcodes": []
+  },
+  {
+    "id": "wholegrain_bread_500",
+    "name": "Vollkornbrot",
+    "category": "Backen",
+    "package_size": "500 g",
+    "search_terms": ["vollkornbrot 500g", "schnittbrot"],
+    "barcodes": []
+  },
+  {
+    "id": "muesli_500",
+    "name": "Muesli",
+    "category": "Trockenware",
+    "package_size": "500 g",
+    "search_terms": ["muesli 500g", "fruechtemuesli"],
+    "barcodes": []
+  },
+  {
+    "id": "cornflakes_500",
+    "name": "Cornflakes",
+    "category": "Trockenware",
+    "package_size": "500 g",
+    "search_terms": ["cornflakes 500g", "fruehstuecksflakes"],
+    "barcodes": []
+  },
+  {
+    "id": "jam_450",
+    "name": "Erdbeermarmelade",
+    "category": "Trockenware",
+    "package_size": "450 g",
+    "search_terms": ["erdbeermarmelade", "konfituere erdbeere"],
+    "barcodes": []
+  },
+  {
+    "id": "honey_500",
+    "name": "Honig",
+    "category": "Trockenware",
+    "package_size": "500 g",
+    "search_terms": ["honig 500g", "bluetenhonig"],
+    "barcodes": []
+  },
+  {
+    "id": "ketchup_500",
+    "name": "Tomatenketchup",
+    "category": "Trockenware",
+    "package_size": "500 ml",
+    "search_terms": ["tomatenketchup", "ketchup 500ml"],
+    "barcodes": []
+  },
+  {
+    "id": "mayonnaise_500",
+    "name": "Mayonnaise",
+    "category": "Trockenware",
+    "package_size": "500 ml",
+    "search_terms": ["mayonnaise 500ml", "mayo"],
+    "barcodes": []
+  },
+  {
+    "id": "mustard_250",
+    "name": "Senf",
+    "category": "Trockenware",
+    "package_size": "250 ml",
+    "search_terms": ["senf 250ml", "mittelscharfer senf"],
+    "barcodes": []
+  },
+  {
+    "id": "chicken_breast_400",
+    "name": "Haehnchenbrust",
+    "category": "Fleisch",
+    "package_size": "400 g",
+    "search_terms": ["haehnchenbrust 400g", "haehnchenfilet"],
+    "barcodes": []
+  },
+  {
+    "id": "minced_meat_500",
+    "name": "Hackfleisch",
+    "category": "Fleisch",
+    "package_size": "500 g",
+    "search_terms": ["hackfleisch 500g", "rinderhackfleisch"],
+    "barcodes": []
+  },
+  {
+    "id": "salami_200",
+    "name": "Salami",
+    "category": "Fleisch",
+    "package_size": "200 g",
+    "search_terms": ["salami 200g", "aufschnitt salami"],
+    "barcodes": []
+  },
+  {
+    "id": "ham_200",
+    "name": "Kochschinken",
+    "category": "Fleisch",
+    "package_size": "200 g",
+    "search_terms": ["kochschinken 200g", "schinken aufschnitt"],
+    "barcodes": []
+  },
+  {
+    "id": "sausages_400",
+    "name": "Wiener Wuerstchen",
+    "category": "Fleisch",
+    "package_size": "400 g",
+    "search_terms": ["wiener wuerstchen", "wuerstchen 400g"],
+    "barcodes": []
+  },
+  {
+    "id": "toilet_paper_10",
+    "name": "Toilettenpapier",
+    "category": "Drogerie",
+    "package_size": "10 Rollen",
+    "search_terms": ["toilettenpapier 10 rollen", "klopapier"],
+    "barcodes": []
+  },
+  {
+    "id": "detergent_20",
+    "name": "Waschmittel",
+    "category": "Drogerie",
+    "package_size": "20 WL",
+    "search_terms": ["waschmittel 20 wl", "vollwaschmittel"],
+    "barcodes": []
+  },
+  {
+    "id": "dish_soap_500",
+    "name": "Spuelmittel",
+    "category": "Drogerie",
+    "package_size": "500 ml",
+    "search_terms": ["spuelmittel 500ml", "geschirrspuelmittel"],
+    "barcodes": []
+  },
+  {
+    "id": "kitchen_towels_4",
+    "name": "Kuechenrollen",
+    "category": "Drogerie",
+    "package_size": "4 Rollen",
+    "search_terms": ["kuechenrollen 4 rollen", "kuechenpapier"],
+    "barcodes": []
+  },
+  {
+    "id": "diapers_4",
+    "name": "Windeln Groesse 4",
+    "category": "Baby",
+    "package_size": "1 Packung",
+    "search_terms": ["windeln groesse 4", "baby windeln"],
+    "barcodes": []
+  },
+  {
+    "id": "baby_food_190",
+    "name": "Babyglaeschen",
+    "category": "Baby",
+    "package_size": "190 g",
+    "search_terms": ["babyglaeschen 190g", "babybrei"],
+    "barcodes": []
+  },
+  {
+    "id": "wet_wipes_80",
+    "name": "Feuchttuecher",
+    "category": "Baby",
+    "package_size": "80 Stueck",
+    "search_terms": ["feuchttuecher 80", "baby feuchttuecher"],
+    "barcodes": []
+  },
+  {
+    "id": "cat_food_400",
+    "name": "Katzenfutter",
+    "category": "Tierbedarf",
+    "package_size": "400 g",
+    "search_terms": ["katzenfutter 400g", "nassfutter katze"],
+    "barcodes": []
+  },
+  {
+    "id": "dog_food_1kg",
+    "name": "Hundefutter",
+    "category": "Tierbedarf",
+    "package_size": "1 kg",
+    "search_terms": ["hundefutter 1kg", "trockenfutter hund"],
+    "barcodes": []
+  },
+  {
+    "id": "cat_litter_10l",
+    "name": "Katzenstreu",
+    "category": "Tierbedarf",
+    "package_size": "10 l",
+    "search_terms": ["katzenstreu 10l", "klumpstreu"],
+    "barcodes": []
   }
 ]

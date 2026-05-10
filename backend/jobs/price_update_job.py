@@ -4,6 +4,7 @@ import json
 import os
 import re
 import time
+import unicodedata
 import uuid
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
@@ -93,6 +94,31 @@ PRODUCT_QUERY_OVERRIDES = {
     "icecream_500": "Eis",
     "frozen_vegetables_750": "Gemuese",
     "fish_sticks_450": "Fischstaebchen",
+    "toast_500": "Toastbrot",
+    "bread_rolls_6": "Aufbackbroetchen",
+    "wholegrain_bread_500": "Vollkornbrot",
+    "muesli_500": "Muesli",
+    "cornflakes_500": "Cornflakes",
+    "jam_450": "Marmelade",
+    "honey_500": "Honig",
+    "ketchup_500": "Ketchup",
+    "mayonnaise_500": "Mayonnaise",
+    "mustard_250": "Senf",
+    "chicken_breast_400": "Haehnchen",
+    "minced_meat_500": "Hackfleisch",
+    "salami_200": "Salami",
+    "ham_200": "Schinken",
+    "sausages_400": "Wuerstchen",
+    "toilet_paper_10": "Toilettenpapier",
+    "detergent_20": "Waschmittel",
+    "dish_soap_500": "Spuelmittel",
+    "kitchen_towels_4": "Kuechenrollen",
+    "diapers_4": "Windeln",
+    "baby_food_190": "Babybrei",
+    "wet_wipes_80": "Feuchttuecher",
+    "cat_food_400": "Katzenfutter",
+    "dog_food_1kg": "Hundefutter",
+    "cat_litter_10l": "Katzenstreu",
 }
 
 
@@ -133,7 +159,7 @@ def fetch_open_prices_for_barcode(barcode: str) -> list[dict[str, Any]]:
     url = f"{OPEN_PRICES_BASE_URL}/api/v1/prices"
     response = requests.get(
         url,
-        params={"product_code": barcode, "country": "de", "size": 25},
+        params={"product_code": barcode, "size": 25},
         headers={"User-Agent": USER_AGENT, "Accept": "application/json"},
         timeout=30,
     )
@@ -228,7 +254,8 @@ def parse_kaufda_offers(
 
 def first_price_text(texts: list[str]) -> str | None:
     for text in texts:
-        if re.fullmatch(r"\d{1,3},\d{2}\s*(€|â‚¬)?", text) or re.fullmatch(r"\d{1,3},\d{2}", text):
+        repaired = repair_mojibake(text)
+        if re.fullmatch(r"\d{1,3},\d{2}\s*(?:\u20ac)?", repaired):
             return text
     return None
 
@@ -248,8 +275,9 @@ def find_offer_name(texts: list[str], retailer_name: str) -> str | None:
     }
     candidates = []
     for text in texts[:8]:
-        lowered = text.lower()
-        if lowered in ignored or "€" in text or "â‚¬" in text or re.fullmatch(r"\d{1,3},\d{2}", text):
+        repaired = repair_mojibake(text)
+        lowered = repaired.lower()
+        if lowered in ignored or "\u20ac" in repaired or re.fullmatch(r"\d{1,3},\d{2}", repaired):
             continue
         if re.search(r"\b(kg|l|g|ml)\b", text, re.I):
             continue
@@ -265,13 +293,16 @@ def matches_retailer(texts: list[str], retailer_name: str) -> bool:
 
 
 def normalize_text(value: str) -> str:
-    return (
-        value.lower()
-        .replace("ü", "u")
-        .replace("ä", "a")
-        .replace("ö", "o")
-        .replace("ß", "ss")
-    )
+    repaired = repair_mojibake(value).lower().replace("\u00df", "ss")
+    without_accents = unicodedata.normalize("NFKD", repaired)
+    return "".join(char for char in without_accents if not unicodedata.combining(char))
+
+
+def repair_mojibake(value: str) -> str:
+    try:
+        return value.encode("cp1252").decode("utf-8")
+    except UnicodeError:
+        return value
 
 
 def query_candidates(product: ProductSeed) -> list[str]:
@@ -297,7 +328,7 @@ def parse_unit_price(value: str | None) -> tuple[str | None, str | None]:
 
 
 def parse_valid_until(text: str) -> date | None:
-    match = re.search(r"Gültig bis\s+(\d{1,2})\.(\d{1,2})\.(\d{4})", text)
+    match = re.search(r"G(?:\u00fc|ue|u)ltig bis\s+(\d{1,2})\.(\d{1,2})\.(\d{4})", repair_mojibake(text), re.I)
     if not match:
         return None
     day, month, year = (int(part) for part in match.groups())
@@ -392,7 +423,13 @@ def main() -> None:
 
     for product in products:
         for barcode in product.barcodes:
-            for item in fetch_open_prices_for_barcode(barcode):
+            try:
+                open_price_items = fetch_open_prices_for_barcode(barcode)
+            except requests.RequestException as error:
+                print(f"Skipped Open Prices barcode {barcode}: {error}")
+                continue
+
+            for item in open_price_items:
                 row = normalize_open_price(product, item)
                 if row:
                     normalized_rows.append(row)

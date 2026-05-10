@@ -83,6 +83,30 @@ export const categories: ProductCategory[] = [
     label: "Tiefkuehl",
     imageUrl: "https://images.unsplash.com/photo-1580915411954-282cb1b0d780?auto=format&fit=crop&w=480&q=80",
     accentColor: "#7aa7d9"
+  },
+  {
+    id: "Fleisch",
+    label: "Fleisch",
+    imageUrl: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&w=480&q=80",
+    accentColor: "#c95f4d"
+  },
+  {
+    id: "Drogerie",
+    label: "Drogerie",
+    imageUrl: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=480&q=80",
+    accentColor: "#55a5a1"
+  },
+  {
+    id: "Baby",
+    label: "Baby",
+    imageUrl: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=480&q=80",
+    accentColor: "#dba8b8"
+  },
+  {
+    id: "Tierbedarf",
+    label: "Tierbedarf",
+    imageUrl: "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=480&q=80",
+    accentColor: "#9a7b58"
   }
 ];
 
