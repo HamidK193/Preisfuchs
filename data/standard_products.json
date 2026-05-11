@@ -1,58 +1,86 @@
 [
   {
     "id": "milk_15",
-    "name": "Milch 1,5%",
+    "name": "Milbona H-Milch 1,5%",
     "category": "Molkerei",
     "package_size": "1 l",
-    "search_terms": ["milch 1.5", "h-milch fettarm", "frischmilch 1.5"],
+    "search_terms": [
+      "Milbona H-Milch 1,5% 1 l",
+      "H-Milch 1,5% 1 l",
+      "fettarme Milch 1 l"
+    ],
     "barcodes": []
   },
   {
     "id": "butter_250",
-    "name": "Butter",
+    "name": "Kerrygold Original Irische Butter",
     "category": "Molkerei",
     "package_size": "250 g",
-    "search_terms": ["deutsche markenbutter", "butter 250g"],
+    "search_terms": [
+      "Kerrygold Original Butter 250 g",
+      "irische Butter 250 g",
+      "Markenbutter 250 g"
+    ],
     "barcodes": []
   },
   {
     "id": "eggs_10",
-    "name": "Eier",
+    "name": "Eier aus Bodenhaltung",
     "category": "Frische",
-    "package_size": "10 Stueck",
-    "search_terms": ["eier 10er", "bodenhaltung eier", "freiland eier"],
+    "package_size": "10 Stück",
+    "search_terms": [
+      "Eier Bodenhaltung 10 Stück",
+      "Eier 10er Pack",
+      "Freiland Eier 10 Stück"
+    ],
     "barcodes": []
   },
   {
     "id": "yogurt_500",
-    "name": "Naturjoghurt",
+    "name": "Gut & Günstig Naturjoghurt mild",
     "category": "Molkerei",
     "package_size": "500 g",
-    "search_terms": ["naturjoghurt 500g", "joghurt natur"],
+    "search_terms": [
+      "Naturjoghurt mild 500 g",
+      "Gut und Günstig Naturjoghurt",
+      "Joghurt natur 500 g"
+    ],
     "barcodes": []
   },
   {
     "id": "cheese_slices_400",
-    "name": "Scheibenkaese",
+    "name": "Milbona Gouda jung in Scheiben",
     "category": "Molkerei",
     "package_size": "400 g",
-    "search_terms": ["kaese scheiben 400g", "gouda scheiben"],
+    "search_terms": [
+      "Milbona Gouda Scheiben 400 g",
+      "Gouda jung Scheiben 400 g",
+      "Käse Scheiben 400 g"
+    ],
     "barcodes": []
   },
   {
     "id": "quark_500",
-    "name": "Magerquark",
+    "name": "Milbona Magerquark",
     "category": "Molkerei",
     "package_size": "500 g",
-    "search_terms": ["magerquark 500g", "speisequark"],
+    "search_terms": [
+      "Milbona Magerquark 500 g",
+      "Magerquark 500 g",
+      "Speisequark mager 500 g"
+    ],
     "barcodes": []
   },
   {
     "id": "cream_200",
-    "name": "Schlagsahne",
+    "name": "Milbona Schlagsahne",
     "category": "Molkerei",
     "package_size": "200 g",
-    "search_terms": ["schlagsahne 200g", "sahne"],
+    "search_terms": [
+      "Milbona Schlagsahne 200 g",
+      "Schlagsahne 200 g",
+      "Sahne 200 g"
+    ],
     "barcodes": []
   },
   {
@@ -60,151 +88,222 @@
     "name": "Mozzarella",
     "category": "Molkerei",
     "package_size": "125 g",
-    "search_terms": ["mozzarella 125g"],
+    "search_terms": [
+      "mozzarella 125g"
+    ],
     "barcodes": []
   },
   {
     "id": "bananas_1kg",
-    "name": "Bananen",
+    "name": "Bio Bananen lose",
     "category": "Obst",
     "package_size": "1 kg",
-    "search_terms": ["bananen", "banane kg"],
+    "search_terms": [
+      "Bio Bananen 1 kg",
+      "Bananen lose 1 kg",
+      "Chiquita Bananen 1 kg"
+    ],
     "barcodes": []
   },
   {
     "id": "apples_1kg",
-    "name": "Aepfel",
+    "name": "Äpfel Gala",
     "category": "Obst",
     "package_size": "1 kg",
-    "search_terms": ["aepfel", "apfel kg", "elstar"],
+    "search_terms": [
+      "Äpfel Gala 1 kg",
+      "Gala Äpfel",
+      "Tafeläpfel Gala"
+    ],
     "barcodes": []
   },
   {
     "id": "oranges_1kg",
-    "name": "Orangen",
+    "name": "Orangen Klasse I",
     "category": "Obst",
     "package_size": "1 kg",
-    "search_terms": ["orangen", "orange kg"],
+    "search_terms": [
+      "Orangen 1 kg",
+      "Saftorangen 1 kg",
+      "Orangen Klasse I"
+    ],
     "barcodes": []
   },
   {
     "id": "strawberries_500",
-    "name": "Erdbeeren",
+    "name": "Erdbeeren Schale",
     "category": "Obst",
     "package_size": "500 g",
-    "search_terms": ["erdbeeren 500g", "erdbeeren schale"],
+    "search_terms": [
+      "Erdbeeren 500 g",
+      "Erdbeeren Schale 500 g",
+      "frische Erdbeeren"
+    ],
     "barcodes": []
   },
   {
     "id": "grapes_500",
-    "name": "Trauben",
+    "name": "Tafeltrauben hell kernlos",
     "category": "Obst",
     "package_size": "500 g",
-    "search_terms": ["trauben 500g", "weintrauben"],
+    "search_terms": [
+      "Tafeltrauben hell kernlos 500 g",
+      "Weintrauben 500 g",
+      "Trauben kernlos"
+    ],
     "barcodes": []
   },
   {
     "id": "pears_1kg",
-    "name": "Birnen",
+    "name": "Birnen Conference",
     "category": "Obst",
     "package_size": "1 kg",
-    "search_terms": ["birnen", "birne kg"],
+    "search_terms": [
+      "Birnen Conference 1 kg",
+      "Conference Birnen",
+      "Birnen lose"
+    ],
     "barcodes": []
   },
   {
     "id": "lemons_500",
-    "name": "Zitronen",
+    "name": "Bio Zitronen Netz",
     "category": "Obst",
     "package_size": "500 g",
-    "search_terms": ["zitronen", "bio zitronen"],
+    "search_terms": [
+      "Bio Zitronen 500 g",
+      "Zitronen Netz 500 g",
+      "Zitronen"
+    ],
     "barcodes": []
   },
   {
     "id": "tomatoes_500",
-    "name": "Tomaten",
-    "category": "Gemuese",
+    "name": "Rispentomaten",
+    "category": "Gemüse",
     "package_size": "500 g",
-    "search_terms": ["tomaten 500g", "rispentomaten", "strauchtomaten"],
+    "search_terms": [
+      "Rispentomaten 500 g",
+      "Tomaten 500 g",
+      "Strauchtomaten"
+    ],
     "barcodes": []
   },
   {
     "id": "cucumber_each",
-    "name": "Gurke",
-    "category": "Gemuese",
-    "package_size": "1 Stueck",
-    "search_terms": ["gurke", "salatgurke"],
+    "name": "Salatgurke",
+    "category": "Gemüse",
+    "package_size": "1 Stück",
+    "search_terms": [
+      "Salatgurke Stück",
+      "Gurke Stück",
+      "Bio Salatgurke"
+    ],
     "barcodes": []
   },
   {
     "id": "carrots_1kg",
-    "name": "Karotten",
-    "category": "Gemuese",
+    "name": "Möhren Beutel",
+    "category": "Gemüse",
     "package_size": "1 kg",
-    "search_terms": ["karotten 1kg", "moehren 1kg"],
+    "search_terms": [
+      "Möhren 1 kg",
+      "Karotten 1 kg",
+      "Möhren Beutel"
+    ],
     "barcodes": []
   },
   {
     "id": "potatoes_25kg",
-    "name": "Kartoffeln",
-    "category": "Gemuese",
+    "name": "Speisekartoffeln vorwiegend festkochend",
+    "category": "Gemüse",
     "package_size": "2,5 kg",
-    "search_terms": ["kartoffeln 2.5kg", "speisekartoffeln"],
+    "search_terms": [
+      "Speisekartoffeln 2,5 kg",
+      "Kartoffeln vorwiegend festkochend",
+      "Kartoffeln 2,5 kg"
+    ],
     "barcodes": []
   },
   {
     "id": "onions_1kg",
     "name": "Zwiebeln",
-    "category": "Gemuese",
+    "category": "Gemüse",
     "package_size": "1 kg",
-    "search_terms": ["zwiebeln 1kg", "speisezwiebeln"],
+    "search_terms": [
+      "zwiebeln 1kg",
+      "speisezwiebeln"
+    ],
     "barcodes": []
   },
   {
     "id": "bell_peppers_500",
-    "name": "Paprika",
-    "category": "Gemuese",
+    "name": "Paprika Mix",
+    "category": "Gemüse",
     "package_size": "500 g",
-    "search_terms": ["paprika 500g", "paprika mix"],
+    "search_terms": [
+      "Paprika Mix 500 g",
+      "Paprika 500 g",
+      "Paprika rot gelb grün"
+    ],
     "barcodes": []
   },
   {
     "id": "salad_each",
     "name": "Kopfsalat",
-    "category": "Gemuese",
-    "package_size": "1 Stueck",
-    "search_terms": ["kopfsalat", "salat"],
+    "category": "Gemüse",
+    "package_size": "1 Stück",
+    "search_terms": [
+      "kopfsalat",
+      "salat"
+    ],
     "barcodes": []
   },
   {
     "id": "broccoli_500",
     "name": "Brokkoli",
-    "category": "Gemuese",
+    "category": "Gemüse",
     "package_size": "500 g",
-    "search_terms": ["brokkoli", "broccoli"],
+    "search_terms": [
+      "brokkoli",
+      "broccoli"
+    ],
     "barcodes": []
   },
   {
     "id": "pasta_500",
-    "name": "Nudeln",
+    "name": "Barilla Spaghetti n.5",
     "category": "Trockenware",
     "package_size": "500 g",
-    "search_terms": ["spaghetti 500g", "penne 500g", "nudeln 500g"],
+    "search_terms": [
+      "Barilla Spaghetti n.5 500 g",
+      "Barilla Spaghetti 500 g",
+      "Spaghetti n.5"
+    ],
     "barcodes": []
   },
   {
     "id": "rice_1kg",
-    "name": "Reis",
+    "name": "Oryza Basmati Reis",
     "category": "Trockenware",
     "package_size": "1 kg",
-    "search_terms": ["reis 1kg", "langkornreis", "basmati reis"],
+    "search_terms": [
+      "Oryza Basmati Reis 1 kg",
+      "Basmati Reis 1 kg",
+      "Langkornreis 1 kg"
+    ],
     "barcodes": []
   },
   {
     "id": "oats_500",
-    "name": "Haferflocken",
+    "name": "Kölln Blütenzarte Haferflocken",
     "category": "Trockenware",
     "package_size": "500 g",
-    "search_terms": ["haferflocken 500g", "zarte haferflocken"],
+    "search_terms": [
+      "Kölln Haferflocken 500 g",
+      "Blütenzarte Haferflocken 500 g",
+      "zarte Haferflocken"
+    ],
     "barcodes": []
   },
   {
@@ -212,7 +311,10 @@
     "name": "Linsen",
     "category": "Trockenware",
     "package_size": "500 g",
-    "search_terms": ["linsen 500g", "rote linsen"],
+    "search_terms": [
+      "linsen 500g",
+      "rote linsen"
+    ],
     "barcodes": []
   },
   {
@@ -220,7 +322,10 @@
     "name": "Dosentomaten",
     "category": "Trockenware",
     "package_size": "400 g",
-    "search_terms": ["dosentomaten 400g", "tomaten dose"],
+    "search_terms": [
+      "dosentomaten 400g",
+      "tomaten dose"
+    ],
     "barcodes": []
   },
   {
@@ -228,7 +333,10 @@
     "name": "Thunfisch",
     "category": "Trockenware",
     "package_size": "195 g",
-    "search_terms": ["thunfisch dose", "thunfisch 195g"],
+    "search_terms": [
+      "thunfisch dose",
+      "thunfisch 195g"
+    ],
     "barcodes": []
   },
   {
@@ -236,7 +344,10 @@
     "name": "Mehl Type 405",
     "category": "Backen",
     "package_size": "1 kg",
-    "search_terms": ["mehl 405", "weizenmehl 1kg"],
+    "search_terms": [
+      "mehl 405",
+      "weizenmehl 1kg"
+    ],
     "barcodes": []
   },
   {
@@ -244,15 +355,22 @@
     "name": "Zucker",
     "category": "Backen",
     "package_size": "1 kg",
-    "search_terms": ["zucker 1kg", "raffinade zucker"],
+    "search_terms": [
+      "zucker 1kg",
+      "raffinade zucker"
+    ],
     "barcodes": []
   },
   {
     "id": "oil_1l",
-    "name": "Sonnenblumenoel",
+    "name": "Brölio Sonnenblumenöl",
     "category": "Backen",
     "package_size": "1 l",
-    "search_terms": ["sonnenblumenoel 1l", "speiseoel"],
+    "search_terms": [
+      "Sonnenblumenöl 1 l",
+      "Brölio Sonnenblumenöl 1 l",
+      "Speiseöl 1 l"
+    ],
     "barcodes": []
   },
   {
@@ -260,7 +378,10 @@
     "name": "Backpulver",
     "category": "Backen",
     "package_size": "3er Pack",
-    "search_terms": ["backpulver", "backpulver 3er"],
+    "search_terms": [
+      "backpulver",
+      "backpulver 3er"
+    ],
     "barcodes": []
   },
   {
@@ -268,159 +389,227 @@
     "name": "Backkakao",
     "category": "Backen",
     "package_size": "250 g",
-    "search_terms": ["backkakao 250g", "kakao"],
+    "search_terms": [
+      "backkakao 250g",
+      "kakao"
+    ],
     "barcodes": []
   },
   {
     "id": "yeast",
     "name": "Hefe",
     "category": "Backen",
-    "package_size": "1 Wuerfel",
-    "search_terms": ["hefe", "frische hefe"],
+    "package_size": "1 Würfel",
+    "search_terms": [
+      "hefe",
+      "frische hefe"
+    ],
     "barcodes": []
   },
   {
     "id": "coffee_500",
     "name": "Kaffee",
-    "category": "Getraenke",
+    "category": "Getränke",
     "package_size": "500 g",
-    "search_terms": ["filterkaffee 500g", "kaffee gemahlen"],
+    "search_terms": [
+      "filterkaffee 500g",
+      "kaffee gemahlen"
+    ],
     "barcodes": []
   },
   {
     "id": "water_15l",
     "name": "Mineralwasser",
-    "category": "Getraenke",
+    "category": "Getränke",
     "package_size": "1,5 l",
-    "search_terms": ["mineralwasser 1.5l", "wasser"],
+    "search_terms": [
+      "mineralwasser 1.5l",
+      "wasser"
+    ],
     "barcodes": []
   },
   {
     "id": "orange_juice_1l",
     "name": "Orangensaft",
-    "category": "Getraenke",
+    "category": "Getränke",
     "package_size": "1 l",
-    "search_terms": ["orangensaft 1l", "o-saft"],
+    "search_terms": [
+      "orangensaft 1l",
+      "o-saft"
+    ],
     "barcodes": []
   },
   {
     "id": "cola_125l",
     "name": "Cola",
-    "category": "Getraenke",
+    "category": "Getränke",
     "package_size": "1,25 l",
-    "search_terms": ["cola 1.25l", "cola"],
+    "search_terms": [
+      "cola 1.25l",
+      "cola"
+    ],
     "barcodes": []
   },
   {
     "id": "tea_20",
     "name": "Tee",
-    "category": "Getraenke",
+    "category": "Getränke",
     "package_size": "20 Beutel",
-    "search_terms": ["tee 20 beutel", "kraeutertee"],
+    "search_terms": [
+      "tee 20 beutel",
+      "Kräutertee"
+    ],
     "barcodes": []
   },
   {
     "id": "beer_05",
     "name": "Pils",
-    "category": "Getraenke",
+    "category": "Getränke",
     "package_size": "0,5 l",
-    "search_terms": ["pils 0.5l", "bier 0.5l"],
+    "search_terms": [
+      "pils 0.5l",
+      "bier 0.5l"
+    ],
     "barcodes": []
   },
   {
     "id": "chocolate_100",
-    "name": "Schokolade",
-    "category": "Suessigkeiten",
+    "name": "Milka Alpenmilch Schokolade",
+    "category": "Süßigkeiten",
     "package_size": "100 g",
-    "search_terms": ["schokolade 100g", "vollmilch schokolade"],
+    "search_terms": [
+      "Milka Alpenmilch 100 g",
+      "Milka Schokolade 100 g",
+      "Alpenmilch Schokolade"
+    ],
     "barcodes": []
   },
   {
     "id": "gummy_bears_200",
-    "name": "Gummibaerchen",
-    "category": "Suessigkeiten",
+    "name": "Haribo Goldbären",
+    "category": "Süßigkeiten",
     "package_size": "200 g",
-    "search_terms": ["gummibaerchen 200g", "fruchtgummi"],
+    "search_terms": [
+      "Haribo Goldbären 175 g",
+      "Haribo Goldbären 200 g",
+      "Fruchtgummi Haribo"
+    ],
     "barcodes": []
   },
   {
     "id": "cookies_200",
-    "name": "Kekse",
-    "category": "Suessigkeiten",
+    "name": "Leibniz Butterkeks",
+    "category": "Süßigkeiten",
     "package_size": "200 g",
-    "search_terms": ["kekse 200g", "butterkekse"],
+    "search_terms": [
+      "Leibniz Butterkeks 200 g",
+      "Butterkeks 200 g",
+      "Kekse Leibniz"
+    ],
     "barcodes": []
   },
   {
     "id": "chips_175",
-    "name": "Chips",
-    "category": "Suessigkeiten",
+    "name": "funny-frisch Chipsfrisch Oriental",
+    "category": "Süßigkeiten",
     "package_size": "175 g",
-    "search_terms": ["chips 175g", "kartoffelchips"],
+    "search_terms": [
+      "funny-frisch Chipsfrisch Oriental 150 g",
+      "funny-frisch Oriental",
+      "Chips Oriental"
+    ],
     "barcodes": []
   },
   {
     "id": "nuts_200",
-    "name": "Nuesse",
-    "category": "Suessigkeiten",
+    "name": "ültje Studentenfutter",
+    "category": "Süßigkeiten",
     "package_size": "200 g",
-    "search_terms": ["nuesse 200g", "studentenfutter"],
+    "search_terms": [
+      "ültje Studentenfutter 200 g",
+      "Studentenfutter 200 g",
+      "Nüsse Mix 200 g"
+    ],
     "barcodes": []
   },
   {
     "id": "frozen_pizza_each",
-    "name": "Tiefkuehlpizza",
-    "category": "Tiefkuehl",
-    "package_size": "1 Stueck",
-    "search_terms": ["tiefkuehlpizza", "pizza tiefkuehl"],
+    "name": "Dr. Oetker Ristorante Pizza Salame",
+    "category": "Tiefkühl",
+    "package_size": "1 Stück",
+    "search_terms": [
+      "Dr. Oetker Ristorante Pizza Salame",
+      "Ristorante Pizza Salame",
+      "Tiefkühlpizza Salame"
+    ],
     "barcodes": []
   },
   {
     "id": "fries_750",
     "name": "Pommes",
-    "category": "Tiefkuehl",
+    "category": "Tiefkühl",
     "package_size": "750 g",
-    "search_terms": ["pommes 750g", "tiefkuehl pommes"],
+    "search_terms": [
+      "pommes 750g",
+      "Tiefkühl Pommes"
+    ],
     "barcodes": []
   },
   {
     "id": "icecream_500",
     "name": "Eiscreme",
-    "category": "Tiefkuehl",
+    "category": "Tiefkühl",
     "package_size": "500 ml",
-    "search_terms": ["eiscreme 500ml", "eis"],
+    "search_terms": [
+      "eiscreme 500ml",
+      "eis"
+    ],
     "barcodes": []
   },
   {
     "id": "frozen_vegetables_750",
-    "name": "TK-Gemuese",
-    "category": "Tiefkuehl",
+    "name": "TK-Gemüse",
+    "category": "Tiefkühl",
     "package_size": "750 g",
-    "search_terms": ["tk gemuese 750g", "tiefkuehl gemuese"],
+    "search_terms": [
+      "TK Gemüse 750 g",
+      "Tiefkühl Gemüse"
+    ],
     "barcodes": []
   },
   {
     "id": "fish_sticks_450",
-    "name": "Fischstaebchen",
-    "category": "Tiefkuehl",
+    "name": "Iglo Fischstäbchen",
+    "category": "Tiefkühl",
     "package_size": "450 g",
-    "search_terms": ["fischstaebchen 450g", "fischstaebchen"],
+    "search_terms": [
+      "Iglo Fischstäbchen 450 g",
+      "Fischstäbchen 450 g",
+      "Fischstäbchen"
+    ],
     "barcodes": []
   },
   {
     "id": "toast_500",
-    "name": "Toastbrot",
+    "name": "Harry Körner Balance Toast",
     "category": "Backen",
     "package_size": "500 g",
-    "search_terms": ["toastbrot 500g", "buttertoast"],
+    "search_terms": [
+      "Harry Körner Balance Toast 500 g",
+      "Toastbrot 500 g",
+      "Buttertoast 500 g"
+    ],
     "barcodes": []
   },
   {
     "id": "bread_rolls_6",
-    "name": "Aufbackbroetchen",
+    "name": "Aufbackbrötchen",
     "category": "Backen",
-    "package_size": "6 Stueck",
-    "search_terms": ["aufbackbroetchen", "broetchen 6er"],
+    "package_size": "6 Stück",
+    "search_terms": [
+      "Aufbackbrötchen",
+      "Brötchen 6er"
+    ],
     "barcodes": []
   },
   {
@@ -428,39 +617,58 @@
     "name": "Vollkornbrot",
     "category": "Backen",
     "package_size": "500 g",
-    "search_terms": ["vollkornbrot 500g", "schnittbrot"],
+    "search_terms": [
+      "vollkornbrot 500g",
+      "schnittbrot"
+    ],
     "barcodes": []
   },
   {
     "id": "muesli_500",
-    "name": "Muesli",
+    "name": "Kölln Müsli Früchte",
     "category": "Trockenware",
     "package_size": "500 g",
-    "search_terms": ["muesli 500g", "fruechtemuesli"],
+    "search_terms": [
+      "Kölln Müsli Früchte 500 g",
+      "Früchtemüsli 500 g",
+      "Müsli 500 g"
+    ],
     "barcodes": []
   },
   {
     "id": "cornflakes_500",
-    "name": "Cornflakes",
+    "name": "Kellogg’s Corn Flakes",
     "category": "Trockenware",
     "package_size": "500 g",
-    "search_terms": ["cornflakes 500g", "fruehstuecksflakes"],
+    "search_terms": [
+      "Kellogg’s Corn Flakes 500 g",
+      "Cornflakes 500 g",
+      "Frühstücksflakes"
+    ],
     "barcodes": []
   },
   {
     "id": "jam_450",
-    "name": "Erdbeermarmelade",
+    "name": "Schwartau Extra Erdbeere",
     "category": "Trockenware",
     "package_size": "450 g",
-    "search_terms": ["erdbeermarmelade", "konfituere erdbeere"],
+    "search_terms": [
+      "Schwartau Extra Erdbeere 340 g",
+      "Erdbeermarmelade 450 g",
+      "Konfitüre Erdbeere"
+    ],
     "barcodes": []
   },
   {
     "id": "honey_500",
-    "name": "Honig",
+    "name": "Langnese Flotte Biene Blütenhonig",
     "category": "Trockenware",
     "package_size": "500 g",
-    "search_terms": ["honig 500g", "bluetenhonig"],
+    "search_terms": [
+      "Langnese Flotte Biene 500 g",
+      "Blütenhonig 500 g",
+      "Honig 500 g"
+    ],
     "barcodes": []
   },
   {
@@ -468,7 +676,10 @@
     "name": "Tomatenketchup",
     "category": "Trockenware",
     "package_size": "500 ml",
-    "search_terms": ["tomatenketchup", "ketchup 500ml"],
+    "search_terms": [
+      "tomatenketchup",
+      "ketchup 500ml"
+    ],
     "barcodes": []
   },
   {
@@ -476,7 +687,10 @@
     "name": "Mayonnaise",
     "category": "Trockenware",
     "package_size": "500 ml",
-    "search_terms": ["mayonnaise 500ml", "mayo"],
+    "search_terms": [
+      "mayonnaise 500ml",
+      "mayo"
+    ],
     "barcodes": []
   },
   {
@@ -484,23 +698,34 @@
     "name": "Senf",
     "category": "Trockenware",
     "package_size": "250 ml",
-    "search_terms": ["senf 250ml", "mittelscharfer senf"],
+    "search_terms": [
+      "senf 250ml",
+      "mittelscharfer senf"
+    ],
     "barcodes": []
   },
   {
     "id": "chicken_breast_400",
-    "name": "Haehnchenbrust",
+    "name": "Frische Hähnchenbrustfilets",
     "category": "Fleisch",
     "package_size": "400 g",
-    "search_terms": ["haehnchenbrust 400g", "haehnchenfilet"],
+    "search_terms": [
+      "Hähnchenbrustfilet 400 g",
+      "Hähnchenbrust 400 g",
+      "Hähnchenfilet"
+    ],
     "barcodes": []
   },
   {
     "id": "minced_meat_500",
-    "name": "Hackfleisch",
+    "name": "Rinderhackfleisch",
     "category": "Fleisch",
     "package_size": "500 g",
-    "search_terms": ["hackfleisch 500g", "rinderhackfleisch"],
+    "search_terms": [
+      "Rinderhackfleisch 500 g",
+      "Hackfleisch 500 g",
+      "gemischtes Hackfleisch"
+    ],
     "barcodes": []
   },
   {
@@ -508,7 +733,10 @@
     "name": "Salami",
     "category": "Fleisch",
     "package_size": "200 g",
-    "search_terms": ["salami 200g", "aufschnitt salami"],
+    "search_terms": [
+      "salami 200g",
+      "aufschnitt salami"
+    ],
     "barcodes": []
   },
   {
@@ -516,15 +744,22 @@
     "name": "Kochschinken",
     "category": "Fleisch",
     "package_size": "200 g",
-    "search_terms": ["kochschinken 200g", "schinken aufschnitt"],
+    "search_terms": [
+      "kochschinken 200g",
+      "schinken aufschnitt"
+    ],
     "barcodes": []
   },
   {
     "id": "sausages_400",
-    "name": "Wiener Wuerstchen",
+    "name": "Wiener Würstchen",
     "category": "Fleisch",
     "package_size": "400 g",
-    "search_terms": ["wiener wuerstchen", "wuerstchen 400g"],
+    "search_terms": [
+      "Wiener Würstchen 400 g",
+      "Würstchen 400 g",
+      "Wiener"
+    ],
     "barcodes": []
   },
   {
@@ -532,71 +767,104 @@
     "name": "Toilettenpapier",
     "category": "Drogerie",
     "package_size": "10 Rollen",
-    "search_terms": ["toilettenpapier 10 rollen", "klopapier"],
+    "search_terms": [
+      "toilettenpapier 10 rollen",
+      "klopapier"
+    ],
     "barcodes": []
   },
   {
     "id": "detergent_20",
-    "name": "Waschmittel",
+    "name": "Persil Universal Pulver",
     "category": "Drogerie",
     "package_size": "20 WL",
-    "search_terms": ["waschmittel 20 wl", "vollwaschmittel"],
+    "search_terms": [
+      "Persil Universal Pulver 20 WL",
+      "Waschmittel 20 WL",
+      "Vollwaschmittel"
+    ],
     "barcodes": []
   },
   {
     "id": "dish_soap_500",
-    "name": "Spuelmittel",
+    "name": "Fairy Original Spülmittel",
     "category": "Drogerie",
     "package_size": "500 ml",
-    "search_terms": ["spuelmittel 500ml", "geschirrspuelmittel"],
+    "search_terms": [
+      "Fairy Original Spülmittel 450 ml",
+      "Spülmittel 500 ml",
+      "Geschirrspülmittel"
+    ],
     "barcodes": []
   },
   {
     "id": "kitchen_towels_4",
-    "name": "Kuechenrollen",
+    "name": "Küchenrollen",
     "category": "Drogerie",
     "package_size": "4 Rollen",
-    "search_terms": ["kuechenrollen 4 rollen", "kuechenpapier"],
+    "search_terms": [
+      "Küchenrollen 4 Rollen",
+      "Küchenpapier"
+    ],
     "barcodes": []
   },
   {
     "id": "diapers_4",
-    "name": "Windeln Groesse 4",
+    "name": "Pampers Baby-Dry Größe 4",
     "category": "Baby",
     "package_size": "1 Packung",
-    "search_terms": ["windeln groesse 4", "baby windeln"],
+    "search_terms": [
+      "Pampers Baby-Dry Größe 4",
+      "Windeln Größe 4",
+      "Baby Windeln"
+    ],
     "barcodes": []
   },
   {
     "id": "baby_food_190",
-    "name": "Babyglaeschen",
+    "name": "HiPP Bio Babygläschen Gemüse",
     "category": "Baby",
     "package_size": "190 g",
-    "search_terms": ["babyglaeschen 190g", "babybrei"],
+    "search_terms": [
+      "HiPP Babygläschen 190 g",
+      "Babybrei 190 g",
+      "Babynahrung Gemüse"
+    ],
     "barcodes": []
   },
   {
     "id": "wet_wipes_80",
-    "name": "Feuchttuecher",
+    "name": "Feuchttücher",
     "category": "Baby",
-    "package_size": "80 Stueck",
-    "search_terms": ["feuchttuecher 80", "baby feuchttuecher"],
+    "package_size": "80 Stück",
+    "search_terms": [
+      "Feuchttücher 80",
+      "Baby Feuchttücher"
+    ],
     "barcodes": []
   },
   {
     "id": "cat_food_400",
-    "name": "Katzenfutter",
+    "name": "Sheba Katzenfutter Sauce Speciale",
     "category": "Tierbedarf",
     "package_size": "400 g",
-    "search_terms": ["katzenfutter 400g", "nassfutter katze"],
+    "search_terms": [
+      "Sheba Katzenfutter 400 g",
+      "Katzenfutter nass 400 g",
+      "Nassfutter Katze"
+    ],
     "barcodes": []
   },
   {
     "id": "dog_food_1kg",
-    "name": "Hundefutter",
+    "name": "Pedigree Hundefutter Adult",
     "category": "Tierbedarf",
     "package_size": "1 kg",
-    "search_terms": ["hundefutter 1kg", "trockenfutter hund"],
+    "search_terms": [
+      "Pedigree Hundefutter 1 kg",
+      "Hundefutter 1 kg",
+      "Trockenfutter Hund"
+    ],
     "barcodes": []
   },
   {
@@ -604,7 +872,10 @@
     "name": "Katzenstreu",
     "category": "Tierbedarf",
     "package_size": "10 l",
-    "search_terms": ["katzenstreu 10l", "klumpstreu"],
+    "search_terms": [
+      "katzenstreu 10l",
+      "klumpstreu"
+    ],
     "barcodes": []
   }
 ]

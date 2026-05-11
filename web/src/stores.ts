@@ -50,7 +50,7 @@ export async function loadNearbyStores(postcode: string, radiusKm: number): Prom
   });
 
   if (!response.ok) {
-    throw new Error("Maerkte konnten nicht geladen werden.");
+    throw new Error("Märkte konnten nicht geladen werden.");
   }
 
   const payload = (await response.json()) as OverpassResponse;
@@ -128,7 +128,7 @@ function mapOverpassElement(element: OverpassElement, centerLat: number, centerL
     retailer,
     name,
     address,
-    openingHours: tags.opening_hours ?? "Oeffnungszeiten nicht hinterlegt",
+    openingHours: tags.opening_hours ?? "Öffnungszeiten nicht hinterlegt",
     lat,
     lon,
     distanceKm: distanceKm(centerLat, centerLon, lat, lon)
@@ -151,7 +151,7 @@ function normalizeRetailer(value: string) {
 
 function retailerTitle(value: string) {
   const normalized = normalizeText(value);
-  if (normalized.includes("aldi")) return "Aldi Sued";
+  if (normalized.includes("aldi")) return "Aldi Süd";
   if (normalized.includes("lidl")) return "Lidl";
   if (normalized.includes("rewe")) return "Rewe";
   if (normalized.includes("edeka") || normalized.includes("e center")) return "Edeka";

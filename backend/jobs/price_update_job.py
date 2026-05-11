@@ -27,7 +27,7 @@ OPEN_PRICES_BASE_URL = os.getenv("OPEN_PRICES_BASE_URL", "https://prices.openfoo
 USER_AGENT = "Preisfuchs-MVP/0.1 (contact: local-development)"
 
 RETAILER_SLUGS = {
-    "aldi_sued": ("Aldi Sued", "Aldi-Sued"),
+    "aldi_sued": ("Aldi Süd", "Aldi-Sued"),
     "lidl": ("Lidl", "Lidl"),
     "rewe": ("Rewe", "REWE"),
     "edeka": ("Edeka", "Edeka"),
@@ -35,7 +35,7 @@ RETAILER_SLUGS = {
 }
 
 RETAILER_ALIASES = {
-    "Aldi Sued": ["aldi sued", "aldi sud", "aldi"],
+    "Aldi Süd": ["aldi sued", "aldi sud", "aldi"],
     "Lidl": ["lidl"],
     "Rewe": ["rewe"],
     "Edeka": ["edeka"],
@@ -47,7 +47,7 @@ PRODUCT_QUERY_OVERRIDES = {
     "butter_250": "Butter",
     "eggs_10": "Eier",
     "yogurt_500": "Joghurt",
-    "cheese_slices_400": "Kaese",
+    "cheese_slices_400": "Käse",
     "quark_500": "Quark",
     "cream_200": "Sahne",
     "mozzarella_125": "Mozzarella",
@@ -59,7 +59,7 @@ PRODUCT_QUERY_OVERRIDES = {
     "tuna_195": "Thunfisch",
     "flour_1kg": "Mehl",
     "sugar_1kg": "Zucker",
-    "oil_1l": "Oel",
+    "oil_1l": "Öl",
     "baking_powder": "Backpulver",
     "cocoa_250": "Kakao",
     "yeast": "Hefe",
@@ -70,7 +70,7 @@ PRODUCT_QUERY_OVERRIDES = {
     "tea_20": "Tee",
     "beer_05": "Pils",
     "bananas_1kg": "Bananen",
-    "apples_1kg": "Aepfel",
+    "apples_1kg": "Äpfel",
     "oranges_1kg": "Orangen",
     "strawberries_500": "Erdbeeren",
     "grapes_500": "Weintrauben",
@@ -88,34 +88,34 @@ PRODUCT_QUERY_OVERRIDES = {
     "gummy_bears_200": "Fruchtgummi",
     "cookies_200": "Kekse",
     "chips_175": "Chips",
-    "nuts_200": "Nuesse",
-    "frozen_pizza_each": "Tiefkuehlpizza",
+    "nuts_200": "Nüsse",
+    "frozen_pizza_each": "Tiefkühlpizza",
     "fries_750": "Pommes",
     "icecream_500": "Eis",
-    "frozen_vegetables_750": "Gemuese",
-    "fish_sticks_450": "Fischstaebchen",
+    "frozen_vegetables_750": "Gemüse",
+    "fish_sticks_450": "Fischstäbchen",
     "toast_500": "Toastbrot",
-    "bread_rolls_6": "Aufbackbroetchen",
+    "bread_rolls_6": "Aufbackbrötchen",
     "wholegrain_bread_500": "Vollkornbrot",
-    "muesli_500": "Muesli",
+    "muesli_500": "Müsli",
     "cornflakes_500": "Cornflakes",
     "jam_450": "Marmelade",
     "honey_500": "Honig",
     "ketchup_500": "Ketchup",
     "mayonnaise_500": "Mayonnaise",
     "mustard_250": "Senf",
-    "chicken_breast_400": "Haehnchen",
+    "chicken_breast_400": "Hähnchen",
     "minced_meat_500": "Hackfleisch",
     "salami_200": "Salami",
     "ham_200": "Schinken",
-    "sausages_400": "Wuerstchen",
+    "sausages_400": "Würstchen",
     "toilet_paper_10": "Toilettenpapier",
     "detergent_20": "Waschmittel",
-    "dish_soap_500": "Spuelmittel",
-    "kitchen_towels_4": "Kuechenrollen",
+    "dish_soap_500": "Spülmittel",
+    "kitchen_towels_4": "Küchenrollen",
     "diapers_4": "Windeln",
     "baby_food_190": "Babybrei",
-    "wet_wipes_80": "Feuchttuecher",
+    "wet_wipes_80": "Feuchttücher",
     "cat_food_400": "Katzenfutter",
     "dog_food_1kg": "Hundefutter",
     "cat_litter_10l": "Katzenstreu",
@@ -306,7 +306,7 @@ def repair_mojibake(value: str) -> str:
 
 
 def query_candidates(product: ProductSeed) -> list[str]:
-    candidates = [PRODUCT_QUERY_OVERRIDES.get(product.id, product.name), product.name, *product.search_terms]
+    candidates = [product.name, *product.search_terms, PRODUCT_QUERY_OVERRIDES.get(product.id, product.name)]
     seen: set[str] = set()
     unique_candidates = []
     for candidate in candidates:

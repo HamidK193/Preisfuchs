@@ -2,6 +2,7 @@ export type PriceObservation = {
   id: string;
   retailer: string;
   storeLocation: string;
+  productName?: string;
   price: number;
   unitPrice?: number;
   unit?: string;
@@ -13,7 +14,10 @@ export type PriceObservation = {
 
 export type GroceryProduct = {
   id: string;
+  sourceProductId?: string;
   name: string;
+  brand?: string;
+  productType?: string;
   category: string;
   packageSize: string;
   symbolName: string;
@@ -37,8 +41,8 @@ export const categories: ProductCategory[] = [
     accentColor: "#f4b83f"
   },
   {
-    id: "Gemuese",
-    label: "Gemuese",
+    id: "Gemüse",
+    label: "Gemüse",
     imageUrl: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=480&q=80",
     accentColor: "#55a95d"
   },
@@ -67,20 +71,20 @@ export const categories: ProductCategory[] = [
     accentColor: "#d7a44a"
   },
   {
-    id: "Getraenke",
-    label: "Getraenke",
+    id: "Getränke",
+    label: "Getränke",
     imageUrl: "https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=480&q=80",
     accentColor: "#4097b8"
   },
   {
-    id: "Suessigkeiten",
-    label: "Suessigkeiten",
+    id: "Süßigkeiten",
+    label: "Süßigkeiten",
     imageUrl: "https://images.unsplash.com/photo-1582058091505-f87a2e55a40f?auto=format&fit=crop&w=480&q=80",
     accentColor: "#d96b9c"
   },
   {
-    id: "Tiefkuehl",
-    label: "Tiefkuehl",
+    id: "Tiefkühl",
+    label: "Tiefkühl",
     imageUrl: "https://images.unsplash.com/photo-1580915411954-282cb1b0d780?auto=format&fit=crop&w=480&q=80",
     accentColor: "#7aa7d9"
   },
@@ -120,7 +124,7 @@ export const demoProducts: GroceryProduct[] = [
     imageUrl: "https://images.unsplash.com/photo-1628088062854-d1870b4553da?auto=format&fit=crop&w=480&q=80",
     accentColor: "#6aa7d8",
     prices: [
-      demoPrice("milk_aldi_demo", "Aldi Sued", 0.99, 0.99, "l", 0),
+      demoPrice("milk_aldi_demo", "Aldi Süd", 0.99, 0.99, "l", 0),
       demoPrice("milk_lidl_demo", "Lidl", 1.05, 1.05, "l", 1),
       demoPrice("milk_rewe_demo", "Rewe", 1.19, 1.19, "l", 2)
     ]
@@ -148,7 +152,7 @@ export const demoProducts: GroceryProduct[] = [
     imageUrl: "https://images.unsplash.com/photo-1551462147-ff29053bfc14?auto=format&fit=crop&w=480&q=80",
     accentColor: "#d7a44a",
     prices: [
-      demoPrice("pasta_aldi_demo", "Aldi Sued", 0.89, 1.78, "kg", 0),
+      demoPrice("pasta_aldi_demo", "Aldi Süd", 0.89, 1.78, "kg", 0),
       demoPrice("pasta_kaufland_demo", "Kaufland", 0.99, 1.98, "kg", 2),
       demoPrice("pasta_rewe_demo", "Rewe", 1.19, 2.38, "kg", 1)
     ]
@@ -171,12 +175,12 @@ export const demoProducts: GroceryProduct[] = [
     id: "eggs_10",
     name: "Eier",
     category: "Frische",
-    packageSize: "10 Stueck",
+    packageSize: "10 Stück",
     symbolName: "badge",
     imageUrl: "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?auto=format&fit=crop&w=480&q=80",
     accentColor: "#dcb35b",
     prices: [
-      demoPrice("eggs_aldi_demo", "Aldi Sued", 2.19, undefined, undefined, 1),
+      demoPrice("eggs_aldi_demo", "Aldi Süd", 2.19, undefined, undefined, 1),
       demoPrice("eggs_lidl_demo", "Lidl", 2.29, undefined, undefined, 0),
       demoPrice("eggs_edeka_demo", "Edeka", 2.59, undefined, undefined, 2)
     ]
@@ -184,7 +188,7 @@ export const demoProducts: GroceryProduct[] = [
   {
     id: "coffee_500",
     name: "Kaffee",
-    category: "Getraenke",
+    category: "Getränke",
     packageSize: "500 g",
     symbolName: "cup.and.saucer",
     imageUrl: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=480&q=80",
@@ -212,7 +216,7 @@ function demoPrice(
   return {
     id,
     retailer,
-    storeLocation: "Baden-Wuerttemberg",
+    storeLocation: "Baden-Württemberg",
     price,
     unitPrice,
     unit,

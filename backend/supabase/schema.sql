@@ -25,7 +25,7 @@ create table if not exists stores (
   street text,
   postcode text,
   city text,
-  state text not null default 'Baden-Wuerttemberg',
+  state text not null default 'Baden-Württemberg',
   latitude double precision,
   longitude double precision,
   source text not null default 'manual',
@@ -100,7 +100,7 @@ create policy "price observations are readable"
   using (true);
 
 insert into retailers (id, name, normalized_name) values
-  ('aldi_sued', 'Aldi Sued', 'aldi sued'),
+  ('aldi_sued', 'Aldi Süd', 'aldi sued'),
   ('lidl', 'Lidl', 'lidl'),
   ('rewe', 'Rewe', 'rewe'),
   ('edeka', 'Edeka', 'edeka'),

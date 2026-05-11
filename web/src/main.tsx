@@ -72,18 +72,18 @@ type SingleStorePlan = {
 type AppView = "home" | "checkout";
 type MainTab = "deals" | "products";
 
-const featuredRetailers = ["Lidl", "Aldi Sued", "Rewe", "Edeka", "Kaufland"];
+const featuredRetailers = ["Lidl", "Aldi Süd", "Rewe", "Edeka", "Kaufland"];
 
 const sidebarLinks: Array<{ id: string; label: string; icon: LucideIcon; categoryId?: string }> = [
   { id: "home", label: "Startseite", icon: Home },
-  { id: "produce", label: "Obst & Gemuese", icon: Apple, categoryId: "Obst" },
+  { id: "produce", label: "Obst & Gemüse", icon: Apple, categoryId: "Obst" },
   { id: "dairy", label: "Milchprodukte", icon: Milk, categoryId: "Molkerei" },
   { id: "bakery", label: "Backwaren", icon: Croissant, categoryId: "Backen" },
   { id: "fresh", label: "Fleisch & Wurst", icon: Store, categoryId: "Fleisch" },
-  { id: "frozen", label: "Tiefkuehlkost", icon: Sparkles, categoryId: "Tiefkuehl" },
-  { id: "drinks", label: "Getraenke", icon: Wine, categoryId: "Getraenke" },
+  { id: "frozen", label: "Tiefkühlkost", icon: Sparkles, categoryId: "Tiefkühl" },
+  { id: "drinks", label: "Getränke", icon: Wine, categoryId: "Getränke" },
   { id: "pasta", label: "Nudeln & Reis", icon: Wheat, categoryId: "Trockenware" },
-  { id: "snacks", label: "Suessigkeiten & Snacks", icon: Tag, categoryId: "Suessigkeiten" },
+  { id: "snacks", label: "Süßigkeiten & Snacks", icon: Tag, categoryId: "Süßigkeiten" },
   { id: "drugstore", label: "Drogerie & Haushalt", icon: PackageCheck, categoryId: "Drogerie" },
   { id: "baby", label: "Baby & Kind", icon: Baby, categoryId: "Baby" },
   { id: "pets", label: "Tierbedarf", icon: PawPrint, categoryId: "Tierbedarf" }
@@ -91,10 +91,10 @@ const sidebarLinks: Array<{ id: string; label: string; icon: LucideIcon; categor
 
 const filterOptions = [
   { id: "deals", label: "Angebote anzeigen", enabled: true, icon: BadgePercent },
-  { id: "availability", label: "Nur Verfuegbarkeit", enabled: false, icon: PackageCheck },
+  { id: "availability", label: "Nur Verfügbarkeit", enabled: false, icon: PackageCheck },
   { id: "bio", label: "Bio-Produkte", enabled: false, icon: Leaf },
   { id: "privateLabel", label: "Eigenmarken", enabled: false, icon: Store },
-  { id: "nearby", label: "Nur in der Naehe", enabled: true, icon: MapPin }
+  { id: "nearby", label: "Nur in der Nähe", enabled: true, icon: MapPin }
 ];
 
 function App() {
@@ -104,7 +104,7 @@ function App() {
   const [products, setProducts] = useState<GroceryProduct[]>(demoProducts);
   const [stores, setStores] = useState<StoreInfo[]>([]);
   const [storeState, setStoreState] = useState<StoreLoadState>("idle");
-  const [storeMessage, setStoreMessage] = useState("PLZ eingeben, um Maerkte in der Naehe zu laden.");
+  const [storeMessage, setStoreMessage] = useState("PLZ eingeben, um Märkte in der Nähe zu laden.");
   const [loadResult, setLoadResult] = useState<ProductLoadResult>({
     products: demoProducts,
     source: "demo",
@@ -115,6 +115,7 @@ function App() {
   const [cart, setCart] = useState<Cart>({ bananas_1kg: 1, pears_1kg: 1, milk_15: 1, pasta_500: 1 });
   const [view, setView] = useState<AppView>("home");
   const [activeTab, setActiveTab] = useState<MainTab>("deals");
+  const [activeProductType, setActiveProductType] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -143,13 +144,13 @@ function App() {
     if (normalizedPostcode.length < 4) {
       setStores([]);
       setStoreState("idle");
-      setStoreMessage("PLZ eingeben, um Maerkte in der Naehe zu laden.");
+      setStoreMessage("PLZ eingeben, um Märkte in der Nähe zu laden.");
       return;
     }
 
     let isMounted = true;
     setStoreState("loading");
-    setStoreMessage("Maerkte und Oeffnungszeiten werden geladen.");
+    setStoreMessage("Märkte und Öffnungszeiten werden geladen.");
 
     const timeout = window.setTimeout(() => {
       loadNearbyStores(normalizedPostcode, radiusKm)
@@ -157,7 +158,7 @@ function App() {
           if (!isMounted) return;
           setStores(loadedStores);
           setStoreState("loaded");
-          setStoreMessage(`${loadedStores.length} Maerkte im Umkreis von ${radiusKm} km gefunden.`);
+          setStoreMessage(`${loadedStores.length} Märkte im Umkreis von ${radiusKm} km gefunden.`);
         })
         .catch((error: Error) => {
           if (!isMounted) return;
@@ -181,17 +182,45 @@ function App() {
     return counts;
   }, [pricedProducts]);
 
-  const visibleProducts = useMemo(() => {
+  const categoryProducts = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     if (normalized) {
       return pricedProducts.filter(
         (product) =>
           product.name.toLowerCase().includes(normalized) ||
-          product.category.toLowerCase().includes(normalized)
+          product.category.toLowerCase().includes(normalized) ||
+          product.packageSize.toLowerCase().includes(normalized) ||
+          product.productType?.toLowerCase().includes(normalized) ||
+          product.brand?.toLowerCase().includes(normalized)
       );
     }
     return pricedProducts.filter((product) => product.category === activeCategoryId);
   }, [activeCategoryId, pricedProducts, query]);
+
+  const productTypeOptions = useMemo(() => {
+    const counts = new Map<string, number>();
+    categoryProducts.forEach((product) => {
+      const productType = productTypeLabel(product);
+      counts.set(productType, (counts.get(productType) ?? 0) + 1);
+    });
+    return Array.from(counts.entries()).map(([label, count]) => ({ label, count }));
+  }, [categoryProducts]);
+
+  const visibleProducts = useMemo(() => {
+    if (query.trim() || !activeProductType) return categoryProducts;
+    return categoryProducts.filter((product) => productTypeLabel(product) === activeProductType);
+  }, [activeProductType, categoryProducts, query]);
+
+  useEffect(() => {
+    if (query.trim()) return;
+    if (!productTypeOptions.length) {
+      setActiveProductType(null);
+      return;
+    }
+    if (!activeProductType || !productTypeOptions.some((option) => option.label === activeProductType)) {
+      setActiveProductType(productTypeOptions[0].label);
+    }
+  }, [activeProductType, productTypeOptions, query]);
 
   useEffect(() => {
     if (!visibleProducts.length) return;
@@ -202,7 +231,7 @@ function App() {
 
   const activeProduct =
     pricedProducts.find((product) => product.id === activeProductId) ?? visibleProducts[0] ?? pricedProducts[0];
-  const activeCategory = categories.find((category) => category.id === activeProduct?.category) ?? categories[0];
+  const activeCategory = findCategory(activeProduct?.category) ?? categories[0];
   const activePriceRows = useMemo(
     () => (activeProduct ? getBestRetailerPrices(activeProduct, stores) : []),
     [activeProduct, stores]
@@ -222,6 +251,7 @@ function App() {
     setActiveCategoryId(categoryId);
     const firstProduct = pricedProducts.find((product) => product.category === categoryId);
     if (firstProduct) setActiveProductId(firstProduct.id);
+    if (firstProduct) setActiveProductType(productTypeLabel(firstProduct));
   }
 
   function addToCart(productId: string) {
@@ -382,10 +412,10 @@ function App() {
         <section className="deal-hero">
           <div className="deal-hero-copy">
             <h3>Die besten Angebote</h3>
-            <h4>aus deiner Naehe - diese Woche sparen!</h4>
+            <h4>aus deiner Nähe - diese Woche sparen!</h4>
             <p>
               Lege Bananen, Birnen, Milch und Co. in den Warenkorb. Preisfuchs zeigt dir den besten Laden oder
-              die guenstigste Aufteilung ueber mehrere Maerkte.
+              die günstigste Aufteilung über mehrere Märkte.
             </p>
             <div className="hero-actions">
               <button onClick={() => setActiveTab("deals")} type="button">
@@ -427,7 +457,7 @@ function App() {
                     <strong>{currency.format(price.price)}</strong>
                     <small>-{Math.max(10, Math.round((1 - price.price / (price.price + 0.4)) * 100))}%</small>
                   </div>
-                  <small>Gueltig bis {validUntilText(price.observedAt)}</small>
+                  <small>Gültig bis {validUntilText(price.observedAt)}</small>
                   <button onClick={() => addToCart(product.id)} type="button">
                     <ShoppingCart size={17} /> In den Warenkorb
                   </button>
@@ -443,13 +473,29 @@ function App() {
               <div className="section-heading">
                 <div>
                   <p className="section-label">{query ? "Suchergebnisse" : activeCategory.label}</p>
-                  <h3>{query ? `${visibleProducts.length} Treffer` : "Beliebte Produkte"}</h3>
+                  <h3>{query ? `${visibleProducts.length} Treffer` : `${activeProductType ?? "Produkte"} auswählen`}</h3>
                 </div>
                 <div className="product-sort-actions">
                   <button type="button">Sortieren: Beste Treffer</button>
                   <button type="button">Angebote zuerst</button>
                 </div>
               </div>
+
+              {!query.trim() && productTypeOptions.length > 1 ? (
+                <div className="product-type-picker" aria-label="Produktart wählen">
+                  {productTypeOptions.map((option) => (
+                    <button
+                      className={option.label === activeProductType ? "active" : ""}
+                      key={option.label}
+                      onClick={() => setActiveProductType(option.label)}
+                      type="button"
+                    >
+                      <span>{option.label}</span>
+                      <small>{option.count} Artikel</small>
+                    </button>
+                  ))}
+                </div>
+              ) : null}
 
               <div className="product-card-grid">
                 {visibleProducts.map((product) => {
@@ -461,6 +507,7 @@ function App() {
                         <img src={product.imageUrl ?? activeCategory.imageUrl} alt={product.name} loading="lazy" />
                       </button>
                       <div className="product-card-copy">
+                        {product.brand ? <span className="brand-chip">{product.brand}</span> : null}
                         <h4>{product.name}</h4>
                         <small>{product.packageSize}</small>
                       </div>
@@ -477,7 +524,7 @@ function App() {
                             <Minus size={16} />
                           </button>
                           <span>{quantity}</span>
-                          <button onClick={() => updateQuantity(product.id, 1)} type="button" aria-label={`${product.name} hinzufuegen`}>
+                          <button onClick={() => updateQuantity(product.id, 1)} type="button" aria-label={`${product.name} hinzufügen`}>
                             <Plus size={16} />
                           </button>
                         </div>
@@ -511,9 +558,9 @@ function App() {
                       <RetailerBadge name={price.retailer} logo />
                       <div className="store-copy">
                         <strong>{price.retailer}</strong>
-                        <span><MapPin size={14} /> {price.store?.name ?? "Naechste passende Filiale"}</span>
+                        <span><MapPin size={14} /> {price.store?.name ?? "Nächste passende Filiale"}</span>
                         <small>{price.store?.address ?? price.storeLocation}</small>
-                        <small><Clock3 size={13} /> {price.store?.openingHours ?? "Oeffnungszeiten nicht geladen"}</small>
+                        <small><Clock3 size={13} /> {price.store?.openingHours ?? "Öffnungszeiten nicht geladen"}</small>
                       </div>
                       <div className="price-cell">
                         <strong>{currency.format(price.price)}</strong>
@@ -528,7 +575,7 @@ function App() {
                     </div>
                   )) : (
                     <div className="no-price-row">
-                      Fuer dieses Produkt gibt es in deinem Umkreis noch keine passende Preisbeobachtung.
+                      Für dieses Produkt gibt es in deinem Umkreis noch keine passende Preisbeobachtung.
                     </div>
                   )}
               </div>
@@ -558,7 +605,7 @@ function App() {
                       <Minus size={15} />
                     </button>
                     <span>{line.quantity}</span>
-                    <button onClick={() => updateQuantity(line.product.id, 1)} type="button" aria-label="Menge erhoehen">
+                    <button onClick={() => updateQuantity(line.product.id, 1)} type="button" aria-label="Menge erhöhen">
                       <Plus size={15} />
                     </button>
                     <button onClick={() => removeFromCart(line.product.id)} type="button" aria-label="Artikel entfernen">
@@ -567,7 +614,7 @@ function App() {
                   </div>
                 </div>
               )) : (
-                <div className="cart-empty">Fuege Produkte hinzu, um den guenstigsten Einkauf zu berechnen.</div>
+                <div className="cart-empty">Füge Produkte hinzu, um den günstigsten Einkauf zu berechnen.</div>
               )}
             </div>
 
@@ -585,8 +632,8 @@ function App() {
                     </div>
                     <span>
                       {bestSingleStore.missingCount
-                        ? `${bestSingleStore.availableCount} von ${cartLines.length} Artikeln verfuegbar`
-                        : "Alle Artikel in einem Laden am guenstigsten"}
+                        ? `${bestSingleStore.availableCount} von ${cartLines.length} Artikeln verfügbar`
+                        : "Alle Artikel in einem Laden am günstigsten"}
                     </span>
                   </>
                 ) : (
@@ -600,7 +647,7 @@ function App() {
                   <strong>Maximal sparen</strong>
                 </div>
                 <div className="checkout-total">
-                  <span>{splitPlan.retailerCount} Laeden</span>
+                  <span>{splitPlan.retailerCount} Läden</span>
                   <strong>{currency.format(splitPlan.total)}</strong>
                 </div>
                 <div className="split-list">
@@ -620,7 +667,7 @@ function App() {
 
             <div className="trust-note">
               <ShieldCheck size={18} />
-              <span>Quellen und Aktualitaet bleiben sichtbar. Preisfuchs behauptet keine Live-Filialpreise.</span>
+              <span>Quellen und Aktualität bleiben sichtbar. Preisfuchs behauptet keine Live-Filialpreise.</span>
             </div>
           </aside>
         </section>
@@ -653,9 +700,9 @@ function CheckoutPage({
   return (
     <section className="checkout-page" aria-label="Kasse">
       <div className="checkout-hero">
-        <button onClick={onBack} type="button">Zurueck zum Shop</button>
+        <button onClick={onBack} type="button">Zurück zum Shop</button>
         <h2>Kasse & Sparoptionen</h2>
-        <p>Vergleiche deinen Warenkorb als Ein-Laden-Einkauf oder als guenstigste Route ueber mehrere Maerkte.</p>
+        <p>Vergleiche deinen Warenkorb als Ein-Laden-Einkauf oder als günstigste Route über mehrere Märkte.</p>
       </div>
 
       <div className="checkout-page-grid">
@@ -682,7 +729,7 @@ function CheckoutPage({
                     <Minus size={15} />
                   </button>
                   <span>{line.quantity}</span>
-                  <button onClick={() => onQuantity(line.product.id, 1)} type="button" aria-label="Menge erhoehen">
+                  <button onClick={() => onQuantity(line.product.id, 1)} type="button" aria-label="Menge erhöhen">
                     <Plus size={15} />
                   </button>
                   <button onClick={() => onRemove(line.product.id)} type="button" aria-label="Artikel entfernen">
@@ -691,7 +738,7 @@ function CheckoutPage({
                 </div>
               </div>
             )) : (
-              <div className="cart-empty">Fuege Produkte hinzu, um den guenstigsten Einkauf zu berechnen.</div>
+              <div className="cart-empty">Füge Produkte hinzu, um den günstigsten Einkauf zu berechnen.</div>
             )}
           </div>
         </article>
@@ -710,8 +757,8 @@ function CheckoutPage({
                 </div>
                 <span>
                   {bestSingleStore.missingCount
-                    ? `${bestSingleStore.availableCount} von ${cartLines.length} Artikeln verfuegbar`
-                    : "Alle Artikel in einem Laden am guenstigsten"}
+                    ? `${bestSingleStore.availableCount} von ${cartLines.length} Artikeln verfügbar`
+                    : "Alle Artikel in einem Laden am günstigsten"}
                 </span>
                 <div className="split-list">
                   {bestSingleStore.rows.map((row) => (
@@ -733,7 +780,7 @@ function CheckoutPage({
               <strong>Maximal sparen</strong>
             </div>
             <div className="savings-total">
-              <span>{splitPlan.retailerCount} Laeden</span>
+              <span>{splitPlan.retailerCount} Läden</span>
               <strong>{currency.format(splitPlan.total)}</strong>
             </div>
             <div className="split-list">
@@ -781,8 +828,27 @@ function retailerBrand(name: string) {
   if (normalized.includes("rewe")) return { label: "REWE", className: "rewe" };
   if (normalized.includes("edeka")) return { label: "EDEKA", className: "edeka" };
   if (normalized.includes("kaufland")) return { label: "Kaufland", className: "kaufland" };
-  if (normalized.includes("aldi")) return { label: "ALDI SUD", className: "aldi" };
+  if (normalized.includes("aldi")) return { label: "ALDI SÜD", className: "aldi" };
   return { label: name, className: "generic" };
+}
+
+function productTypeLabel(product: GroceryProduct) {
+  return product.productType || product.category || "Produkte";
+}
+
+function findCategory(categoryId?: string) {
+  if (!categoryId) return undefined;
+  return categories.find((category) => category.id === categoryId || normalizeFilterKey(category.id) === normalizeFilterKey(categoryId));
+}
+
+function normalizeFilterKey(value: string) {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ß/g, "ss")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
 }
 
 function getDisplayPrices(product: GroceryProduct, stores: StoreInfo[]): PriceWithStore[] {
@@ -902,8 +968,8 @@ function normalizeRetailer(value: string) {
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/Ã¼/g, "u")
-    .replace(/ÃŸ/g, "ss")
+    .replace(/\u00c3\u00bc/g, "u")
+    .replace(/\u00c3\u0178/g, "ss")
     .replace(/[^a-z0-9 ]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
