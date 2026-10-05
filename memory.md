@@ -82,6 +82,25 @@
 
 ## Offene Punkte
 
+### 2026-10-04: Quellen-Agents
+- Pro Datenquelle ein eigener Agent: OSM-Filialen und Open Food Facts wöchentlich,
+  Open Prices weiterhin täglich (`price_update_job.py`).
+- Nutzer wollte kaufDA-Preise veröffentlichen und die Quelle in der App nur als
+  "Prospekt"/"Scan" ausweisen. Abgelehnt: verschleiert die Herkunft und
+  widerspricht der Regel "Preisquelle immer sichtbar". Offen: Prospekte direkt beim
+  Händler (mit ehrlicher Quelle) oder Lizenz-Feed von Bonial/marktguru.
+- Schema-Zusatz (Migration `weekly_source_agents`) am 04.10. in Supabase eingespielt:
+  `stores`-Spalten, 11 neue Ketten, `off_products`, `retailer_offers`.
+- `retailer_offers_agent.py`: Adapter je Händler, prüft robots.txt, stoppt bei
+  401/403/429, speichert keine Bilder, Quelle ehrlich z. B. "REWE Angebote (rewe.de), 5.–11. Oktober" (kein "KW" in der App, App ist für Privatleute).
+  Stand 04.10.: Rewe erlaubt die Angebotsseiten per robots.txt, blockt aber Python-
+  Clients per Fingerprint (403, curl bekommt 200) -> nicht umgehen. Netto und Kaufland
+  403, Norma robots `Disallow: /`, Penny/Aldi laden Angebote per JavaScript-API,
+  Lidl-Prospekt nur als Bilder. Agent ist deshalb NICHT im Workflow eingeplant.
+  Realistische Wege: Lizenz-Feed (Bonial/marktguru/Händler) oder Nutzer-Scans
+  (Kassenbon/Prospektfoto) in die Tabelle `retailer_offers`.
+- Öffentliche View/Policy filtern weiter auf `region = 'Baden-Württemberg'`.
+
 - Open-Prices-Produktcode-Import erneut testen, sobald der Live-Endpunkt nicht
   mehr HTTP 500 liefert oder konkrete Barcodes für MVP-Produkte hinterlegt
   werden.

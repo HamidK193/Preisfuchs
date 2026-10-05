@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- Wöchentliche Daten-Agents (`.github/workflows/weekly-data-agents.yml`, montags
+  02:00 UTC), ein Job pro Quelle: `osm_stores_agent.py` lädt Filialen von 16
+  Ketten in allen 16 Bundesländern mit Adresse, Koordinaten und Öffnungszeiten
+  (ODbL); `off_products_agent.py` lädt Name, Marke, Menge, Nährwerte, Labels und
+  Frontbild je GTIN aus Open Food Facts (Bilder bleiben bis zur Prüfung
+  `image_reviewed = false`). Schema um `stores.opening_hours/is_active/last_seen_at`,
+  neue Ketten und `off_products` erweitert. Open Prices bleibt täglich.
+  kaufDA bleibt gesperrt. Probelauf: Bremen 188 Filialen, 6/6 GTINs.
+  Migration in Supabase eingespielt. Erster Volllauf: 26.300 Filialen in allen
+  16 Bundesländern (davon ca. 94 % mit Öffnungszeiten), 6 Produkte aus Open Food Facts.
+  Neue Tabelle `retailer_offers` und Agent
+  `retailer_offers_agent.py` (Rewe-Adapter, robots.txt-Prüfung, ehrliche Quelle);
+  noch nicht geplant, weil Händlerseiten automatische Abrufe derzeit blocken.
 - Web/PWA von einer Preisübersicht zu einer Shopping-Oberfläche mit
   Angebots-Hero, Händler-Leiste, Angebotskarten, Produktkarten und sichtbarem
   Warenkorb umgebaut.
