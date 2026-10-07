@@ -35,6 +35,8 @@ OPEN_PRICES_URL = os.getenv("OPEN_PRICES_BASE_URL", "https://prices.openfoodfact
 FIRST_RUN_DAYS = int(os.getenv("OPEN_PRICES_FIRST_RUN_DAYS", "60"))
 PAGE_LIMIT = int(os.getenv("OPEN_PRICES_PAGE_LIMIT", "400"))
 KAUFDA_CHECK_DAYS = 14
+OBSERVATION_ONLY_REASONS = {"too_old", "kaufda_price_mismatch"}
+MAX_AGE_DAYS = 90  # Older observations stay internal; the app marks >30 days as possibly outdated.
 
 # Ordered most specific first; matched against OFF category tags (specific tags come last).
 CATEGORY_RULES = [
@@ -101,7 +103,10 @@ def build_records(item: dict[str, Any], stores: dict[str, dict], checker: Kaufda
     location = item.get("location") or {}
     product = item.get("product") or {}
     gtin = item.get("product_code") or ""
+    # Only real shops: relations are regions such as a federal state, not a place to buy.
     if (location.get("osm_address_country_code") != "DE" or item.get("type") != "PRODUCT"
+            or (item.get("location_osm_type") or "").upper() not in {"NODE", "WAY"}
+            or location.get("osm_tag_key") not in {None, "shop"}
             or item.get("currency") != "EUR" or item.get("duplicate_of") or item.get("price_per")
             or not is_valid_gtin(gtin) or not item.get("price") or float(item["price"]) <= 0):
         return None
@@ -131,6 +136,9 @@ def build_records(item: dict[str, Any], stores: dict[str, dict], checker: Kaufda
     retailer_name = RETAILERS[retailer_id][0] if retailer_id else (location.get("osm_brand") or location.get("osm_name") or "Markt")
     observed = date.fromisoformat(item["date"])
 
+    if (today - observed).days > MAX_AGE_DAYS:
+        reasons.append("too_old")
+
     check = None
     if not reasons and checker and (today - observed).days <= KAUFDA_CHECK_DAYS:
         check = checker.check(retailer_id, display_name, category, float(price))
@@ -140,6 +148,8 @@ def build_records(item: dict[str, Any], stores: dict[str, dict], checker: Kaufda
     product_id = f"gtin_{gtin}"
     article_id = stable_id("open-prices-gtin", gtin)
     verified = not reasons
+    # Age and the kaufDA check concern this observation only, not the product itself.
+    article_reasons = [r for r in reasons if r not in OBSERVATION_ONLY_REASONS]
     discounted = bool(item.get("price_is_discounted"))
     regular = item.get("price_without_discount")
     city = location.get("osm_address_city")
@@ -151,7 +161,8 @@ def build_records(item: dict[str, Any], stores: dict[str, dict], checker: Kaufda
             "id": article_id, "product_id": product_id, "product_type": "gtin", "source": SOURCE,
             "source_product_ref": gtin, "gtin": gtin, "name": display_name[:240] or gtin, "brand_name": brand,
             "brand_type": "unknown", "package": package, "comparison_key": f"gtin:{gtin}",
-            "review_status": "verified" if verified else "needs_review", "review_reasons": reasons,
+            "review_status": "needs_review" if article_reasons else "verified",
+            "review_reasons": article_reasons,
             "evidence_url": f"https://world.openfoodfacts.org/product/{gtin}",
             "automatic_values": {"verified_by": "open_prices_de_agent", "category": category},
         },

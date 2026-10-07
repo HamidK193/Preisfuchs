@@ -40,6 +40,15 @@ jobs:
           OPEN_PRICES_BASE_URL: https://prices.openfoodfacts.org
         run: python backend/jobs/price_update_job.py
 
+      # All new German observations from Open Prices, auto-verified, kaufDA only as internal last check.
+      - name: Run Open Prices DE agent
+        if: always()
+        working-directory: backend/jobs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python open_prices_de_agent.py
+
       - name: Write import summary
         if: always()
         shell: python

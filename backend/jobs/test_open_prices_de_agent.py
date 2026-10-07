@@ -71,6 +71,7 @@ class BuildRecordsTests(unittest.TestCase):
     def test_kaufda_mismatch_keeps_price_internal(self) -> None:
         records = build_records(item(), {}, FakeChecker("mismatch"), TODAY)
         self.assertFalse(records["observation"]["is_public"])
+        self.assertEqual(records["article"]["review_status"], "verified")
         self.assertIn("kaufda_price_mismatch", records["observation"]["review_reasons"])
 
     def test_matches_known_store(self) -> None:
@@ -83,6 +84,12 @@ class BuildRecordsTests(unittest.TestCase):
         self.assertIsNone(build_records(item(price_per="KILOGRAM"), {}, None, TODAY))
         self.assertIsNone(build_records(item(product_code="123"), {}, None, TODAY))
         self.assertIsNone(build_records(item(duplicate_of=5), {}, None, TODAY))
+        self.assertIsNone(build_records(item(location_osm_type="RELATION"), {}, None, TODAY))
+
+    def test_old_observation_stays_internal(self) -> None:
+        records = build_records(item(date="2026-06-01"), {}, None, TODAY)
+        self.assertIn("too_old", records["observation"]["review_reasons"])
+        self.assertFalse(records["observation"]["is_public"])
 
     def test_unknown_quantity_needs_review(self) -> None:
         records = build_records(item(product={"source": "off", "product_name": "Joghurt"}), {}, None, TODAY)

@@ -132,6 +132,18 @@
 
 ## Offene Punkte
 
+### 2026-10-07: Echte Preise und Preismeldungen
+- Nutzerentscheidungen: automatische Prüfung für Open Prices; jede GTIN ein eigenes
+  Produkt; Preismeldungen ohne Konto mit Bestätigung; kaufDA NUR interner letzter
+  Check (nichts von kaufDA in der App).
+- Open Prices API ignoriert alle Länder-/ID-Filter -> Agent pagt `order_by=-id` bis
+  zum Cursor aus `update_runs` (source "Open Prices DE").
+- `catalog_identity.parse_package` speichert Mengen als "5E+2" (Decimal.normalize).
+  Funktioniert (JS Number/Python Decimal), aber Vergleichsschlüssel hängen daran;
+  nicht ohne Migration der Schlüssel ändern.
+- Offen: Bild-Pipeline (KI-Aufbereitung) wartet auf Freigabe einer kostenpflichtigen
+  KI-API; AGENTS.md schließt Bezahl-APIs im MVP aus.
+
 ### 2026-10-04: Quellen-Agents
 - Pro Datenquelle ein eigener Agent: OSM-Filialen und Open Food Facts wöchentlich,
   Open Prices weiterhin täglich (`price_update_job.py`).

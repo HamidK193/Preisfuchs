@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- Echte Preise für ganz Deutschland: `open_prices_de_agent.py` holt täglich alle
+  neuen deutschen Open-Prices-Beobachtungen (kein Serverfilter vorhanden, daher
+  Cursor über alle Preise). Jede GTIN wird ein eigenes Produkt (`gtin_<EAN>`,
+  Kategorie aus Open Food Facts). Automatische Prüfung: Produkt in Open Food Facts,
+  Menge eindeutig, plausibler Grundpreis, nur echte Geschäfte, höchstens 90 Tage alt.
+  kaufDA dient nur als interner letzter Check (starke Abweichung -> intern zur
+  Prüfung), nie als angezeigter Preis. Erster Lauf (60 Tage): 1.439 importiert,
+  1.109 öffentlich zu 1.059 Artikeln, 13 Bundesländer (vorher 4 Preise).
+- Preismeldungen ohne Konto: Tabelle `price_reports`, privater Bucket
+  `price-report-photos`, Edge Function `report-price` (Validierung, Rate-Limit
+  3/Minute und 20/Tag je Gerät und IP, nur gesalzene Hashes). Veröffentlichung nach
+  zweiter übereinstimmender Meldung von anderem Gerät und anderer IP oder mit
+  plausiblem Belegfoto. Live getestet, Testdaten entfernt.
 - Web-App lädt Filialen im PLZ-Umkreis jetzt aus Supabase (26.300 Filialen,
   wöchentlich aus OpenStreetMap); Live-Overpass nur noch als Ausweichweg.
   Aldi Nord wird nicht mehr als Aldi Süd erkannt. 36 Webtests und Build bestanden.

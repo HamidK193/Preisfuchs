@@ -20,7 +20,9 @@ const CORS = {
 };
 
 const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-const SALT = Deno.env.get("REPORT_HASH_SALT") ?? "";
+// A secret salt keeps IP/device hashes from being reversed by brute force; the service
+// role key is always present in Edge Functions and serves as fallback.
+const SALT = Deno.env.get("REPORT_HASH_SALT") ?? Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 type Report = {
   device_id: string; gtin: string; store_id: string; price: number; is_offer?: boolean;
