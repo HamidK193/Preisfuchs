@@ -77,6 +77,9 @@ const CATEGORY_MAP: Record<string, string> = {
   Tiefkühl: 'tiefkuehl',
   Fleisch: 'fleisch',
   Drogerie: 'drogerie',
+  Baby: 'drogerie',
+  Tierbedarf: 'drogerie',
+  Sonstiges: 'vorrat',
 };
 
 // Preise aelter als 30 Tage gelten als "moeglicherweise veraltet".

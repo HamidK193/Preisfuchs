@@ -382,7 +382,7 @@ export default function ProductSheet() {
             keine garantierten Marktpreise – im Markt kann der Preis abweichen. Aktuell zeigt die App Demo-Daten.
           </AppText>
           <Pressable
-            onPress={() => Linking.openURL(`mailto:hallo@preisfuchs.app?subject=${encodeURIComponent(`Preis melden: ${product.brand} ${product.name}`)}`)}
+            onPress={() => router.push({ pathname: '/preis-melden/[id]', params: { id: product.id } })}
             hitSlop={6}>
             <AppText weight="bold" size={14} color={Colors.primary}>
               Preis melden

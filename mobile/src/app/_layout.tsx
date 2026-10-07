@@ -64,6 +64,7 @@ function AppNavigator() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false, title: 'Zurück' }} />
       <Stack.Screen name="produkt/[id]" options={sheetOptions([0.6, 1])} />
       <Stack.Screen name="preisalarm/[id]" options={sheetOptions([0.9])} />
+      <Stack.Screen name="preis-melden/[id]" options={sheetOptions([0.9])} />
       <Stack.Screen name="konto" options={sheetOptions([0.7])} />
       <Stack.Screen name="plus" options={{ presentation: 'modal', headerShown: false }} />
       <Stack.Screen name="angebote" options={{ title: 'Angebote' }} />
