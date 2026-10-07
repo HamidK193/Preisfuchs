@@ -14,6 +14,9 @@ Design duerfen keine Region fest voraussetzen.
 - Trenne iOS-App, Backend-Jobs und Datenbank-Schema klar.
 - Speichere Demo- und Seed-Daten in `data/`.
 - Pflege `README.md`, `memory.md` und `CHANGELOG.md` nach groesseren Schritten.
+- Nach jedem abgeschlossenen Arbeitsschritt committen und auf `main` pushen
+  (vorher `git pull --rebase`), damit alle Geraete und Sessions denselben Stand haben.
+  Nie `.env`, `.env.local` oder Schluessel committen.
 - Nutze kostenlose oder frei zugaengliche Datenquellen zuerst.
 - Zeige Preisquelle und Aktualisierungsdatum immer sichtbar an.
 - Behaupte keine Live-Genauigkeit, wenn Preise aus offenen oder alten Daten stammen.
