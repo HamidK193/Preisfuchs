@@ -1,18 +1,23 @@
 import { createClient } from "@supabase/supabase-js";
 import { categories, demoProducts, type GroceryProduct, type PriceObservation } from "./data";
 import { productImageOverrides } from "./productImages";
+import { verifiedImageFor } from "./articleImages";
+import { cleanProductName } from "./productCatalog";
+import { resolveOfferIdentity, type BrandType, type OfferIdentity } from "./productIdentity";
 
-type ProductRow = {
+export type ProductRow = {
   id: string;
   name: string;
   category: string;
   package_size: string;
 };
 
-type PriceObservationRow = {
+export type PriceObservationRow = {
   id: string;
   product_id: string;
   product_name: string;
+  brand_name?: string | null;
+  brand_type?: BrandType | null;
   retailer_name: string;
   price: string | number;
   unit_price: string | number | null;
@@ -21,6 +26,24 @@ type PriceObservationRow = {
   source: string;
   source_url: string | null;
   confidence: string | number;
+  offer_type?: "regular" | "sale" | "app_discount" | null;
+  requires_app?: boolean | null;
+  app_name?: string | null;
+  coupon_activation_required?: boolean | null;
+  is_personalized?: boolean | null;
+  regular_price?: string | number | null;
+  valid_from?: string | null;
+  valid_until?: string | null;
+  discount_description?: string | null;
+  article_id?: string | null;
+  article_name?: string | null;
+  comparison_key?: string | null;
+  article_review_status?: "verified" | "needs_review";
+  product_type?: string;
+  package?: GroceryProduct["package"] | null;
+  location_label?: string | null;
+  location_source_ref?: string | null;
+  region?: string | null;
 };
 
 export type ProductLoadResult = {
@@ -31,9 +54,26 @@ export type ProductLoadResult = {
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
-const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
+const enableLiveProductImageSearch = import.meta.env.VITE_ENABLE_OFF_IMAGE_SEARCH === "true";
+const LIVE_PRODUCT_IMAGE_SEARCH_BUDGET = 4;
+export const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
+const publicPriceColumns = [
+  "id", "product_id", "retailer_id", "store_id", "product_name", "brand_name", "brand_type", "retailer_name",
+  "price", "currency", "unit_price", "unit", "observed_at", "valid_from", "valid_until",
+  "offer_type", "requires_app", "app_name", "coupon_activation_required", "is_personalized",
+  "regular_price", "discount_description", "source", "source_url", "source_license", "confidence", "created_at",
+  "article_id", "article_name", "comparison_key", "article_review_status", "product_type", "package", "location_label", "location_source_ref", "region"
+].join(",");
 
 export async function loadProducts(): Promise<ProductLoadResult> {
+  if (new URLSearchParams(window.location.search).get("demo") === "app-rabatte") {
+    return {
+      products: await enrichProductImages(demoProducts),
+      source: "demo",
+      message: "Demo-Modus mit klar gekennzeichneten App-Rabatt-Beispielen."
+    };
+  }
+
   if (!supabase) {
     return {
       products: await enrichProductImages(demoProducts),
@@ -55,113 +95,181 @@ export async function loadProducts(): Promise<ProductLoadResult> {
     };
   }
 
-  const { data: priceRows, error: priceError } = await supabase
-    .from("price_observations")
-    .select("id,product_id,product_name,retailer_name,price,unit_price,unit,observed_at,source,source_url,confidence")
-    .order("observed_at", { ascending: false })
-    .limit(5000);
+  const { data: priceRows, error: priceError } = await loadPriceRows();
 
   const products = await enrichProductImages(mapProducts(productRows, priceError ? [] : priceRows ?? []));
 
   return {
     products,
     source: "supabase",
-    message: priceRows?.length
+    message: priceError ? "Preisbeobachtungen konnten nicht geladen werden. Bitte später erneut versuchen." : priceRows?.length
       ? "Produkte und Preisbeobachtungen aus Supabase geladen."
       : "Produkte aus Supabase geladen. Noch keine echten Preisbeobachtungen gefunden."
   };
 }
 
-function mapProducts(productRows: ProductRow[], priceRows: PriceObservationRow[]): GroceryProduct[] {
-  return productRows.flatMap((product) => {
-    const matchingRows = priceRows.filter((price) => price.product_id === product.id);
+async function loadPriceRows() {
+  if (!supabase) return { data: [] as PriceObservationRow[], error: undefined };
+
+  return loadPricePages("current_price_observations", publicPriceColumns);
+}
+
+async function loadPricePages(relation: string, columns: string) {
+  if (!supabase) return { data: [] as PriceObservationRow[], error: undefined };
+
+  const pageSize = 1_000;
+  const rows: PriceObservationRow[] = [];
+  for (let from = 0; ; from += pageSize) {
+    const { data, error } = await supabase
+      .from(relation)
+      .select(columns)
+      .order("observed_at", { ascending: false })
+      .order("id")
+      .range(from, from + pageSize - 1);
+
+    if (error) return { data: rows, error };
+    const page = (data ?? []) as unknown as PriceObservationRow[];
+    rows.push(...page);
+    if (page.length < pageSize) return { data: rows, error: undefined };
+  }
+}
+
+export function mapProducts(productRows: ProductRow[], priceRows: PriceObservationRow[]): GroceryProduct[] {
+  const pricesByProduct = priceRows.reduce((groups, price) => {
+    const rows = groups.get(price.product_id) ?? [];
+    rows.push(price);
+    groups.set(price.product_id, rows);
+    return groups;
+  }, new Map<string, PriceObservationRow[]>());
+
+  const mapped = productRows.flatMap((product) => {
+    const matchingRows = pricesByProduct.get(product.id) ?? [];
     if (!matchingRows.length) {
       return [mapBaseProduct(product, [])];
     }
 
     const variantGroups = groupOfferVariants(product, matchingRows);
-    return variantGroups.map(([variantKey, rows], index) => {
-      const firstRow = rows[0];
-      const displayName = cleanOfferProductName(firstRow.product_name, product.name);
-      const packageSize = detectPackageSize(firstRow.product_name) ?? product.package_size;
-      const brand = inferBrand(displayName);
-      const isBaseProductName = normalizeProductKey(displayName) === normalizeProductKey(product.name);
+    const baseGroup = variantGroups.find((group) => group.identity.isBaseProduct);
+    const baseProduct = mapBaseProduct(product, (baseGroup?.rows ?? []).map(mapPriceObservation));
+    const variants = variantGroups.filter((group) => !group.identity.isBaseProduct).map(({ key, rows, identity }) => {
+      const displayName = identity.displayName;
+      const packageSize = identity.packageSize;
       const classification = classifyOfferVariant(displayName, product);
-      const imageSeedId = isBaseProductName ? product.id : classification.imageSeedId;
+      const imageSeedId = identity.isGeneric ? product.id : classification.imageSeedId;
 
       return {
         ...mapBaseProduct(product, rows.map(mapPriceObservation)),
-        id: index === 0 ? product.id : `${product.id}__${shortHash(variantKey)}`,
+        id: rows[0].article_id ? key : buildVariantProductId(product.id, key, false),
+        articleId: rows[0].article_id ?? undefined,
+        comparisonKey: rows[0].comparison_key ?? undefined,
+        package: rows[0].package ?? undefined,
         sourceProductId: product.id,
         name: displayName,
-        brand,
+        brand: identity.isGeneric ? undefined : identity.brand,
+        reviewRequired: identity.reviewRequired,
         productType: classification.productType,
         category: classification.category,
         packageSize,
         symbolName: symbolForCategory(classification.category),
-        imageUrl: imageForProduct(imageSeedId, classification.category, displayName, isBaseProductName),
+        imageUrl: imageForProduct(imageSeedId, classification.category, displayName, identity.isGeneric),
         accentColor: accentForCategory(classification.category)
       };
     });
+    return [baseProduct, ...variants];
   });
+  // The same verified manufacturer article has one global ID even when old
+  // source slots differ. Its price observations retain their individual stores.
+  const global = new Map<string, GroceryProduct>();
+  for (const product of mapped) {
+    const existing = global.get(product.id);
+    if (existing) existing.prices.push(...product.prices.filter(price => !existing.prices.some(item => item.id === price.id)));
+    else global.set(product.id, product);
+  }
+  return [...global.values()];
 }
 
 function mapBaseProduct(product: ProductRow, prices: PriceObservation[]): GroceryProduct {
+  const displayName = cleanProductName(product.name);
   return {
     id: product.id,
     sourceProductId: product.id,
-    name: product.name,
-    brand: inferBrand(product.name),
-    productType: productTypeForProduct(product.id, product.category, product.name),
+    name: displayName,
+    productType: productTypeForProduct(product.id, product.category, displayName),
     category: product.category,
     packageSize: product.package_size,
     symbolName: symbolForCategory(product.category),
-    imageUrl: imageForProduct(product.id, product.category, product.name, true),
+    imageUrl: imageForProduct(product.id, product.category, displayName, true),
     accentColor: accentForCategory(product.category),
     prices
   };
 }
 
 function mapPriceObservation(row: PriceObservationRow): PriceObservation {
+  const requiresApp = row.requires_app ?? row.offer_type === "app_discount";
   return {
     id: row.id,
     retailer: row.retailer_name,
-    storeLocation: "Baden-Württemberg",
-    productName: row.product_name,
+    storeLocation: row.location_label ?? row.region ?? "Standort nicht belegt",
+    locationSourceRef: row.location_source_ref ? `${row.source}:${row.location_source_ref}` : undefined,
+    articleId: row.article_id ?? undefined,
+    productName: row.product_name ? cleanProductName(row.product_name) : undefined,
+    brandName: row.brand_name ?? undefined,
+    brandType: row.brand_type ?? undefined,
     price: Number(row.price),
     unitPrice: row.unit_price === null ? undefined : Number(row.unit_price),
     unit: row.unit ?? undefined,
     observedAt: row.observed_at,
     source: row.source,
     sourceDetail: row.source_url ?? row.source,
-    confidence: Number(row.confidence)
+    confidence: Number(row.confidence),
+    offerType: row.offer_type ?? (requiresApp ? "app_discount" : "regular"),
+    requiresApp,
+    appName: row.app_name ?? undefined,
+    couponActivationRequired: row.coupon_activation_required ?? undefined,
+    personalized: row.is_personalized ?? undefined,
+    regularPrice: row.regular_price === null || row.regular_price === undefined ? undefined : Number(row.regular_price),
+    validFrom: row.valid_from ?? undefined,
+    validUntil: row.valid_until ?? undefined,
+    discountDescription: row.discount_description ?? undefined
   };
 }
 
+type OfferVariantGroup = {
+  key: string;
+  identity: OfferIdentity;
+  rows: PriceObservationRow[];
+};
+
 function groupOfferVariants(product: ProductRow, rows: PriceObservationRow[]) {
-  const groups = new Map<string, PriceObservationRow[]>();
+  const groups = new Map<string, OfferVariantGroup>();
   rows.forEach((row) => {
-    const name = cleanOfferProductName(row.product_name, product.name);
-    const packageSize = detectPackageSize(row.product_name) ?? product.package_size;
-    const key = normalizeProductKey(`${product.id} ${name} ${packageSize}`);
-    const existing = groups.get(key) ?? [];
-    existing.push(row);
-    groups.set(key, existing);
+    const observedName = cleanProductName(row.article_name ?? row.product_name, product.name);
+    const identity = resolveOfferIdentity({
+      baseProductId: product.id,
+      baseName: cleanProductName(product.name),
+      basePackageSize: product.package_size,
+      observedName,
+      observedPackageSize: row.package?.original ?? detectPackageSize(row.product_name),
+      explicitBrandName: row.brand_name,
+      explicitBrandType: row.brand_type,
+      observationId: row.id,
+      articleId: row.article_id,
+      comparisonKey: row.comparison_key,
+      articleVerified: row.article_review_status === "verified"
+    });
+    const existing = groups.get(identity.key);
+    if (existing) existing.rows.push(row);
+    else groups.set(identity.key, { key: identity.key, identity, rows: [row] });
   });
 
-  return Array.from(groups.entries()).sort((left, right) => {
-    const leftBest = Math.min(...left[1].map((row) => Number(row.price)));
-    const rightBest = Math.min(...right[1].map((row) => Number(row.price)));
+  return Array.from(groups.values()).sort((left, right) => {
+    if (left.identity.isBaseProduct !== right.identity.isBaseProduct) {
+      return left.identity.isBaseProduct ? -1 : 1;
+    }
+    const leftBest = Math.min(...left.rows.map((row) => Number(row.price)));
+    const rightBest = Math.min(...right.rows.map((row) => Number(row.price)));
     return leftBest - rightBest;
   });
-}
-
-function cleanOfferProductName(rawName: string | null | undefined, fallback: string) {
-  const cleaned = (rawName ?? fallback)
-    .replace(/\s+/g, " ")
-    .replace(/\b(mehr angebote|uvp)\b/gi, "")
-    .trim();
-  return cleaned || fallback;
 }
 
 type OfferClassification = {
@@ -185,8 +293,8 @@ function classifyOfferVariant(name: string, product: ProductRow): OfferClassific
     { category: "Getränke", productType: "Cola", imageSeedId: "cola_125l", patterns: ["cola", "pepsi", "fanta", "sprite"] },
     { category: "Baby", productType: "Babybrei", imageSeedId: "baby_food_190", patterns: ["hipp", "baby", "babykeks", "fruchtbrei", "fruchtpuree", "fruchtpüree", "gläschen", "glaeschen", "wiffkids", "quetschie"] },
     { category: "Fleisch", productType: "Wurst", imageSeedId: "sausages_400", patterns: ["rugenwalder", "rügenwalder", "wurst", "gutsleberwurst", "leberwurst", "salami", "schinken", "mortadella", "aufschnitt"] },
-    { category: "Süßigkeiten", productType: "Fruchtgummi", imageSeedId: "gummy_bears_200", patterns: ["trolli", "haribo", "katjes", "fruchtgummi", "gummibarchen", "gummibärchen", "apfel garten"] },
-    { category: "Süßigkeiten", productType: "Schokolade", imageSeedId: "chocolate_100", patterns: ["milka", "schokolade", "choco", "after eight", "crossies"] },
+    { category: "Süßigkeiten", productType: "Fruchtgummi", imageSeedId: "gummy_bears_200", patterns: ["trolli", "haribo", "katjes", "fruchtgummi", "gummibarchen", "gummibärchen", "apfel garten", "süßigkeiten"] },
+    { category: "Süßigkeiten", productType: "Schokolade", imageSeedId: "chocolate_100", patterns: ["milka", "schokolade", "milchschokolade", "schoko", "choco", "after eight", "crossies", "kinder joy"] },
     { category: "Süßigkeiten", productType: "Chips", imageSeedId: "chips_175", patterns: ["chips", "pringles", "nacho", "tortilla", "lays", "lay s"] },
     { category: "Süßigkeiten", productType: "Kekse & Gebäck", imageSeedId: "cookies_200", patterns: ["keks", "kekse", "cookie", "cookies", "leibniz"] },
     { category: "Süßigkeiten", productType: "Nüsse", imageSeedId: "nuts_200", patterns: ["nuss", "nüsse", "nusse", "studentenfutter", "mandel", "cashew", "pistazien"] },
@@ -210,54 +318,13 @@ function classifyOfferVariant(name: string, product: ProductRow): OfferClassific
     { category: "Gemüse", productType: "Kartoffeln", imageSeedId: "potatoes_25kg", patterns: ["kartoffel", "kartoffeln"] }
   ];
 
-  const matchedRule = rules.find((rule) => rule.patterns.some((pattern) => key.includes(normalizeProductKey(pattern))));
+  const matchedRule = rules.find((rule) => rule.patterns.some((pattern) => ` ${key} `.includes(` ${normalizeProductKey(pattern)} `)));
   return matchedRule ?? baseClassification;
 }
 
 function detectPackageSize(value: string | null | undefined) {
-  const match = value?.match(/\b\d+(?:[,.]\d+)?\s?(?:kg|g|l|ml|Liter|Rollen|Stück|WL|Beutel|Packung)\b/i);
+  const match = value?.match(/\b(?:\d+\s*[x×]\s*)?\d+(?:[,.]\d+)?\s?(?:kg|g|ml|l|Liter|Rollen|Stück|WL|Beutel|Packung)\b/i);
   return match?.[0]?.replace(/\s+/, " ");
-}
-
-function inferBrand(name: string) {
-  const knownBrands = [
-    "Milka",
-    "funny-frisch",
-    "Haribo",
-    "Katjes",
-    "Leibniz",
-    "Kerrygold",
-    "Meggle",
-    "Barilla",
-    "Milbona",
-    "K-CLASSIC",
-    "K-Bio",
-    "Gut & Günstig",
-    "REWE Regional",
-    "Snack Day",
-    "Solevita",
-    "Innocent",
-    "Rio D'Oro",
-    "Valensina",
-    "Trolli",
-    "Pringles",
-    "Lay's",
-    "Rügenwalder Mühle",
-    "WIFFKIDS",
-    "Chiquita",
-    "Dr. Oetker",
-    "Iglo",
-    "Coca-Cola",
-    "Volvic",
-    "Persil",
-    "Fairy",
-    "Pampers",
-    "HiPP",
-    "Sheba",
-    "Pedigree"
-  ];
-  const normalizedName = normalizeProductKey(name);
-  return knownBrands.find((brand) => normalizedName.includes(normalizeProductKey(brand)));
 }
 
 function productTypeForProduct(id: string, category: string, name: string) {
@@ -366,6 +433,10 @@ function shortHash(value: string) {
   return hash.toString(36);
 }
 
+export function buildVariantProductId(productId: string, variantKey: string, isBaseProductName: boolean) {
+  return isBaseProductName ? productId : `${productId}__${shortHash(variantKey)}`;
+}
+
 function symbolForCategory(category: string) {
   switch (normalizeProductKey(category)) {
     case "molkerei":
@@ -389,9 +460,18 @@ function accentForCategory(category: string) {
 async function enrichProductImages(products: GroceryProduct[]) {
   const cache = readProductImageCache();
   const nextCache = { ...cache };
+  let remainingLiveSearches = LIVE_PRODUCT_IMAGE_SEARCH_BUDGET;
 
   const enriched = await Promise.all(
     products.map(async (product) => {
+      if (product.articleId) {
+        const verifiedImage = verifiedImageFor(product);
+        if (verifiedImage) return { ...product, imageUrl: verifiedImage.local_url,
+          imageKind: "verified_packshot" as const, imageCredit: verifiedImage };
+        // A catalog match does not verify a picture. Use a marked illustration
+        // until a reviewed image is attached to this exact article and package.
+        return { ...product, imageUrl: categories.find(category => category.id === product.category)?.imageUrl, imageKind: "symbol" as const };
+      }
       const fallbackImage = fallbackImageForProduct(product.id, product.category, product.name, product.productType);
       const cacheKey = `${product.id}|${product.name}|${product.packageSize}`;
       const exactImageUrl = directProductImageFor(product);
@@ -411,6 +491,12 @@ async function enrichProductImages(products: GroceryProduct[]) {
       if (!shouldFetchOpenFoodFactsImage(product)) {
         return { ...product, imageUrl: product.imageUrl ?? fallbackImage };
       }
+
+      if (!enableLiveProductImageSearch || remainingLiveSearches <= 0) {
+        return { ...product, imageUrl: fallbackImage };
+      }
+
+      remainingLiveSearches -= 1;
 
       const imageUrl = await fetchOpenFoodFactsImage(product);
       if (!imageUrl) return { ...product, imageUrl: product.imageUrl ?? fallbackImage };
@@ -448,10 +534,6 @@ function directProductImageFor(product: GroceryProduct) {
       imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Milka_Alpine_Milk_Chocolate_bar_100g.jpg/960px-Milka_Alpine_Milk_Chocolate_bar_100g.jpg"
     },
     {
-      patterns: ["barilla spaghetti n 5", "barilla spaghetti"],
-      imageUrl: productImageOverrides.pasta_500
-    },
-    {
       patterns: ["milbona h milch", "milbona h milch 1 5"],
       imageUrl: productImageOverrides.milk_15
     },
@@ -461,7 +543,7 @@ function directProductImageFor(product: GroceryProduct) {
     },
     {
       patterns: ["kolln blutenzarte", "kolln haferflocken", "koln blutenzarte"],
-      imageUrl: productImageOverrides.oats_500
+      imageUrl: "https://images.openfoodfacts.org/images/products/400/054/000/0108/front_de.273.400.jpg"
     },
     {
       patterns: ["hipp bio fruchtbrei apfel banane babykeks", "hipp fruchtbrei apfel banane", "hipp apfel banane babykeks"],

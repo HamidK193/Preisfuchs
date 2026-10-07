@@ -6,7 +6,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    strictPort: false
+    strictPort: false,
+    fs: {
+      allow: [".."]
+    }
   },
   preview: {
     allowedHosts: true

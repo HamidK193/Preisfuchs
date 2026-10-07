@@ -2,7 +2,11 @@ export type PriceObservation = {
   id: string;
   retailer: string;
   storeLocation: string;
+  locationSourceRef?: string;
+  articleId?: string;
   productName?: string;
+  brandName?: string;
+  brandType?: "manufacturer" | "private_label" | "unbranded" | "unknown";
   price: number;
   unitPrice?: number;
   unit?: string;
@@ -10,6 +14,15 @@ export type PriceObservation = {
   source: string;
   sourceDetail: string;
   confidence: number;
+  offerType?: "regular" | "sale" | "app_discount";
+  requiresApp?: boolean;
+  appName?: string;
+  couponActivationRequired?: boolean;
+  personalized?: boolean;
+  regularPrice?: number;
+  validFrom?: string;
+  validUntil?: string;
+  discountDescription?: string;
 };
 
 export type GroceryProduct = {
@@ -17,11 +30,17 @@ export type GroceryProduct = {
   sourceProductId?: string;
   name: string;
   brand?: string;
+  reviewRequired?: boolean;
+  articleId?: string;
+  comparisonKey?: string;
+  package?: { amount: string; unit: string; count: number; total: string; original: string };
   productType?: string;
   category: string;
   packageSize: string;
   symbolName: string;
   imageUrl?: string;
+  imageKind?: "symbol" | "verified_packshot";
+  imageCredit?: { attribution: string; source_page: string; license: string; license_url: string };
   accentColor?: string;
   prices: PriceObservation[];
 };
@@ -65,8 +84,14 @@ export const categories: ProductCategory[] = [
     accentColor: "#c98a43"
   },
   {
+    id: "Backwaren",
+    label: "Brot & Backwaren",
+    imageUrl: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=480&q=80",
+    accentColor: "#b8793d"
+  },
+  {
     id: "Trockenware",
-    label: "Vorrat",
+    label: "Vorrat & Frühstück",
     imageUrl: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=480&q=80",
     accentColor: "#d7a44a"
   },
@@ -78,7 +103,7 @@ export const categories: ProductCategory[] = [
   },
   {
     id: "Süßigkeiten",
-    label: "Süßigkeiten",
+    label: "Süßes & Snacks",
     imageUrl: "https://images.unsplash.com/photo-1582058091505-f87a2e55a40f?auto=format&fit=crop&w=480&q=80",
     accentColor: "#d96b9c"
   },
@@ -114,7 +139,7 @@ export const categories: ProductCategory[] = [
   }
 ];
 
-export const demoProducts: GroceryProduct[] = [
+const pricedDemoProducts: GroceryProduct[] = [
   {
     id: "milk_15",
     name: "Milch 1,5%",
@@ -125,6 +150,12 @@ export const demoProducts: GroceryProduct[] = [
     accentColor: "#6aa7d8",
     prices: [
       demoPrice("milk_aldi_demo", "Aldi Süd", 0.99, 0.99, "l", 0),
+      demoPrice("milk_lidl_app_demo", "Lidl", 0.89, 0.89, "l", 0, {
+        appName: "Lidl Plus",
+        regularPrice: 1.05,
+        discountDescription: "App-Coupon vor dem Einkauf aktivieren",
+        couponActivationRequired: true
+      }),
       demoPrice("milk_lidl_demo", "Lidl", 1.05, 1.05, "l", 1),
       demoPrice("milk_rewe_demo", "Rewe", 1.19, 1.19, "l", 2)
     ]
@@ -167,6 +198,12 @@ export const demoProducts: GroceryProduct[] = [
     accentColor: "#f4b83f",
     prices: [
       demoPrice("bananas_lidl_demo", "Lidl", 1.39, 1.39, "kg", 1),
+      demoPrice("bananas_edeka_app_demo", "Edeka", 1.29, 1.29, "kg", 0, {
+        appName: "EDEKA App",
+        regularPrice: 1.49,
+        discountDescription: "Nur im teilnehmenden Lieblingsmarkt",
+        personalized: true
+      }),
       demoPrice("bananas_edeka_demo", "Edeka", 1.49, 1.49, "kg", 0),
       demoPrice("bananas_rewe_demo", "Rewe", 1.69, 1.69, "kg", 3)
     ]
@@ -201,13 +238,61 @@ export const demoProducts: GroceryProduct[] = [
   }
 ];
 
+type ProductSeed = {
+  id: string;
+  name: string;
+  category: string;
+  package_size: string;
+};
+
+const pricedDemoProductsById = new Map(pricedDemoProducts.map((product) => [product.id, product]));
+
+export const demoProducts: GroceryProduct[] = (seedProducts as ProductSeed[]).map((seed) => {
+  const pricedDemo = pricedDemoProductsById.get(seed.id);
+  const category = categories.find((item) => item.id === seed.category);
+  return {
+    ...pricedDemo,
+    id: seed.id,
+    sourceProductId: seed.id,
+    name: cleanProductName(seed.name),
+    category: seed.category,
+    packageSize: seed.package_size,
+    symbolName: symbolForCategory(seed.category),
+    imageUrl: productImageOverrides[seed.id] ?? category?.imageUrl,
+    accentColor: category?.accentColor ?? "#55a95d",
+    prices: pricedDemo?.prices ?? []
+  };
+});
+
+function symbolForCategory(category: string) {
+  switch (category) {
+    case "Molkerei":
+      return "carton";
+    case "Obst":
+    case "Gemüse":
+    case "Frische":
+      return "leaf";
+    case "Getränke":
+      return "cup.and.saucer";
+    default:
+      return "basket";
+  }
+}
+
 function demoPrice(
   id: string,
   retailer: string,
   price: number,
   unitPrice?: number,
   unit?: string,
-  daysAgo = 0
+  daysAgo = 0,
+  appDiscount?: {
+    appName: string;
+    regularPrice?: number;
+    discountDescription?: string;
+    couponActivationRequired?: boolean;
+    personalized?: boolean;
+  }
 ): PriceObservation {
   const date = new Date();
   date.setDate(date.getDate() - daysAgo);
@@ -221,8 +306,18 @@ function demoPrice(
     unitPrice,
     unit,
     observedAt: date.toISOString(),
-    source: "Demo-Daten",
-    sourceDetail: "MVP-Beispiel",
-    confidence: 0.4
+    source: appDiscount ? "Demo-App-Rabatt" : "Demo-Daten",
+    sourceDetail: appDiscount ? "MVP-Beispiel, kein aktuelles Live-Angebot" : "MVP-Beispiel",
+    confidence: 0.4,
+    offerType: appDiscount ? "app_discount" : "regular",
+    requiresApp: Boolean(appDiscount),
+    appName: appDiscount?.appName,
+    couponActivationRequired: appDiscount?.couponActivationRequired,
+    personalized: appDiscount?.personalized,
+    regularPrice: appDiscount?.regularPrice,
+    discountDescription: appDiscount?.discountDescription
   };
 }
+import seedProducts from "../../data/standard_products.json";
+import { cleanProductName } from "./productCatalog";
+import { productImageOverrides } from "./productImages";

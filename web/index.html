@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#147342" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' ws: wss: https://*.supabase.co https://nominatim.openstreetmap.org https://overpass-api.de https://world.openfoodfacts.org; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; worker-src 'self'"
+    />
     <meta name="description" content="Preisfuchs vergleicht beobachtete Lebensmittelpreise in Baden-Wuerttemberg." />
     <link rel="manifest" href="/manifest.webmanifest" />
     <title>Preisfuchs</title>
