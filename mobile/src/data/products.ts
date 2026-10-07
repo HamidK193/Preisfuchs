@@ -36,6 +36,8 @@ export type ProductInfo = {
 
 export type Product = {
   id: string;
+  // Barcode; bei echten Produkten aus der Datenbank, noetig fuer Preismeldungen.
+  gtin?: string;
   name: string;
   brand: string;
   categoryId: string;

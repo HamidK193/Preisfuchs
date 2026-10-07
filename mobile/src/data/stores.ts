@@ -35,6 +35,8 @@ export function getChain(id: StoreId): Chain {
 // Eine einzelne Filiale, z. B. aus OpenStreetMap.
 export type Branch = {
   key: string;
+  // UUID aus der Tabelle stores; fehlt bei Overpass-Fallback und Beispieldaten.
+  uuid?: string;
   chainId: StoreId;
   address: string;
   latitude: number;
@@ -47,6 +49,8 @@ export type Branch = {
 // Kette mit ihrer naechsten Filiale im Umkreis.
 export type Store = {
   id: StoreId;
+  // UUID der naechsten Filiale (fuer Preismeldungen).
+  uuid?: string;
   name: string;
   address: string;
   latitude: number;

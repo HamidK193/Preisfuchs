@@ -38,6 +38,13 @@
         {
           "locationWhenInUsePermission": "Preisfuchs nutzt deinen Standort nur, um Märkte in deiner Nähe zu finden. Er bleibt auf deinem Gerät."
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Preisfuchs nutzt die Kamera nur für ein Foto vom Preisschild, wenn du einen Preis meldest.",
+          "photosPermission": "Preisfuchs nutzt deine Fotos nur, wenn du ein Foto vom Preisschild zu einer Preismeldung hinzufügst."
+        }
       ]
     ],
     "experiments": {

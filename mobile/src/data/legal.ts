@@ -21,6 +21,7 @@ export const legalDocuments: LegalDocument[] = [
       'Ohne Konto speichert Preisfuchs Warenkorb, Favoriten, Preisalarme und Einstellungen nur auf deinem Gerät.',
       'Deinen Standort nutzt Preisfuchs nur nach deiner Freigabe, um die Postleitzahl zu bestimmen. Er wird nicht übertragen.',
       'Anzeigen und Nutzungsstatistik werden nur mit deiner Einwilligung eingesetzt. Du kannst sie unter Profil → Datenschutz & Werbung jederzeit ändern.',
+      'Preismeldungen: Du kannst ohne Konto Preise melden. Dafür speichert der Server nur gesalzene Hashwerte einer zufälligen Geräte-Kennung und deiner IP-Adresse, um Missbrauch zu begrenzen. Optionale Belegfotos liegen in einem nicht öffentlichen Speicher und dienen nur zur Prüfung des Preises. Fotografiere bitte nur das Preisschild – keine Gesichter, keine Kartendaten oder andere persönliche Angaben.',
       'Die vollständige Datenschutzerklärung wird vor der Veröffentlichung ergänzt.',
     ],
   },

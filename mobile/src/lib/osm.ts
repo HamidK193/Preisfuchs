@@ -92,6 +92,7 @@ async function findStoresInSupabase(center: Center, radiusKm: number): Promise<B
     const city = [row.postcode, row.city].filter(Boolean).join(' ');
     branches.push({
       key: row.source_ref ?? row.id,
+      uuid: row.id,
       chainId,
       address: [street, city].filter(Boolean).join(', ') || 'Adresse nicht hinterlegt',
       latitude: row.latitude,
@@ -154,6 +155,7 @@ function summarize(branches: Branch[]): NearbyResult {
       distanceKm: nearest.distanceKm,
       openingHours: nearest.openingHours,
       branchCount: ofChain.length,
+      uuid: nearest.uuid,
     });
   }
   stores.sort((a, b) => a.distanceKm - b.distanceKm);

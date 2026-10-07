@@ -4,7 +4,9 @@ import { supabase } from '@/lib/supabase';
 
 // Oeffentliche, freigegebene Preise (View current_price_observations, Quelle meist Open Prices, ODbL).
 type PriceRow = {
+  id: string;
   product_id: string;
+  comparison_key: string | null;
   article_id: string;
   article_name: string | null;
   brand_name: string | null;
@@ -20,8 +22,6 @@ type PriceRow = {
 };
 
 type ProductRow = { id: string; name: string; category: string; package_size: string };
-
-type ArticleRow = { id: string; gtin: string | null };
 
 // Produktdaten aus Open Food Facts (ODbL); Bilder nur nach Pruefung (image_reviewed).
 type OffRow = {
@@ -106,37 +106,63 @@ function packageOf(row: PriceRow): { amount: number; unit: Product['unit']; labe
   return { amount: 1, unit: 'Stk', label: label || '1 Stück' };
 }
 
+const PAGE_SIZE = 1000;
+const MAX_PAGES = 10;
+const CHUNK = 150;
+
+function chunks<T>(items: T[]): T[][] {
+  const result: T[][] = [];
+  for (let index = 0; index < items.length; index += CHUNK) result.push(items.slice(index, index + CHUNK));
+  return result;
+}
+
+// Barcode aus comparison_key ("gtin:<EAN>") bzw. product_id ("gtin_<EAN>").
+function gtinOf(row: PriceRow): string | undefined {
+  const key = row.comparison_key ?? '';
+  if (key.startsWith('gtin:')) return key.slice(5);
+  if (row.product_id.startsWith('gtin_')) return row.product_id.slice(5);
+  return undefined;
+}
+
 // Laedt echte Preise und baut daraus Produkte. Ohne Verbindung: leere Liste, die App zeigt Demo-Daten.
 export async function loadRealProducts(): Promise<Product[]> {
-  if (!supabase) return [];
-  const [prices, catalog] = await Promise.all([
-    supabase
-      .from('current_price_observations')
-      .select('product_id,article_id,article_name,brand_name,package,retailer_name,price,regular_price,observed_at,valid_until,source,source_url,location_label')
-      .returns<PriceRow[]>(),
-    supabase.from('products').select('id,name,category,package_size').returns<ProductRow[]>(),
-  ]);
-  if (prices.error || !prices.data) return [];
-  const productInfo = new Map((catalog.data ?? []).map((row) => [row.id, row]));
+  const client = supabase;
+  if (!client) return [];
 
-  // Barcode je Artikel und passende Open-Food-Facts-Daten.
-  const articleIds = [...new Set(prices.data.map((row) => row.article_id))];
-  const articles = articleIds.length
-    ? await supabase.from('catalog_articles').select('id,gtin').in('id', articleIds).returns<ArticleRow[]>()
-    : { data: [] as ArticleRow[] };
-  const gtinByArticle = new Map((articles.data ?? []).map((row) => [row.id, row.gtin]));
-  const gtins = [...new Set([...gtinByArticle.values()].filter((gtin): gtin is string => Boolean(gtin)))];
-  const off = gtins.length
-    ? await supabase
-        .from('off_products')
-        .select('gtin,nutriscore_grade,nutriments,labels_tags,image_url,image_reviewed,image_attribution')
-        .in('gtin', gtins)
-        .returns<OffRow[]>()
-    : { data: [] as OffRow[] };
-  const offByGtin = new Map((off.data ?? []).map((row) => [row.gtin, row]));
+  // Seitenweise, weil Supabase je Abfrage hoechstens 1000 Zeilen liefert.
+  const rows: PriceRow[] = [];
+  for (let page = 0; page < MAX_PAGES; page += 1) {
+    const { data, error } = await client
+      .from('current_price_observations')
+      .select('id,product_id,article_id,article_name,brand_name,package,comparison_key,retailer_name,price,regular_price,observed_at,valid_until,source,source_url,location_label')
+      .order('id')
+      .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
+      .returns<PriceRow[]>();
+    if (error) return [];
+    rows.push(...data);
+    if (data.length < PAGE_SIZE) break;
+  }
+
+  const productIds = [...new Set(rows.map((row) => row.product_id))];
+  const productInfo = new Map<string, ProductRow>();
+  for (const part of chunks(productIds)) {
+    const { data } = await client.from('products').select('id,name,category,package_size').in('id', part).returns<ProductRow[]>();
+    for (const row of data ?? []) productInfo.set(row.id, row);
+  }
+
+  const gtins = [...new Set(rows.map(gtinOf).filter((gtin): gtin is string => Boolean(gtin)))];
+  const offByGtin = new Map<string, OffRow>();
+  for (const part of chunks(gtins)) {
+    const { data } = await client
+      .from('off_products')
+      .select('gtin,nutriscore_grade,nutriments,labels_tags,image_url,image_reviewed,image_attribution')
+      .in('gtin', part)
+      .returns<OffRow[]>();
+    for (const row of data ?? []) offByGtin.set(row.gtin, row);
+  }
 
   const byArticle = new Map<string, PriceRow[]>();
-  for (const row of prices.data) {
+  for (const row of rows) {
     byArticle.set(row.article_id, [...(byArticle.get(row.article_id) ?? []), row]);
   }
 
@@ -153,7 +179,7 @@ export async function loadRealProducts(): Promise<Product[]> {
         storeId,
         price: Number(row.price),
         regularPrice: row.regular_price ? Number(row.regular_price) : undefined,
-        source: 'Open Prices',
+        source: row.source === 'Preisfuchs Nutzermeldung' ? 'Community' : 'Open Prices',
         observedAt: row.observed_at.slice(0, 10),
         validUntil: row.valid_until ?? undefined,
         demo: false,
@@ -168,11 +194,12 @@ export async function loadRealProducts(): Promise<Product[]> {
       if (!latest.has(observation.storeId)) latest.set(observation.storeId, observation);
     }
     const prices = [...latest.values()];
-    const gtin = gtinByArticle.get(first.article_id);
+    const gtin = gtinOf(first);
     const offRow = gtin ? offByGtin.get(gtin) : undefined;
     const reviewedImage = offRow?.image_reviewed && offRow.image_url ? offRow.image_url : undefined;
     result.push({
       id: first.product_id,
+      gtin,
       name: first.article_name ?? productInfo.get(first.product_id)?.name ?? first.product_id,
       brand: first.brand_name ?? '',
       categoryId,
