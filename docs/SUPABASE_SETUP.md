@@ -1,5 +1,13 @@
 # Supabase Setup fuer Preisfuchs
 
+Stand 06.09.2026: Das bestehende Preisfuchs-Projekt ist wieder aktiv. Die sieben
+lokalen Migrationsversionen einschließlich Initial-Baseline sind registriert;
+Remote-Rollen- und API-Prüfungen bestanden. Bestandsbackup, Rollout und Pilot:
+[KATALOG_IMPORT.md](KATALOG_IMPORT.md). Bestehende Instanzen über Migrationen
+aktualisieren; `backend/supabase/schema.sql` ist der Snapshot für neue Instanzen.
+Der [BW-Pilot](PILOT_2026-09-06.md) ergänzt drei bestätigte Artikel und sechs
+öffentliche Beobachtungen. Alle 8.935 alten kaufDA-Beobachtungen bleiben intern.
+
 ## 1. Projekt erstellen
 
 1. Oeffne https://supabase.com/dashboard/projects
@@ -22,6 +30,7 @@ Danach existieren Tabellen fuer:
 - `stores`
 - `price_observations`
 - `update_runs`
+- `catalog_articles`
 
 ### GitHub-Integration fuer spaeter
 
@@ -31,6 +40,12 @@ dem Repo nachvollziehbar laufen. Das Repo enthaelt dafuer jetzt:
 ```text
 supabase/config.toml
 supabase/migrations/202605090001_initial_schema.sql
+supabase/migrations/20260810151027_app_discount_prices.sql
+supabase/migrations/20260828090000_harden_public_access.sql
+supabase/migrations/20260828092000_price_publication_gate.sql
+supabase/migrations/20260828093000_current_price_view.sql
+supabase/migrations/20260905180235_structured_catalog.sql
+supabase/migrations/20260905181351_enforce_catalog_publication.sql
 ```
 
 In Supabase:
@@ -52,6 +67,7 @@ Im Projektordner `A:\Codex\Preisfuchs` eine Datei `.env` erstellen:
 ```text
 SUPABASE_URL=https://DEIN-PROJEKT.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=DEIN_SERVICE_ROLE_KEY
+SUPABASE_ANON_KEY=DEIN_OEFFENTLICHER_ANON_KEY
 ```
 
 Wichtig: Den `SERVICE_ROLE_KEY` nicht in Git committen. `.env` ist bereits in
@@ -61,7 +77,7 @@ Wichtig: Den `SERVICE_ROLE_KEY` nicht in Git committen. `.env` ist bereits in
 
 ```powershell
 cd A:\Codex\Preisfuchs
-.\.venv\Scripts\python.exe backend\jobs\test_supabase_connection.py
+uv --cache-dir .uv-cache run --python 3.12 --with-requirements backend/jobs/requirements.txt python backend/jobs/test_supabase_connection.py
 ```
 
 Erwartete Ausgabe:
@@ -70,17 +86,23 @@ Erwartete Ausgabe:
 Supabase connection OK
 products rows: 0
 retailers rows: 5
+schema: app discounts + publication gate + current-price view OK
+anon security: raw payload and update runs denied
 ```
+
+Der Test beendet sich absichtlich mit `Supabase schema is outdated`, wenn die
+eingecheckten Rabatt-, Veröffentlichungs- oder View-Migrationen noch fehlen.
 
 ## 5. Seed- und Update-Job testen
 
 ```powershell
-.\.venv\Scripts\python.exe backend\jobs\price_update_job.py
+uv --cache-dir .uv-cache run --python 3.12 --with-requirements backend/jobs/requirements.txt python backend/jobs/price_update_job.py
 ```
 
-Der Job schreibt die Standard-Produkte in `products`. Preisbeobachtungen werden
-erst importiert, wenn fuer Produkte Barcodes oder belastbare externe
-Preisquellen angebunden sind.
+Der Job schreibt die Standard-Produkte in `products`. Für drei exakt geprüfte
+Produkte sind erste Barcodes hinterlegt. Der aktuelle Open-Prices-Dry-Run findet
+4 offene Beobachtungen; sie stammen aus 2025 und werden deshalb in der App als
+möglicherweise veraltet gekennzeichnet.
 
 ## 6. GitHub-Secrets setzen
 
@@ -99,3 +121,18 @@ SUPABASE_SERVICE_ROLE_KEY
 ```
 
 Danach kann `.github/workflows/daily-price-update.yml` taeglich laufen.
+
+## 7. Sicherheitspruefung nach Migrationen
+
+- `anon` und `authenticated` duerfen Katalog- und freigegebene Preisspalten
+  lesen, aber nichts schreiben.
+- `raw_payload` ist fuer Browserrollen nicht lesbar.
+- `update_runs` besitzt RLS und keine Client-Policy.
+- Nur der serverseitige `SUPABASE_SERVICE_ROLE_KEY` darf Produkte,
+  Preisbeobachtungen und Update-Laeufe schreiben.
+- Der Service-Role-Key darf nie als `VITE_*`-Variable oder im iOS-Bundle
+  landen.
+
+Die Migrationen zuerst in einer Staging-/Preview-Umgebung ausrollen. Danach
+Supabase Security Advisors sowie echte anon-, authenticated- und
+service-role-Anfragen prüfen, bevor dieselben Migrationen produktiv laufen.

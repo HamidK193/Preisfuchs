@@ -3,8 +3,9 @@
 ## Zweck
 
 Diese Datei beschreibt die Arbeitsregeln fuer das Projekt Preisfuchs.
-Preisfuchs ist ein iOS-MVP fuer Lebensmittel-Preisvergleich in
-Baden-Wuerttemberg.
+Preisfuchs ist ein MVP fuer Lebensmittel-Preisvergleich in ganz
+Deutschland. Der erste Datenpilot lief in Baden-Wuerttemberg; Code, Texte und
+Design duerfen keine Region fest voraussetzen.
 
 ## Arbeitsregeln
 
@@ -17,11 +18,14 @@ Baden-Wuerttemberg.
 - Zeige Preisquelle und Aktualisierungsdatum immer sichtbar an.
 - Behaupte keine Live-Genauigkeit, wenn Preise aus offenen oder alten Daten stammen.
 - Behandle Preise als Beobachtungen, nicht als garantierte Marktpreise.
+- Die Preis-Rangliste ist nie kaeuflich; Werbung immer als "Anzeige",
+  Partnerlinks als "Partnerlink" markieren (siehe `docs/MONETARISIERUNG.md`).
+- Neue Screens folgen dem Stitch-Konzept und `docs/APP_SCREENS_PLAN.md`.
 
 ## MVP-Ziel
 
-- iOS-App "Preisfuchs" mit Suche nach Standard-Lebensmitteln
-- Preisvergleich fuer Standard-Supermaerkte in Baden-Wuerttemberg
+- App "Preisfuchs" mit Suche nach Standard-Lebensmitteln
+- Preisvergleich fuer Standard-Supermaerkte in ganz Deutschland (Standort per PLZ und Radius)
 - Demo-Daten lokal in der App
 - Supabase-Schema fuer Produkte, Maerkte, Filialen und Preisbeobachtungen
 - Taeglicher GitHub-Actions-Job fuer kostenlose Datenquellen
@@ -37,9 +41,13 @@ Baden-Wuerttemberg.
 
 ## Wichtige Pfade
 
-- `ios/Preisfuchs/`: native iOS-App
+- `mobile/`: neue App (Expo / React Native, iOS + Android) nach dem Stitch-Design;
+  Test auf dem iPhone ueber Expo Go (`cd mobile; npx expo start --lan`)
+- `ios/Preisfuchs/`: bisherige native iOS-App (SwiftUI)
 - `backend/supabase/schema.sql`: Datenbankschema
 - `backend/jobs/price_update_job.py`: taeglicher Preis-Update-Job
 - `.github/workflows/daily-price-update.yml`: geplanter GitHub-Actions-Lauf
 - `data/standard_products.json`: erste Produktliste
 - `docs/MVP_PLAN.md`: fachlicher und technischer MVP-Plan
+- `docs/APP_SCREENS_PLAN.md`: alle App-Seiten und Sitemap (Design in Google Stitch)
+- `docs/MONETARISIERUNG.md`: Umsatzmodell (Plus-Abo, Anzeigen, Partnerlinks)

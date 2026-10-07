@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Web-App lädt Filialen im PLZ-Umkreis jetzt aus Supabase (26.300 Filialen,
+  wöchentlich aus OpenStreetMap); Live-Overpass nur noch als Ausweichweg.
+  Aldi Nord wird nicht mehr als Aldi Süd erkannt. 36 Webtests und Build bestanden.
 - Wöchentliche Daten-Agents (`.github/workflows/weekly-data-agents.yml`, montags
   02:00 UTC), ein Job pro Quelle: `osm_stores_agent.py` lädt Filialen von 16
   Ketten in allen 16 Bundesländern mit Adresse, Koordinaten und Öffnungszeiten
@@ -15,6 +18,159 @@
   Neue Tabelle `retailer_offers` und Agent
   `retailer_offers_agent.py` (Rewe-Adapter, robots.txt-Prüfung, ehrliche Quelle);
   noch nicht geplant, weil Händlerseiten automatische Abrufe derzeit blocken.
+- Design-Konzept in Google Stitch erstellt (Projekt "Preisfuchs Grocery Comparison
+  App", 04.10.2026): alle App-Seiten inkl. Onboarding, Suche, Produkt, Warenkorb,
+  Favoriten, Profil, Systemzustaende und Monetarisierung. Ausrichtung jetzt
+  deutschlandweit. Screen-Plan in `docs/APP_SCREENS_PLAN.md`, Umsatzmodell
+  (Plus-Abo, markierte Anzeigen, Partnerlinks) in `docs/MONETARISIERUNG.md`.
+  Noch nicht programmiert.
+- Neue App in `mobile/` (Expo SDK 57, Expo Router, Plus Jakarta Sans) mit Demo-Daten:
+  Start, Suche, Produktdetail als Sheet, Warenkorb mit Marktvergleich und Aufteilen
+  auf 2 Maerkte, Favoriten, Profil. Testbar auf dem iPhone ueber Expo Go.
+  Typecheck, Lint und expo-doctor bestanden; iOS-Bundle baut.
+- App-Design nach erstem iPhone-Test: SF-Pro-Systemschrift, weißer Hintergrund,
+  echte Händlerlogos (Wikimedia Commons, siehe `THIRD_PARTY_NOTICES.md`),
+  Eckenradius 5 px, gestaffelte Innenabstände (`Inset` in `mobile/src/constants/theme.ts`),
+  SF Symbols statt Emoji-Icons, Angebotswoche als Datumsbereich statt Kalenderwoche
+  und neu gestaltete Profilseite (Kopfkarte, Kennzahlen, Plus-Karte, gruppierte
+  Einstellungen).
+- Unterseiten der App nach `docs/APP_UNTERSEITEN_PLAN.md` umgesetzt: ausgebautes
+  Produkt-Sheet (Bestpreis, alle Märkte inkl. „kein Preis bekannt“, Preisverlauf,
+  Produktinfos, Alternativen), Preisalarm-Sheet (3 kostenlos), Standort & Radius
+  (mit GPS-PLZ), Meine Märkte, Markt-Detail, Mitteilungen, Datenschutz & Werbung,
+  Datenquellen, Hilfe & Feedback, Rechtliches, Konto-Sheet, Plus, Alle Angebote,
+  Kategorie, Marktvergleich. Preisvergleich nutzt nur aktive Märkte; Einstellungen
+  werden lokal gespeichert. Leeres Produkt-Sheet behoben (formSheet ohne Höhe).
+  Rechtstexte und Kontaktadresse sind Platzhalter für die Testversion.
+- Farbschema „Fuchsrot“ (`docs/FARBSCHEMA.md`, Variante A nach Stitch-Vergleich):
+  Rot für Marke und Angebote, Grün nur für Ersparnis, schwarze Auswahl-Chips.
+- Standort: beim ersten Start sofort Standortabfrage, sonst Adresseingabe; Märkte
+  werden per OpenStreetMap (Overpass) am genauen Standort gesucht und ersetzen die
+  Tübinger Beispielmärkte. Karte mit Apple Maps, Radius und Logo-Markern
+  (Google Maps vorbereitet, braucht eigenen App-Build mit API-Schlüssel).
+- Einheitliche Logo-Quadrate, Produkt-Sheet mit ScreenContentWrapper gegen leeren
+  Inhalt, Warenkorb mit Rangliste und neuem Einkaufsmodus.
+- Supabase-Anbindung der App (`mobile/src/lib/supabase.ts`, anon-Key in
+  `mobile/.env.local`): Filialen aus `stores` (26.300 aktive, OSM-Import) statt
+  Overpass live (Overpass bleibt Fallback); neue Ketten Aldi Nord, Netto, Norma.
+  Echte Preise aus `current_price_observations` mit Quelle, Ort, Beleg-Link und
+  Hinweis „möglicherweise veraltet“ (älter als 30 Tage); übrige Preise bleiben
+  als Demo markiert.
+- Migration `open_public_prices_germany`: öffentliche Preis-Policy und View ohne
+  BW-Filter (deutschlandweit); in `backend/supabase/schema.sql` angehängt.
+- BW-Pilot vom 06.09.2026 veröffentlicht: drei geprüfte Artikel mit sechs
+  Open-Prices-Beobachtungen; vier Artikel-/Standorteinträge in der öffentlichen
+  View. Preise vom 02.06. bis 22.08. werden als möglicherweise veraltet gezeigt.
+- Barcode-Preisadapter an den offiziellen Vertrag angepasst: `PRODUCT` hat
+  leeres `price_per`; widersprüchliche Preisbasis und ungeklärte Rabatte bleiben
+  ausgeschlossen. Begrenzte BW-Kandidatensuche als separates Leseskript ergänzt.
+- Drei belegte Artikelkorrekturen hinterlegt. Wiederholter Import erhält ihre
+  Werte und bestehende zulässige Freigaben; nachweislich unzulässige Quellen-IDs
+  werden zurückgezogen. 8.941 Beobachtungen nach Reimport, keine doppelten IDs.
+- Geprüftes Öl-Frontfoto mit fester Artikel-/Packungszuordnung und sichtbarer
+  CC-BY-SA-Attribution lokal eingebunden. Preisquellen führen direkt zum Beleg.
+- Prüfstand vom 06.09.: 33 Webtests, 19 Backendtests, Build, echte öffentliche
+  API und Browserfluss bei vier Breiten bestanden. Vite meldet eine Größenwarnung
+  für das etwa 501-kB-JavaScript-Bündel. Pilotbericht und nächste Schritte ergänzt.
+
+- Supabase wieder aufgenommen, alle 8.935 Altbeobachtungen lokal gesichert und
+  sechs Erweiterungsmigrationen ausgerollt. Migrationshistorie abgeglichen;
+  alte kaufDA-Daten erhalten und wegen ungeklärter Lizenz intern gehalten.
+- Strukturierte Pflichtmerkmale für alle 76 Produktarten, globale Artikel-IDs,
+  numerische Packungen, Cent-/Bedarfsrechnung und dauerhafte Korrekturen ergänzt.
+  Titelähnlichkeit allein gibt keine Eigenmarken-Zusammenführung mehr frei.
+- Open-Prices-Import prüft Datum, Quellen-ID, Preisbasis, GTIN, OSM-Shoptyp,
+  Händler und BW-Bezug; Seitenbudget, Wiederholungen, Prüfliste und Laufstatus
+  ergänzt. Erster Pilot am 05.09.: drei GTINs, sieben unpassende Treffer,
+  keine Veröffentlichung.
+- Web nutzt ausschließlich die geprüfte Preisview und übernimmt beobachtete
+  Standorte. Unterschiedliche Filialen werden nicht als Ein-Laden-Einkauf
+  kombiniert. Neue strukturierte Artikel erhalten gekennzeichnete Symbolbilder.
+- Remote-Prüfung für anon/authenticated/service_role mit zurückgerollten
+  Testeinträgen bestanden. API-Negativtests prüfen konkrete Rechtefehler.
+- Prüfstand dieser Erweiterung: 32 Webtests, 17 Backendtests, Webbuild und
+  Browsercheck einschließlich strukturiertem Katalogfixture erfolgreich.
+
+- Wiedereinstieg vom 05.09.2026 geprüft: claude-mem weiterhin deaktiviert,
+  lokale Web-/Backendtests und Build erfolgreich; Supabase-Projekt inaktiv.
+  Keine Behauptung einer dauerhaft behobenen Hook-Ursache.
+- Ausführlichen Gesamtplan sowie Merkmalmatrix für alle 76 Seed-Produktarten
+  und geplante Kinder-Joy-/Pokémon-Erweiterungen ergänzt.
+- Neue Webgestaltung für Desktop und Mobil mit Einkaufszettel-Einstieg,
+  sichtbarem Demo-/Beobachtungsstatus, Händlerabdeckung und Quellen/Datum an
+  Produktkarten. Unbelegte Wochenangebotswerbung entfernt.
+- Wirkungslose Filter entfernt; Produkte mit Preisbeobachtung sind auswählbar.
+  „Einkauf vergleichen“ ersetzt die bisherige Kassenbezeichnung; personalisierte
+  Coupons können auch mobil separat ein- und ausgeschaltet werden.
+- Eigenmarken nur bei passender vollständiger Beschreibung zusammengeführt;
+  unbekannte Marken sowie abweichende Bio-/Fettstufen als ungeprüfte Varianten
+  erhalten. Markenerkennung verwendet Wortgrenzen, Multipacks bleiben vollständig.
+- Bananen-Süßigkeiten und Schoko-Bananen als Süßigkeiten eingeordnet;
+  Kategorien erkennen vollständige Wörter statt etwa „Eis“ innerhalb von „Reis“.
+- Reproduzierbaren Playwright-/Edge-Check mit vier Bildschirmbreiten und
+  Warenkorbfluss ergänzt; eigener Vite-Prozess wird unter Windows beendet.
+
+- Reguläre, öffentliche App- und personalisierte Preise werden je Händler
+  getrennt auf Aktualität geprüft; danach gewinnt die günstigste aktivierte
+  Preisart. Bei Gleichstand wird die Variante ohne App-Bedingung bevorzugt.
+- Erfundenen Rabatt-Prozentwert aus Angebotskarten entfernt. Ohne beobachteten
+  Normalpreis zeigt die App keine rechnerische Ersparnis an.
+- Warenkorbvergleich zeigt die echte Differenz zwischen Ein-Laden-Einkauf und
+  Mehr-Läden-Aufteilung sowie den Hinweis, dass Fahrtkosten und Zeit fehlen.
+- Standortanzeige nutzt den zur PLZ ermittelten Ort statt fest „Stuttgart“,
+  meldet den Lookup-Status sichtbar und akzeptiert nur vollständige 5-stellige
+  deutsche Postleitzahlen.
+- Entfernte Warenkorbartikel können 6 Sekunden lang rückgängig gemacht werden;
+  mobile Rabattbox und Such-/Standortleiste wurden gegen Überbreite gehärtet.
+- Native iOS-Einkaufsliste um Ein-Laden-vs.-Mehr-Läden-Vergleich und getrennte
+  Opt-ins für öffentliche App-Rabatte und personalisierte Coupons ergänzt.
+- Drei Produktbarcodes über Open Food Facts verifiziert. Der Open-Prices-Dry-Run
+  normalisiert damit 4 offen lizenzierte, aber klar veraltete Beobachtungen.
+- Nicht passende Packshots für Barilla, Backpulver und Senf entfernt und den
+  Seed-Katalog um GTIN-Prüfsumme, Eindeutigkeits- und Pflichtfeldtests gehärtet.
+- Supabase-Smoke-Test prüft nun Rabatt-/Publikationsschema, aktuelle View sowie
+  den gesperrten anon-Zugriff auf Rohpayloads und interne Update-Läufe.
+- Data-API-Rechte für `service_role` explizit gemacht, direkte npm-Versionen
+  gepinnt und eine restriktive Basis-CSP für die Web-App ergänzt.
+- Unbegrenzte parallele Open-Food-Facts-Bildsuche entfernt: standardmäßig aus,
+  optionales Entwicklungs-Opt-in mit höchstens 4 Suchen pro Ladevorgang.
+- Preisvergleich korrigiert: pro Händler zählt die neueste aktive Beobachtung
+  statt des historischen Tiefstpreises; abgelaufene und zukünftige Angebote
+  werden ausgeschlossen.
+- Fehlende Preise werden in Ein-Laden- und Mehr-Läden-Plänen als fehlend
+  ausgewiesen. Unvollständige Summen heißen Teilsumme und können nicht mehr
+  künstlich als günstigster kompletter Warenkorb erscheinen.
+- Web-Warenkorb startet leer, bleibt lokal gespeichert und kann als validierter
+  Link geteilt und wieder geöffnet werden.
+- App-Rabatte standardmäßig deaktiviert; personalisierte Coupons besitzen ein
+  separates ausdrückliches Opt-in. Erfundenes `Gültig bis` wurde entfernt.
+- Native iOS-Liste um Mengen, Teilsummenhinweis und ShareLink ergänzt; iOS nutzt
+  dieselbe Aktualitäts- und Rabattlogik wie die Web-App.
+- Supabase-Zugriff gehärtet: RLS für `update_runs`, explizite Spaltenrechte,
+  kein Browserzugriff auf Rohpayloads und private Standardrechte für neue
+  Tabellen.
+- RLS-respektierende Supabase-View für aktive neueste Preisbeobachtungen
+  ergänzt, damit der Browser nicht mehr die vollständige Historie laden muss.
+- Veröffentlichungs-Gate für Preisquellen ergänzt: neue Beobachtungen bleiben
+  standardmäßig intern, nur lizenzgeprüfte Quellen werden per RLS publiziert.
+- Täglichen Import auf Open Prices als Standardquelle begrenzt; ungeklärter
+  kaufDA-HTML-Import ist deaktiviert. Update-Läufe und Importstatus werden
+  protokolliert, Open-Prices-Zeilen plausibilisiert.
+- GitHub Actions mit minimalen Rechten und vollständigen Commit-SHAs gehärtet;
+  Web-Testworkflow, Dependabot und `SECURITY.md` ergänzt.
+- Vitest- und Python-Regressionstests ergänzt; npm-Abhängigkeiten geprüft und
+  alle gefundenen Audit-Warnungen durch kompatible Updates behoben.
+- Recherche zu GitHub-Repositories, Skills, Reddit-/X-Erfahrungen, Tokenkosten,
+  Memory, Security und Datenquellen in `docs/RESEARCH_REPOS_SKILLS.md`
+  dokumentiert.
+- App-exklusive Preise als eigene bedingte Preisart ergänzt: Web-Vergleich mit
+  und ohne App-Rabatte, sichtbare App-/Aktivierungs-/Personalisierungshinweise,
+  Warenkorbwarnung sowie entsprechende SwiftUI-Darstellung.
+- Supabase-Preisbeobachtungen um App-Name, Coupon-Aktivierung,
+  Personalisierung, Normalpreis, Gültigkeitsbeginn und Rabattbeschreibung
+  erweitert; kaufDA-Treffer werden nur bei eindeutigen App-Markern als
+  App-Rabatt klassifiziert.
+
 - Web/PWA von einer Preisübersicht zu einer Shopping-Oberfläche mit
   Angebots-Hero, Händler-Leiste, Angebotskarten, Produktkarten und sichtbarem
   Warenkorb umgebaut.

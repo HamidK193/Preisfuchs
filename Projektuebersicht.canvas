@@ -1,0 +1,15 @@
+{
+  "nodes": [
+    {"id":"home","type":"file","file":"Obsidian-Start.md","x":0,"y":0,"width":300,"height":180},
+    {"id":"status","type":"file","file":"Obsidian-Notizen/00-Projektstatus.md","x":0,"y":-280,"width":300,"height":180},
+    {"id":"backend","type":"text","text":"## Backend\n\nServer, Schnittstellen und Logik.","x":-430,"y":280,"width":300,"height":180},
+    {"id":"web","type":"text","text":"## Web\n\nWeb-App und Oberfläche.","x":0,"y":280,"width":300,"height":180},
+    {"id":"data","type":"text","text":"## Daten\n\nDatenbasis und Preisquellen.","x":430,"y":280,"width":300,"height":180}
+  ],
+  "edges": [
+    {"id":"e0","fromNode":"status","fromSide":"bottom","toNode":"home","toSide":"top"},
+    {"id":"e1","fromNode":"home","fromSide":"bottom","toNode":"backend","toSide":"top"},
+    {"id":"e2","fromNode":"home","fromSide":"bottom","toNode":"web","toSide":"top"},
+    {"id":"e3","fromNode":"home","fromSide":"bottom","toNode":"data","toSide":"top"}
+  ]
+}
