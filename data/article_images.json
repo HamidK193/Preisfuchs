@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "images": [
+    {
+      "article_id": "4e41d6c7-b843-57b1-982e-78a77e096939",
+      "gtin": "4061461377601",
+      "amount": "500",
+      "unit": "ml",
+      "count": 1,
+      "local_url": "/products/off-4061461377601-front.jpg",
+      "source_url": "https://images.openfoodfacts.org/images/products/406/146/137/7601/front_de.4.400.jpg",
+      "source_page": "https://world.openfoodfacts.org/product/4061461377601",
+      "attribution": "Open Food Facts contributors",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "reviewed_at": "2026-09-06T10:09:00+00:00",
+      "review_note": "Frontetikett visuell geprüft: bio Sonnenblumenöl kaltgepresst, 500 ml. Originaldatei unverändert übernommen."
+    }
+  ]
+}

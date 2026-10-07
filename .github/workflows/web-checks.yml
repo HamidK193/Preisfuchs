@@ -1,0 +1,53 @@
+name: Web checks
+
+on:
+  pull_request:
+    paths:
+      - "web/**"
+      - ".github/workflows/web-checks.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "web/**"
+      - ".github/workflows/web-checks.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: web-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install locked dependencies
+        working-directory: web
+        run: npm ci
+
+      - name: Run unit tests
+        working-directory: web
+        run: npm test
+
+      - name: Audit dependencies
+        working-directory: web
+        run: npm audit --audit-level=high
+
+      - name: Build production bundle
+        working-directory: web
+        run: npm run build

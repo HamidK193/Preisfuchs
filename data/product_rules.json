@@ -1,0 +1,798 @@
+{
+  "version": 1,
+  "products": {
+    "milk_15": {
+      "product_type": "milk",
+      "category": "Molkerei",
+      "required_attributes": [
+        "organic",
+        "fat_percent",
+        "treatment",
+        "animal",
+        "lactose_free"
+      ]
+    },
+    "butter_250": {
+      "product_type": "butter",
+      "category": "Molkerei",
+      "required_attributes": [
+        "organic",
+        "salted",
+        "spread_type",
+        "animal"
+      ]
+    },
+    "eggs_10": {
+      "product_type": "eggs",
+      "category": "Frische",
+      "required_attributes": [
+        "organic",
+        "housing",
+        "size_class"
+      ]
+    },
+    "yogurt_500": {
+      "product_type": "yogurt",
+      "category": "Molkerei",
+      "required_attributes": [
+        "organic",
+        "fat_percent",
+        "flavour",
+        "mild",
+        "animal",
+        "lactose_free"
+      ]
+    },
+    "cheese_slices_400": {
+      "product_type": "cheese_slices",
+      "category": "Molkerei",
+      "required_attributes": [
+        "organic",
+        "cheese_type",
+        "maturity",
+        "fat_in_dry_matter",
+        "form"
+      ]
+    },
+    "quark_500": {
+      "product_type": "quark",
+      "category": "Molkerei",
+      "required_attributes": [
+        "organic",
+        "fat_in_dry_matter",
+        "flavour",
+        "animal",
+        "lactose_free"
+      ]
+    },
+    "cream_200": {
+      "product_type": "cream",
+      "category": "Molkerei",
+      "required_attributes": [
+        "organic",
+        "fat_percent",
+        "treatment",
+        "sweetened",
+        "plant_based"
+      ]
+    },
+    "mozzarella_125": {
+      "product_type": "mozzarella",
+      "category": "Molkerei",
+      "required_attributes": [
+        "organic",
+        "animal",
+        "fat_in_dry_matter",
+        "drained_weight"
+      ]
+    },
+    "bananas_1kg": {
+      "product_type": "bananas",
+      "category": "Obst",
+      "required_attributes": [
+        "organic",
+        "sale_form",
+        "preparation"
+      ]
+    },
+    "apples_1kg": {
+      "product_type": "apples",
+      "category": "Obst",
+      "required_attributes": [
+        "organic",
+        "variety",
+        "grade",
+        "sale_form"
+      ]
+    },
+    "oranges_1kg": {
+      "product_type": "oranges",
+      "category": "Obst",
+      "required_attributes": [
+        "organic",
+        "variety",
+        "intended_use",
+        "grade",
+        "sale_form"
+      ]
+    },
+    "strawberries_500": {
+      "product_type": "strawberries",
+      "category": "Obst",
+      "required_attributes": [
+        "organic",
+        "preparation",
+        "grade",
+        "sale_form"
+      ]
+    },
+    "grapes_500": {
+      "product_type": "grapes",
+      "category": "Obst",
+      "required_attributes": [
+        "organic",
+        "colour",
+        "seedless",
+        "preparation"
+      ]
+    },
+    "pears_1kg": {
+      "product_type": "pears",
+      "category": "Obst",
+      "required_attributes": [
+        "organic",
+        "variety",
+        "grade",
+        "sale_form"
+      ]
+    },
+    "lemons_500": {
+      "product_type": "lemons",
+      "category": "Obst",
+      "required_attributes": [
+        "organic",
+        "peel_treatment",
+        "sale_form"
+      ]
+    },
+    "tomatoes_500": {
+      "product_type": "tomatoes",
+      "category": "Gemüse",
+      "required_attributes": [
+        "organic",
+        "variety",
+        "preparation"
+      ]
+    },
+    "cucumber_each": {
+      "product_type": "cucumber_each",
+      "category": "Gemüse",
+      "required_attributes": [
+        "organic",
+        "variety",
+        "sale_form"
+      ]
+    },
+    "carrots_1kg": {
+      "product_type": "carrots",
+      "category": "Gemüse",
+      "required_attributes": [
+        "organic",
+        "sale_form",
+        "preparation"
+      ]
+    },
+    "potatoes_25kg": {
+      "product_type": "potatoes",
+      "category": "Gemüse",
+      "required_attributes": [
+        "organic",
+        "cooking_type",
+        "variety",
+        "preparation"
+      ]
+    },
+    "onions_1kg": {
+      "product_type": "onions",
+      "category": "Gemüse",
+      "required_attributes": [
+        "organic",
+        "colour",
+        "variety"
+      ]
+    },
+    "bell_peppers_500": {
+      "product_type": "bell_peppers",
+      "category": "Gemüse",
+      "required_attributes": [
+        "organic",
+        "colour",
+        "variety",
+        "preparation"
+      ]
+    },
+    "salad_each": {
+      "product_type": "salad_each",
+      "category": "Gemüse",
+      "required_attributes": [
+        "organic",
+        "variety",
+        "preparation",
+        "sale_form"
+      ]
+    },
+    "broccoli_500": {
+      "product_type": "broccoli",
+      "category": "Gemüse",
+      "required_attributes": [
+        "organic",
+        "preparation",
+        "form"
+      ]
+    },
+    "pasta_500": {
+      "product_type": "pasta",
+      "category": "Trockenware",
+      "required_attributes": [
+        "organic",
+        "shape",
+        "grain",
+        "egg",
+        "wholegrain",
+        "gluten_free"
+      ]
+    },
+    "rice_1kg": {
+      "product_type": "rice",
+      "category": "Trockenware",
+      "required_attributes": [
+        "organic",
+        "variety",
+        "wholegrain",
+        "cooking_bag"
+      ]
+    },
+    "oats_500": {
+      "product_type": "oats",
+      "category": "Trockenware",
+      "required_attributes": [
+        "organic",
+        "texture",
+        "gluten_free"
+      ]
+    },
+    "lentils_500": {
+      "product_type": "lentils",
+      "category": "Trockenware",
+      "required_attributes": [
+        "organic",
+        "variety",
+        "preparation",
+        "container"
+      ]
+    },
+    "canned_tomatoes_400": {
+      "product_type": "canned_tomatoes",
+      "category": "Trockenware",
+      "required_attributes": [
+        "organic",
+        "form",
+        "seasoning",
+        "drained_weight"
+      ]
+    },
+    "tuna_195": {
+      "product_type": "tuna",
+      "category": "Trockenware",
+      "required_attributes": [
+        "organic",
+        "species",
+        "medium",
+        "drained_weight"
+      ]
+    },
+    "flour_1kg": {
+      "product_type": "flour",
+      "category": "Backen",
+      "required_attributes": [
+        "organic",
+        "grain",
+        "flour_type",
+        "wholegrain",
+        "gluten_free"
+      ]
+    },
+    "sugar_1kg": {
+      "product_type": "sugar",
+      "category": "Backen",
+      "required_attributes": [
+        "organic",
+        "colour",
+        "sugar_type"
+      ]
+    },
+    "oil_1l": {
+      "product_type": "oil",
+      "category": "Trockenware",
+      "required_attributes": [
+        "organic",
+        "plant",
+        "refining",
+        "blend"
+      ]
+    },
+    "baking_powder": {
+      "product_type": "baking_powder",
+      "category": "Backen",
+      "required_attributes": [
+        "organic",
+        "raising_agent"
+      ]
+    },
+    "cocoa_250": {
+      "product_type": "cocoa",
+      "category": "Backen",
+      "required_attributes": [
+        "organic",
+        "cocoa_type",
+        "added_sugar",
+        "fat_percent"
+      ]
+    },
+    "yeast": {
+      "product_type": "yeast",
+      "category": "Backen",
+      "required_attributes": [
+        "organic",
+        "preparation"
+      ]
+    },
+    "coffee_500": {
+      "product_type": "coffee",
+      "category": "Getränke",
+      "required_attributes": [
+        "organic",
+        "form",
+        "variety",
+        "roast",
+        "decaffeinated"
+      ]
+    },
+    "water_15l": {
+      "product_type": "water",
+      "category": "Getränke",
+      "required_attributes": [
+        "organic",
+        "carbonation",
+        "container",
+        "deposit"
+      ]
+    },
+    "orange_juice_1l": {
+      "product_type": "orange_juice",
+      "category": "Getränke",
+      "required_attributes": [
+        "organic",
+        "juice_type",
+        "processing",
+        "pulp",
+        "deposit"
+      ]
+    },
+    "cola_125l": {
+      "product_type": "cola",
+      "category": "Getränke",
+      "required_attributes": [
+        "organic",
+        "sugar_variant",
+        "caffeine",
+        "deposit"
+      ]
+    },
+    "tea_20": {
+      "product_type": "tea",
+      "category": "Getränke",
+      "required_attributes": [
+        "organic",
+        "variety",
+        "form",
+        "bag_count",
+        "net_weight"
+      ]
+    },
+    "beer_05": {
+      "product_type": "beer",
+      "category": "Getränke",
+      "required_attributes": [
+        "organic",
+        "style",
+        "alcohol_percent",
+        "container",
+        "deposit"
+      ]
+    },
+    "chocolate_100": {
+      "product_type": "chocolate",
+      "category": "Süßigkeiten",
+      "required_attributes": [
+        "organic",
+        "variety",
+        "filling",
+        "cocoa_percent",
+        "form"
+      ]
+    },
+    "gummy_bears_200": {
+      "product_type": "gummy_bears",
+      "category": "Süßigkeiten",
+      "required_attributes": [
+        "organic",
+        "mix",
+        "gelatin",
+        "vegan",
+        "sugar_free"
+      ]
+    },
+    "cookies_200": {
+      "product_type": "cookies",
+      "category": "Süßigkeiten",
+      "required_attributes": [
+        "organic",
+        "variety",
+        "filling",
+        "coating",
+        "gluten_free"
+      ]
+    },
+    "chips_175": {
+      "product_type": "chips",
+      "category": "Süßigkeiten",
+      "required_attributes": [
+        "organic",
+        "base_ingredient",
+        "flavour",
+        "preparation"
+      ]
+    },
+    "nuts_200": {
+      "product_type": "nuts",
+      "category": "Süßigkeiten",
+      "required_attributes": [
+        "organic",
+        "nut_types",
+        "mix_ratio",
+        "salted",
+        "roasted"
+      ]
+    },
+    "frozen_pizza_each": {
+      "product_type": "frozen_pizza_each",
+      "category": "Tiefkühl",
+      "required_attributes": [
+        "organic",
+        "topping",
+        "dough",
+        "net_weight",
+        "piece_count"
+      ]
+    },
+    "fries_750": {
+      "product_type": "fries",
+      "category": "Tiefkühl",
+      "required_attributes": [
+        "organic",
+        "cut",
+        "prefried",
+        "seasoning",
+        "preparation"
+      ]
+    },
+    "icecream_500": {
+      "product_type": "icecream",
+      "category": "Tiefkühl",
+      "required_attributes": [
+        "organic",
+        "flavour",
+        "ice_type",
+        "form",
+        "piece_count"
+      ]
+    },
+    "frozen_vegetables_750": {
+      "product_type": "frozen_vegetables",
+      "category": "Tiefkühl",
+      "required_attributes": [
+        "organic",
+        "vegetable_mix",
+        "seasoned",
+        "sauce"
+      ]
+    },
+    "fish_sticks_450": {
+      "product_type": "fish_sticks",
+      "category": "Tiefkühl",
+      "required_attributes": [
+        "organic",
+        "species",
+        "breading",
+        "piece_count"
+      ]
+    },
+    "toast_500": {
+      "product_type": "toast",
+      "category": "Backwaren",
+      "required_attributes": [
+        "organic",
+        "grain",
+        "wholegrain",
+        "multigrain",
+        "sliced"
+      ]
+    },
+    "bread_rolls_6": {
+      "product_type": "bread_rolls",
+      "category": "Backwaren",
+      "required_attributes": [
+        "organic",
+        "variety",
+        "preparation",
+        "net_weight"
+      ]
+    },
+    "wholegrain_bread_500": {
+      "product_type": "wholegrain_bread",
+      "category": "Backwaren",
+      "required_attributes": [
+        "organic",
+        "grain",
+        "wholegrain_percent",
+        "sliced"
+      ]
+    },
+    "muesli_500": {
+      "product_type": "muesli",
+      "category": "Trockenware",
+      "required_attributes": [
+        "organic",
+        "mix",
+        "flavour",
+        "added_sugar",
+        "gluten_free"
+      ]
+    },
+    "cornflakes_500": {
+      "product_type": "cornflakes",
+      "category": "Trockenware",
+      "required_attributes": [
+        "organic",
+        "grain",
+        "sweetened",
+        "coating"
+      ]
+    },
+    "jam_450": {
+      "product_type": "jam",
+      "category": "Trockenware",
+      "required_attributes": [
+        "organic",
+        "fruit",
+        "fruit_percent",
+        "spread_type"
+      ]
+    },
+    "honey_500": {
+      "product_type": "honey",
+      "category": "Trockenware",
+      "required_attributes": [
+        "organic",
+        "variety",
+        "consistency",
+        "origin"
+      ]
+    },
+    "ketchup_500": {
+      "product_type": "ketchup",
+      "category": "Trockenware",
+      "required_attributes": [
+        "organic",
+        "flavour",
+        "reduced_sugar"
+      ]
+    },
+    "mayonnaise_500": {
+      "product_type": "mayonnaise",
+      "category": "Trockenware",
+      "required_attributes": [
+        "organic",
+        "fat_percent",
+        "egg",
+        "vegan",
+        "spread_type"
+      ]
+    },
+    "mustard_250": {
+      "product_type": "mustard",
+      "category": "Trockenware",
+      "required_attributes": [
+        "organic",
+        "heat",
+        "mustard_type",
+        "recipe"
+      ]
+    },
+    "chicken_breast_400": {
+      "product_type": "chicken_breast",
+      "category": "Fleisch",
+      "required_attributes": [
+        "organic",
+        "preparation",
+        "cut",
+        "marinated",
+        "housing"
+      ]
+    },
+    "minced_meat_500": {
+      "product_type": "minced_meat",
+      "category": "Fleisch",
+      "required_attributes": [
+        "organic",
+        "species",
+        "mix_ratio",
+        "fat_percent",
+        "preparation",
+        "housing"
+      ]
+    },
+    "salami_200": {
+      "product_type": "salami",
+      "category": "Fleisch",
+      "required_attributes": [
+        "organic",
+        "species",
+        "variety",
+        "form",
+        "maturity"
+      ]
+    },
+    "ham_200": {
+      "product_type": "ham",
+      "category": "Fleisch",
+      "required_attributes": [
+        "organic",
+        "preparation",
+        "species",
+        "form",
+        "reformed"
+      ]
+    },
+    "sausages_400": {
+      "product_type": "sausages",
+      "category": "Fleisch",
+      "required_attributes": [
+        "organic",
+        "variety",
+        "species",
+        "preparation",
+        "drained_weight"
+      ]
+    },
+    "toilet_paper_10": {
+      "product_type": "toilet_paper",
+      "category": "Drogerie",
+      "required_attributes": [
+        "plies",
+        "sheets_per_roll",
+        "recycled",
+        "wet"
+      ]
+    },
+    "detergent_20": {
+      "product_type": "detergent",
+      "category": "Drogerie",
+      "required_attributes": [
+        "purpose",
+        "form",
+        "dosage"
+      ]
+    },
+    "dish_soap_500": {
+      "product_type": "dish_soap",
+      "category": "Drogerie",
+      "required_attributes": [
+        "purpose",
+        "concentrated",
+        "variant"
+      ]
+    },
+    "kitchen_towels_4": {
+      "product_type": "kitchen_towels",
+      "category": "Drogerie",
+      "required_attributes": [
+        "plies",
+        "sheets_per_roll",
+        "format"
+      ]
+    },
+    "diapers_4": {
+      "product_type": "diapers",
+      "category": "Baby",
+      "required_attributes": [
+        "size",
+        "weight_range",
+        "form"
+      ]
+    },
+    "baby_food_190": {
+      "product_type": "baby_food",
+      "category": "Baby",
+      "required_attributes": [
+        "organic",
+        "age",
+        "meal_type",
+        "recipe",
+        "allergens"
+      ]
+    },
+    "wet_wipes_80": {
+      "product_type": "wet_wipes",
+      "category": "Baby",
+      "required_attributes": [
+        "purpose",
+        "perfumed"
+      ]
+    },
+    "cat_food_400": {
+      "product_type": "cat_food",
+      "category": "Tierbedarf",
+      "required_attributes": [
+        "form",
+        "life_stage",
+        "completeness",
+        "recipe"
+      ]
+    },
+    "dog_food_1kg": {
+      "product_type": "dog_food",
+      "category": "Tierbedarf",
+      "required_attributes": [
+        "form",
+        "life_stage",
+        "animal_size",
+        "completeness",
+        "recipe"
+      ]
+    },
+    "cat_litter_10l": {
+      "product_type": "cat_litter",
+      "category": "Tierbedarf",
+      "required_attributes": [
+        "material",
+        "clumping",
+        "scented"
+      ]
+    },
+    "kinder_joy": {
+      "product_type": "kinder_joy",
+      "category": "Süßigkeiten",
+      "required_attributes": [
+        "organic",
+        "product_line",
+        "variant",
+        "edition"
+      ]
+    },
+    "pokemon_cards": {
+      "product_type": "trading_cards",
+      "category": "Non-Food",
+      "required_attributes": [
+        "game",
+        "set",
+        "language",
+        "edition",
+        "sealed",
+        "pack_type",
+        "card_count"
+      ]
+    }
+  }
+}

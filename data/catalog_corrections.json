@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "corrections": [
+    {
+      "source": "Open Food Facts",
+      "source_product_ref": "4006888000565",
+      "action": "replace",
+      "reason": "GTIN, Joghurt und 500-g-Packung anhand des OFF-API-Datensatzes und mehrerer BW-Preisbeobachtungen abgeglichen. Fehlende Bio-/Fett-/Tierart-Angaben bleiben unbekannt. Kein Bild freigegeben: Bildabruf mit HTTP 403.",
+      "reviewed_at": "2026-09-06T10:06:00+00:00",
+      "evidence_url": "https://world.openfoodfacts.org/api/v3.6/product/4006888000565",
+      "before": {
+        "identity_verified": false,
+        "brand_type": "unknown"
+      },
+      "after": {
+        "product_id": "yogurt_500",
+        "name": "Dobler Milchbauernhof Joghurt mild",
+        "brand_name": "Dobler Milchbauernhof",
+        "brand_type": "manufacturer",
+        "package_text": "500 g",
+        "attributes": {
+          "mild": true
+        },
+        "identity_verified": true
+      }
+    },
+    {
+      "source": "Open Food Facts",
+      "source_product_ref": "4061461377601",
+      "action": "replace",
+      "reason": "GTIN, Produktart und 500 ml anhand OFF und des sichtbaren Frontetiketts abgeglichen. Das Etikett nennt bio und Sonnenblumenöl kaltgepresst; Markenwert Aldi ist der Händler. Keine Mischungseigenschaft oder Packungsgröße aus dem generischen 1-l-Suchprodukt übernommen.",
+      "reviewed_at": "2026-09-06T10:06:00+00:00",
+      "evidence_url": "https://world.openfoodfacts.org/api/v3.6/product/4061461377601",
+      "before": {
+        "identity_verified": false,
+        "brand_type": "unknown"
+      },
+      "after": {
+        "product_id": "oil_1l",
+        "name": "Bio Sonnenblumenöl kaltgepresst",
+        "brand_name": "bio",
+        "brand_type": "private_label",
+        "package_text": "500 ml",
+        "attributes": {
+          "organic": true,
+          "plant": "sunflower",
+          "refining": "cold_pressed"
+        },
+        "identity_verified": true
+      }
+    },
+    {
+      "source": "Open Food Facts",
+      "source_product_ref": "4311501134627",
+      "action": "replace",
+      "reason": "GTIN, Stadionbratwurst, EDEKA Herzstücke und 400 g anhand OFF abgeglichen; Zutatenliste nennt Schweinefleisch. Frisch/Glas, Bio und Abtropfgewicht bleiben unbekannt. Kein Bild freigegeben: Bildabruf mit HTTP 403.",
+      "reviewed_at": "2026-09-06T10:06:00+00:00",
+      "evidence_url": "https://world.openfoodfacts.org/api/v3.6/product/4311501134627",
+      "before": {
+        "identity_verified": false,
+        "brand_type": "unknown"
+      },
+      "after": {
+        "product_id": "sausages_400",
+        "name": "EDEKA Herzstücke Stadionbratwurst",
+        "brand_name": "EDEKA Herzstücke",
+        "brand_type": "private_label",
+        "package_text": "400 g",
+        "attributes": {
+          "species": "pork",
+          "variety": "bratwurst"
+        },
+        "identity_verified": true
+      }
+    }
+  ]
+}

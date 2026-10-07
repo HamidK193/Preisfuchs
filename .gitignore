@@ -14,6 +14,7 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+.uv-cache/
 
 node_modules/
 dist/
@@ -23,3 +24,14 @@ web/*.log
 web/*.tsbuildinfo
 
 *.log
+artifacts/
+
+# Local browser profiles, tool caches and screenshots
+.tmp-*/
+.tmp-*.mjs
+%SystemDrive%/
+supabase/.temp/
+backend/jobs/Lib/
+backend/jobs/Scripts/
+.obsidian/
+/preisfuchs-*.png

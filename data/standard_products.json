@@ -1,7 +1,7 @@
 [
   {
     "id": "milk_15",
-    "name": "Milbona H-Milch 1,5%",
+    "name": "Bio H-Milch 1,5%",
     "category": "Molkerei",
     "package_size": "1 l",
     "search_terms": [
@@ -9,11 +9,16 @@
       "H-Milch 1,5% 1 l",
       "fettarme Milch 1 l"
     ],
-    "barcodes": []
+    "barcodes": [
+      "4056489013105"
+    ],
+    "barcode_product_names": {
+      "4056489013105": "Milbona Bio H-Milch 1,5%"
+    }
   },
   {
     "id": "butter_250",
-    "name": "Kerrygold Original Irische Butter",
+    "name": "Butter",
     "category": "Molkerei",
     "package_size": "250 g",
     "search_terms": [
@@ -37,7 +42,7 @@
   },
   {
     "id": "yogurt_500",
-    "name": "Gut & Günstig Naturjoghurt mild",
+    "name": "Naturjoghurt mild",
     "category": "Molkerei",
     "package_size": "500 g",
     "search_terms": [
@@ -45,11 +50,16 @@
       "Gut und Günstig Naturjoghurt",
       "Joghurt natur 500 g"
     ],
-    "barcodes": []
+    "barcodes": [
+      "4006888000565"
+    ],
+    "barcode_product_names": {
+      "4006888000565": "Dobler Milchbauernhof Joghurt mild"
+    }
   },
   {
     "id": "cheese_slices_400",
-    "name": "Milbona Gouda jung in Scheiben",
+    "name": "Gouda jung in Scheiben",
     "category": "Molkerei",
     "package_size": "400 g",
     "search_terms": [
@@ -57,11 +67,16 @@
       "Gouda jung Scheiben 400 g",
       "Käse Scheiben 400 g"
     ],
-    "barcodes": []
+    "barcodes": [
+      "4056489320500"
+    ],
+    "barcode_product_names": {
+      "4056489320500": "Milbona Gouda jung in Scheiben"
+    }
   },
   {
     "id": "quark_500",
-    "name": "Milbona Magerquark",
+    "name": "Magerquark",
     "category": "Molkerei",
     "package_size": "500 g",
     "search_terms": [
@@ -73,7 +88,7 @@
   },
   {
     "id": "cream_200",
-    "name": "Milbona Schlagsahne",
+    "name": "Schlagsahne",
     "category": "Molkerei",
     "package_size": "200 g",
     "search_terms": [
@@ -272,7 +287,7 @@
   },
   {
     "id": "pasta_500",
-    "name": "Barilla Spaghetti n.5",
+    "name": "Spaghetti",
     "category": "Trockenware",
     "package_size": "500 g",
     "search_terms": [
@@ -284,7 +299,7 @@
   },
   {
     "id": "rice_1kg",
-    "name": "Oryza Basmati Reis",
+    "name": "Basmati Reis",
     "category": "Trockenware",
     "package_size": "1 kg",
     "search_terms": [
@@ -296,7 +311,7 @@
   },
   {
     "id": "oats_500",
-    "name": "Kölln Blütenzarte Haferflocken",
+    "name": "Zarte Haferflocken",
     "category": "Trockenware",
     "package_size": "500 g",
     "search_terms": [
@@ -304,7 +319,12 @@
       "Blütenzarte Haferflocken 500 g",
       "zarte Haferflocken"
     ],
-    "barcodes": []
+    "barcodes": [
+      "4000540000108"
+    ],
+    "barcode_product_names": {
+      "4000540000108": "Kölln Blütenzarte Haferflocken"
+    }
   },
   {
     "id": "lentils_500",
@@ -363,15 +383,20 @@
   },
   {
     "id": "oil_1l",
-    "name": "Brölio Sonnenblumenöl",
-    "category": "Backen",
+    "name": "Sonnenblumenöl",
+    "category": "Trockenware",
     "package_size": "1 l",
     "search_terms": [
       "Sonnenblumenöl 1 l",
       "Brölio Sonnenblumenöl 1 l",
       "Speiseöl 1 l"
     ],
-    "barcodes": []
+    "barcodes": [
+      "4061461377601"
+    ],
+    "barcode_product_names": {
+      "4061461377601": "Bio Sonnenblumenöl kaltgepresst"
+    }
   },
   {
     "id": "baking_powder",
@@ -474,7 +499,7 @@
   },
   {
     "id": "chocolate_100",
-    "name": "Milka Alpenmilch Schokolade",
+    "name": "Vollmilchschokolade",
     "category": "Süßigkeiten",
     "package_size": "100 g",
     "search_terms": [
@@ -486,7 +511,7 @@
   },
   {
     "id": "gummy_bears_200",
-    "name": "Haribo Goldbären",
+    "name": "Fruchtgummi",
     "category": "Süßigkeiten",
     "package_size": "200 g",
     "search_terms": [
@@ -498,7 +523,7 @@
   },
   {
     "id": "cookies_200",
-    "name": "Leibniz Butterkeks",
+    "name": "Butterkekse",
     "category": "Süßigkeiten",
     "package_size": "200 g",
     "search_terms": [
@@ -510,7 +535,7 @@
   },
   {
     "id": "chips_175",
-    "name": "funny-frisch Chipsfrisch Oriental",
+    "name": "Kartoffelchips",
     "category": "Süßigkeiten",
     "package_size": "175 g",
     "search_terms": [
@@ -522,7 +547,7 @@
   },
   {
     "id": "nuts_200",
-    "name": "ültje Studentenfutter",
+    "name": "Studentenfutter",
     "category": "Süßigkeiten",
     "package_size": "200 g",
     "search_terms": [
@@ -534,7 +559,7 @@
   },
   {
     "id": "frozen_pizza_each",
-    "name": "Dr. Oetker Ristorante Pizza Salame",
+    "name": "Pizza Salami",
     "category": "Tiefkühl",
     "package_size": "1 Stück",
     "search_terms": [
@@ -579,7 +604,7 @@
   },
   {
     "id": "fish_sticks_450",
-    "name": "Iglo Fischstäbchen",
+    "name": "Fischstäbchen",
     "category": "Tiefkühl",
     "package_size": "450 g",
     "search_terms": [
@@ -591,8 +616,8 @@
   },
   {
     "id": "toast_500",
-    "name": "Harry Körner Balance Toast",
-    "category": "Backen",
+    "name": "Mehrkorntoast",
+    "category": "Backwaren",
     "package_size": "500 g",
     "search_terms": [
       "Harry Körner Balance Toast 500 g",
@@ -604,7 +629,7 @@
   {
     "id": "bread_rolls_6",
     "name": "Aufbackbrötchen",
-    "category": "Backen",
+    "category": "Backwaren",
     "package_size": "6 Stück",
     "search_terms": [
       "Aufbackbrötchen",
@@ -615,7 +640,7 @@
   {
     "id": "wholegrain_bread_500",
     "name": "Vollkornbrot",
-    "category": "Backen",
+    "category": "Backwaren",
     "package_size": "500 g",
     "search_terms": [
       "vollkornbrot 500g",
@@ -625,7 +650,7 @@
   },
   {
     "id": "muesli_500",
-    "name": "Kölln Müsli Früchte",
+    "name": "Früchtemüsli",
     "category": "Trockenware",
     "package_size": "500 g",
     "search_terms": [
@@ -637,7 +662,7 @@
   },
   {
     "id": "cornflakes_500",
-    "name": "Kellogg’s Corn Flakes",
+    "name": "Cornflakes",
     "category": "Trockenware",
     "package_size": "500 g",
     "search_terms": [
@@ -649,7 +674,7 @@
   },
   {
     "id": "jam_450",
-    "name": "Schwartau Extra Erdbeere",
+    "name": "Erdbeerkonfitüre",
     "category": "Trockenware",
     "package_size": "450 g",
     "search_terms": [
@@ -661,7 +686,7 @@
   },
   {
     "id": "honey_500",
-    "name": "Langnese Flotte Biene Blütenhonig",
+    "name": "Blütenhonig",
     "category": "Trockenware",
     "package_size": "500 g",
     "search_terms": [
@@ -760,7 +785,12 @@
       "Würstchen 400 g",
       "Wiener"
     ],
-    "barcodes": []
+    "barcodes": [
+      "4311501134627"
+    ],
+    "barcode_product_names": {
+      "4311501134627": "EDEKA Herzstücke Stadionbratwurst"
+    }
   },
   {
     "id": "toilet_paper_10",
@@ -775,7 +805,7 @@
   },
   {
     "id": "detergent_20",
-    "name": "Persil Universal Pulver",
+    "name": "Vollwaschmittel Pulver",
     "category": "Drogerie",
     "package_size": "20 WL",
     "search_terms": [
@@ -787,7 +817,7 @@
   },
   {
     "id": "dish_soap_500",
-    "name": "Fairy Original Spülmittel",
+    "name": "Handspülmittel",
     "category": "Drogerie",
     "package_size": "500 ml",
     "search_terms": [
@@ -810,7 +840,7 @@
   },
   {
     "id": "diapers_4",
-    "name": "Pampers Baby-Dry Größe 4",
+    "name": "Babywindeln Größe 4",
     "category": "Baby",
     "package_size": "1 Packung",
     "search_terms": [
@@ -822,7 +852,7 @@
   },
   {
     "id": "baby_food_190",
-    "name": "HiPP Bio Babygläschen Gemüse",
+    "name": "Babygläschen Gemüse",
     "category": "Baby",
     "package_size": "190 g",
     "search_terms": [
@@ -845,7 +875,7 @@
   },
   {
     "id": "cat_food_400",
-    "name": "Sheba Katzenfutter Sauce Speciale",
+    "name": "Katzen-Nassfutter",
     "category": "Tierbedarf",
     "package_size": "400 g",
     "search_terms": [
@@ -857,7 +887,7 @@
   },
   {
     "id": "dog_food_1kg",
-    "name": "Pedigree Hundefutter Adult",
+    "name": "Hunde-Trockenfutter Adult",
     "category": "Tierbedarf",
     "package_size": "1 kg",
     "search_terms": [
