@@ -7,6 +7,25 @@
     "symbolName": "carton",
     "prices": [
       {
+        "id": "milk_lidl_app_demo",
+        "retailer": "Lidl",
+        "storeLocation": "Baden-Wuerttemberg",
+        "price": 0.89,
+        "unitPrice": 0.89,
+        "unit": "l",
+        "observedAt": "2026-08-10T06:00:00Z",
+        "source": "Demo-App-Rabatt",
+        "sourceDetail": "MVP-Beispiel, kein aktuelles Live-Angebot",
+        "confidence": 0.4,
+        "offerType": "app_discount",
+        "requiresApp": true,
+        "appName": "Lidl Plus",
+        "couponActivationRequired": true,
+        "personalized": false,
+        "regularPrice": 1.05,
+        "discountDescription": "Coupon vor dem Einkauf aktivieren"
+      },
+      {
         "id": "milk_aldi_demo",
         "retailer": "Aldi Sued",
         "storeLocation": "Baden-Wuerttemberg",
@@ -141,6 +160,25 @@
     "packageSize": "1 kg",
     "symbolName": "leaf",
     "prices": [
+      {
+        "id": "bananas_edeka_app_demo",
+        "retailer": "Edeka",
+        "storeLocation": "Baden-Wuerttemberg",
+        "price": 1.29,
+        "unitPrice": 1.29,
+        "unit": "kg",
+        "observedAt": "2026-08-10T06:00:00Z",
+        "source": "Demo-App-Rabatt",
+        "sourceDetail": "MVP-Beispiel, kein aktuelles Live-Angebot",
+        "confidence": 0.4,
+        "offerType": "app_discount",
+        "requiresApp": true,
+        "appName": "EDEKA App",
+        "couponActivationRequired": false,
+        "personalized": true,
+        "regularPrice": 1.49,
+        "discountDescription": "Nur im teilnehmenden Lieblingsmarkt"
+      },
       {
         "id": "bananas_edeka_demo",
         "retailer": "Edeka",

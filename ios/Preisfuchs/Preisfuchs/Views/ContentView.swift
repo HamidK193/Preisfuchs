@@ -95,6 +95,14 @@ struct ProductRow: View {
                     Text(cheapest.retailer)
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                    Text("\(cheapest.source) · \(cheapest.observedDateText)")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                    if let requirement = cheapest.appRequirementText {
+                        Text(requirement)
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(.green)
+                    }
                 }
             }
         }
@@ -104,14 +112,33 @@ struct ProductRow: View {
 
 struct ProductDetailView: View {
     let product: GroceryProduct
+    @State private var includeAppDiscounts = false
+    @State private var includePersonalizedDiscounts = false
 
     var sortedPrices: [PriceObservation] {
-        product.prices.sorted { $0.price < $1.price }
+        product.comparisonPrices(
+            includeAppDiscounts: includeAppDiscounts,
+            includePersonalizedDiscounts: includePersonalizedDiscounts
+        )
+    }
+
+    var cheapestPrice: PriceObservation? {
+        sortedPrices.first
     }
 
     var body: some View {
         List {
-            if let cheapest = product.cheapestPrice {
+            Section {
+                Toggle("App-Rabatte einrechnen", isOn: $includeAppDiscounts)
+                if includeAppDiscounts {
+                    Toggle("Personalisierte Coupons einrechnen", isOn: $includePersonalizedDiscounts)
+                }
+                Text("App-Preise können Aktivierung, Anmeldung oder einen ausgewählten Markt voraussetzen. Personalisierte Coupons bleiben standardmäßig aus.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            if let cheapest = cheapestPrice {
                 Section {
                     CheapestPriceCard(product: product, price: cheapest)
                 }
@@ -119,14 +146,17 @@ struct ProductDetailView: View {
                 .listRowBackground(Color.clear)
             }
 
-            Section("Maerkte") {
+            Section("Märkte") {
                 ForEach(sortedPrices) { price in
-                    PriceRow(price: price, isBest: price.id == product.cheapestPrice?.id)
+                    PriceRow(price: price, isBest: price.id == cheapestPrice?.id)
                 }
             }
         }
         .navigationTitle(product.name)
         .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: includeAppDiscounts) { _, value in
+            if !value { includePersonalizedDiscounts = false }
+        }
     }
 }
 
@@ -155,9 +185,27 @@ struct CheapestPriceCard: View {
             Text("\(price.retailer) · \(price.storeLocation)")
                 .font(.headline)
 
-            Text("\(price.source) · \(price.freshnessText)")
+            Text("\(price.source) · \(price.observedDateText)")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+
+            if let validity = price.validityText {
+                Text(validity)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            if price.isStale() {
+                Label("Älter als 14 Tage", systemImage: "exclamationmark.triangle")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.orange)
+            }
+
+            if let requirement = price.appRequirementText {
+                Label(requirement, systemImage: "tag.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.green)
+            }
         }
         .padding(16)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
@@ -180,9 +228,29 @@ struct PriceRow: View {
                 Text(price.storeLocation)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-                Text("\(price.source) · \(price.freshnessText)")
+                Text("\(price.source) · \(price.observedDateText)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                if let validity = price.validityText {
+                    Text(validity)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                if price.isStale() {
+                    Text("Möglicherweise veraltet")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(.orange)
+                }
+                if let requirement = price.appRequirementText {
+                    Label(requirement, systemImage: "tag.fill")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.green)
+                }
+                if price.couponActivationRequired == true {
+                    Text("Coupon vorher aktivieren")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
             }
 
             Spacer()
@@ -203,53 +271,250 @@ struct PriceRow: View {
 
 struct ShoppingListView: View {
     let products: [GroceryProduct]
-    @State private var selectedProductIDs: Set<String> = []
+    @State private var quantities: [String: Int]
+    @State private var includeAppDiscounts = false
+    @State private var includePersonalizedDiscounts = false
+
+    private struct StoreBasketPlan {
+        let retailer: String
+        let total: Decimal
+        let availableCount: Int
+        let missingCount: Int
+        let staleCount: Int
+
+        var isComplete: Bool { availableCount > 0 && missingCount == 0 }
+    }
+
+    init(products: [GroceryProduct]) {
+        self.products = products
+        _quantities = State(initialValue: Self.loadCart())
+    }
 
     private var selectedProducts: [GroceryProduct] {
-        products.filter { selectedProductIDs.contains($0.id) }
+        products.filter { (quantities[$0.id] ?? 0) > 0 }
     }
 
     private var estimatedBestTotal: Decimal {
         selectedProducts.reduce(Decimal.zero) { partial, product in
-            partial + (product.cheapestPrice?.price ?? .zero)
+            partial + (comparisonPrice(for: product)?.price ?? .zero) * Decimal(quantities[product.id] ?? 0)
         }
+    }
+
+    private var missingPriceCount: Int {
+        selectedProducts.filter { comparisonPrice(for: $0) == nil }.count
+    }
+
+    private var stalePriceCount: Int {
+        selectedProducts.filter { comparisonPrice(for: $0)?.isStale() == true }.count
+    }
+
+    private var splitRetailerCount: Int {
+        Set(selectedProducts.compactMap { comparisonPrice(for: $0)?.normalizedRetailer }).count
+    }
+
+    private var singleStorePlans: [StoreBasketPlan] {
+        let productPrices = selectedProducts.map { product in
+            (
+                product,
+                product.comparisonPrices(
+                    includeAppDiscounts: includeAppDiscounts,
+                    includePersonalizedDiscounts: includePersonalizedDiscounts
+                )
+            )
+        }
+        let retailerKeys = Set(productPrices.flatMap { $0.1.map(\.normalizedRetailer) })
+
+        return retailerKeys.map { retailerKey in
+            var total = Decimal.zero
+            var availableCount = 0
+            var staleCount = 0
+            var displayName = retailerKey
+
+            for (product, prices) in productPrices {
+                guard let price = prices.first(where: { $0.normalizedRetailer == retailerKey }) else { continue }
+                displayName = price.retailer
+                total += price.price * Decimal(quantities[product.id] ?? 0)
+                availableCount += 1
+                if price.isStale() { staleCount += 1 }
+            }
+
+            return StoreBasketPlan(
+                retailer: displayName,
+                total: total,
+                availableCount: availableCount,
+                missingCount: selectedProducts.count - availableCount,
+                staleCount: staleCount
+            )
+        }
+        .sorted { left, right in
+            if left.isComplete != right.isComplete { return left.isComplete && !right.isComplete }
+            if left.missingCount != right.missingCount { return left.missingCount < right.missingCount }
+            return left.total < right.total
+        }
+    }
+
+    private var bestSingleStore: StoreBasketPlan? {
+        singleStorePlans.first
+    }
+
+    private var splitSavings: Decimal {
+        guard missingPriceCount == 0, let bestSingleStore, bestSingleStore.isComplete else { return .zero }
+        return max(.zero, bestSingleStore.total - estimatedBestTotal)
+    }
+
+    private var shareText: String {
+        let rows = selectedProducts.map { product in
+            let quantity = quantities[product.id] ?? 0
+            let priceText = comparisonPrice(for: product).map {
+                let requirement = $0.appRequirementText.map { ", \($0)" } ?? ""
+                return "ab \($0.formattedPrice) bei \($0.retailer) (\($0.source), \($0.observedDateText)\(requirement))"
+            } ?? "kein Preis"
+            return "- \(quantity) × \(product.name) (\(product.packageSize)): \(priceText)"
+        }
+        let totalLabel = missingPriceCount == 0 ? "Geschätztes Minimum" : "Unvollständige Teilsumme"
+        return (["Preisfuchs-Warenkorb", ""] + rows + [
+            "",
+            "\(totalLabel): \(formatCurrency(estimatedBestTotal))",
+            "Preise sind datierte Beobachtungen, keine garantierten Live-Filialpreise."
+        ]).joined(separator: "\n")
     }
 
     var body: some View {
         NavigationStack {
             List {
+                Section("Rabatte") {
+                    Toggle("App-Rabatte einrechnen", isOn: $includeAppDiscounts)
+                    if includeAppDiscounts {
+                        Toggle("Personalisierte Coupons einrechnen", isOn: $includePersonalizedDiscounts)
+                    }
+                    Text("App-Preise können Aktivierung oder Anmeldung voraussetzen. Personalisierte Coupons bleiben separat freiwillig.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
                 Section {
-                    HStack {
-                        Text("Geschaetztes Minimum")
-                        Spacer()
-                        Text(formatCurrency(estimatedBestTotal))
-                            .font(.headline)
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack {
+                            Text(missingPriceCount == 0 ? "Maximal sparen" : "Unvollständige Teilsumme")
+                            Spacer()
+                            Text(formatCurrency(estimatedBestTotal))
+                                .font(.headline)
+                        }
+                        Text("\(splitRetailerCount) \(splitRetailerCount == 1 ? "Markt" : "Märkte")")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        if let bestSingleStore {
+                            Divider()
+                            HStack {
+                                Text(bestSingleStore.missingCount == 0 ? "Bester Ein-Laden-Einkauf" : "Beste Ein-Laden-Teilsumme")
+                                Spacer()
+                                Text(formatCurrency(bestSingleStore.total))
+                                    .font(.headline)
+                            }
+                            Text("\(bestSingleStore.retailer) · \(bestSingleStore.availableCount) von \(selectedProducts.count) Artikeln")
+                                .font(.caption)
+                                .foregroundStyle(bestSingleStore.isComplete ? Color.secondary : Color.orange)
+                            if bestSingleStore.staleCount > 0 {
+                                Text("\(bestSingleStore.staleCount) Preise dieses Ein-Laden-Vergleichs sind älter als 14 Tage.")
+                                    .font(.caption2)
+                                    .foregroundStyle(.orange)
+                            }
+                        }
+                        if splitSavings > 0 {
+                            Text("Die Aufteilung spart \(formatCurrency(splitSavings)) gegenüber dem besten vollständigen Ein-Laden-Einkauf.")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.green)
+                        }
+                        if splitRetailerCount > 1 {
+                            Text("Fahrtkosten und zusätzliche Einkaufszeit sind nicht eingerechnet.")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        if missingPriceCount > 0 {
+                            Text("Für \(missingPriceCount) ausgewählte Produkte fehlt eine Preisbeobachtung.")
+                                .font(.caption)
+                                .foregroundStyle(.orange)
+                        }
+                        if stalePriceCount > 0 {
+                            Text("\(stalePriceCount) verwendete Preisbeobachtungen sind älter als 14 Tage.")
+                                .font(.caption)
+                                .foregroundStyle(.orange)
+                        }
+                        ShareLink(item: shareText, subject: Text("Mein Preisfuchs-Warenkorb")) {
+                            Label("Warenkorb teilen", systemImage: "square.and.arrow.up")
+                        }
+                        .disabled(selectedProducts.isEmpty)
                     }
                 }
 
                 Section("Produkte") {
                     ForEach(products) { product in
-                        Button {
-                            if selectedProductIDs.contains(product.id) {
-                                selectedProductIDs.remove(product.id)
-                            } else {
-                                selectedProductIDs.insert(product.id)
-                            }
-                        } label: {
-                            HStack {
-                                Image(systemName: selectedProductIDs.contains(product.id) ? "checkmark.square.fill" : "square")
-                                    .foregroundStyle(.green)
+                        HStack(spacing: 10) {
+                            VStack(alignment: .leading, spacing: 3) {
                                 Text(product.name)
-                                Spacer()
-                                Text(product.cheapestPrice?.formattedPrice ?? "-")
-                                    .foregroundStyle(.secondary)
+                                if let price = comparisonPrice(for: product) {
+                                    Text("\(price.formattedPrice) · \(price.retailer) · \(price.source)")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                    if let requirement = price.appRequirementText {
+                                        Text(requirement)
+                                            .font(.caption2.weight(.semibold))
+                                            .foregroundStyle(.green)
+                                    }
+                                } else {
+                                    Text("Keine aktive Preisbeobachtung")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
                             }
+                            Spacer()
+                            HStack(spacing: 8) {
+                                Button {
+                                    updateQuantity(for: product.id, delta: -1)
+                                } label: {
+                                    Image(systemName: "minus.circle.fill")
+                                }
+                                .disabled((quantities[product.id] ?? 0) == 0)
+
+                                Text("\(quantities[product.id] ?? 0)")
+                                    .monospacedDigit()
+                                    .frame(minWidth: 20)
+
+                                Button {
+                                    updateQuantity(for: product.id, delta: 1)
+                                } label: {
+                                    Image(systemName: "plus.circle.fill")
+                                }
+                            }
+                            .foregroundStyle(.green)
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
                 }
             }
             .navigationTitle("Einkaufsliste")
+            .onChange(of: quantities) { _, value in
+                Self.saveCart(value)
+            }
+            .onChange(of: includeAppDiscounts) { _, value in
+                if !value { includePersonalizedDiscounts = false }
+            }
+        }
+    }
+
+    private func comparisonPrice(for product: GroceryProduct) -> PriceObservation? {
+        product.cheapestPrice(
+            includeAppDiscounts: includeAppDiscounts,
+            includePersonalizedDiscounts: includePersonalizedDiscounts
+        )
+    }
+
+    private func updateQuantity(for productID: String, delta: Int) {
+        let quantity = min(99, max(0, (quantities[productID] ?? 0) + delta))
+        if quantity == 0 {
+            quantities.removeValue(forKey: productID)
+        } else {
+            quantities[productID] = quantity
         }
     }
 
@@ -259,6 +524,22 @@ struct ShoppingListView: View {
         formatter.currencyCode = "EUR"
         formatter.locale = Locale(identifier: "de_DE")
         return formatter.string(from: value as NSDecimalNumber) ?? "\(value) EUR"
+    }
+
+    private static let cartStorageKey = "preisfuchs-cart-v1"
+
+    private static func loadCart() -> [String: Int] {
+        guard let data = UserDefaults.standard.data(forKey: cartStorageKey),
+              let decoded = try? JSONDecoder().decode([String: Int].self, from: data) else {
+            return [:]
+        }
+        return decoded.filter { !$0.key.isEmpty && $0.key.count <= 200 && (1...99).contains($0.value) }
+    }
+
+    private static func saveCart(_ cart: [String: Int]) {
+        let sanitized = cart.filter { !$0.key.isEmpty && $0.key.count <= 200 && (1...99).contains($0.value) }
+        guard let data = try? JSONEncoder().encode(sanitized) else { return }
+        UserDefaults.standard.set(data, forKey: cartStorageKey)
     }
 }
 

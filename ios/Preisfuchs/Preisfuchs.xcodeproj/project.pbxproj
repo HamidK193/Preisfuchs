@@ -13,6 +13,7 @@
 		1A0000010000000000000004 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000104 /* ContentView.swift */; };
 		1A0000010000000000000005 /* DemoPrices.json in Resources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000105 /* DemoPrices.json */; };
 		1A0000010000000000000006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000106 /* Assets.xcassets */; };
+		1A0000010000000000000007 /* standard_products.json in Resources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000107 /* standard_products.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		1A0000010000000000000104 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ContentView.swift; sourceTree = "<group>"; };
 		1A0000010000000000000105 /* DemoPrices.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Resources/DemoPrices.json; sourceTree = "<group>"; };
 		1A0000010000000000000106 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1A0000010000000000000107 /* standard_products.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = standard_products.json; path = ../../../data/standard_products.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +55,7 @@
 				1A0000010000000000000104 /* ContentView.swift */,
 				1A0000010000000000000105 /* DemoPrices.json */,
 				1A0000010000000000000106 /* Assets.xcassets */,
+				1A0000010000000000000107 /* standard_products.json */,
 			);
 			path = Preisfuchs;
 			sourceTree = "<group>";
@@ -126,6 +129,7 @@
 			files = (
 				1A0000010000000000000005 /* DemoPrices.json in Resources */,
 				1A0000010000000000000006 /* Assets.xcassets in Resources */,
+				1A0000010000000000000007 /* standard_products.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
