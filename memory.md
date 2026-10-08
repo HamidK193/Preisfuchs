@@ -132,6 +132,17 @@
 
 ## Offene Punkte
 
+### 2026-10-08: App-Lücken A+B+E (Onboarding, Suche, Systemzustände)
+- Umgesetzt in `mobile/`: `components/onboarding.tsx`, `app/scanner.tsx`,
+  `components/search-filter-sheet.tsx`, `components/system-states.tsx`; Zustand um
+  `onboarded`, `recentSearches`, `priceData` (live/cached/offline/demo) erweitert,
+  Preis-Cache unter `preisfuchs-prices-v1`. `loadRealProducts` wirft jetzt bei Fehlern.
+- Mitteilungen werden noch nicht verschickt (kein expo-notifications); Auswahl wird nur gespeichert.
+- Skeleton-Ladezustand nicht nötig: Splash bleibt, bis Zustand und Preise geladen sind.
+- Nächste Reihenfolge (vom Nutzer bestätigt): C+D (mehrere Listen, Teilen, Einkauf
+  abgeschlossen, Benachrichtigungs-Inbox), danach F (RevenueCat, AdMob, Partnerlinks) und
+  G (Login, Familie) – F/G brauchen einen Development Build statt Expo Go.
+
 ### 2026-10-07: Echte Preise und Preismeldungen
 - Nutzerentscheidungen: automatische Prüfung für Open Prices; jede GTIN ein eigenes
   Produkt; Preismeldungen ohne Konto mit Bestätigung; kaufDA NUR interner letzter

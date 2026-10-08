@@ -3,11 +3,18 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
+import { ErrorState } from '@/components/system-states';
 import { LocationSetup } from '@/components/location-setup';
+import { Onboarding } from '@/components/onboarding';
 import { Colors } from '@/constants/theme';
 import { AppStateProvider, useAppState } from '@/state/app-state';
 
 SplashScreen.preventAutoHideAsync();
+
+// Unerwarteter Fehler in einem Screen: freundliche Meldung statt rotem Bildschirm.
+export function ErrorBoundary({ retry }: { error: Error; retry: () => Promise<void> }) {
+  return <ErrorState onRetry={retry} />;
+}
 
 const theme = {
   ...DefaultTheme,
@@ -42,7 +49,7 @@ function sheetOptions(detents: number[]): NativeStackNavigationOptions {
 // der Warenkorb-Badge direkt nach dem Start, und iOS 26 kuerzt die Tab-Beschriftungen
 // (react-native-screens #4749).
 function AppNavigator() {
-  const { loaded, storesFromOsm } = useAppState();
+  const { loaded, storesFromOsm, onboarded } = useAppState();
 
   useEffect(() => {
     if (loaded) {
@@ -52,6 +59,10 @@ function AppNavigator() {
 
   if (!loaded) {
     return null;
+  }
+
+  if (!onboarded) {
+    return <Onboarding />;
   }
 
   // Ohne festgelegten Standort zuerst nach dem Standort fragen.
@@ -67,6 +78,7 @@ function AppNavigator() {
       <Stack.Screen name="preis-melden/[id]" options={sheetOptions([0.9])} />
       <Stack.Screen name="konto" options={sheetOptions([0.7])} />
       <Stack.Screen name="plus" options={{ presentation: 'modal', headerShown: false }} />
+      <Stack.Screen name="scanner" options={{ presentation: 'fullScreenModal', headerShown: false }} />
       <Stack.Screen name="angebote" options={{ title: 'Angebote' }} />
       <Stack.Screen name="kategorie/[id]" options={{ title: 'Kategorie' }} />
       <Stack.Screen name="marktvergleich" options={{ title: 'Marktvergleich' }} />

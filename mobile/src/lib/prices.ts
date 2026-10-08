@@ -124,7 +124,8 @@ function gtinOf(row: PriceRow): string | undefined {
   return undefined;
 }
 
-// Laedt echte Preise und baut daraus Produkte. Ohne Verbindung: leere Liste, die App zeigt Demo-Daten.
+// Laedt echte Preise und baut daraus Produkte. Ohne Supabase-Konfiguration: leere Liste (nur Demo-Daten).
+// Ohne Verbindung wirft die Funktion, damit die App zwischengespeicherte Preise zeigen kann.
 export async function loadRealProducts(): Promise<Product[]> {
   const client = supabase;
   if (!client) return [];
@@ -138,7 +139,7 @@ export async function loadRealProducts(): Promise<Product[]> {
       .order('id')
       .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
       .returns<PriceRow[]>();
-    if (error) return [];
+    if (error) throw new Error(error.message);
     rows.push(...data);
     if (data.length < PAGE_SIZE) break;
   }

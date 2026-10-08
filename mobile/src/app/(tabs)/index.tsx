@@ -4,6 +4,7 @@ import { Pressable, ScrollView, View } from 'react-native';
 
 import { OffersCallout } from '@/components/offers-callout';
 import { ProductCard } from '@/components/product-card';
+import { OfflineBanner } from '@/components/system-states';
 import { AppText, Card, DemoNotice, FoxLogo, Icon, SectionHeader, StoreBadge } from '@/components/ui';
 import { Colors, Radius, Spacing, Inset } from '@/constants/theme';
 import { categories, products } from '@/data/products';
@@ -54,25 +55,36 @@ export default function StartScreen() {
           Hallo! Was brauchst du heute?
         </AppText>
 
-        <Link href="/suche" asChild>
+        <View style={{ flexDirection: 'row', gap: Spacing.two }}>
+          <Link href="/suche" asChild>
+            <Pressable
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: Spacing.two,
+                backgroundColor: Colors.card,
+                borderRadius: Radius.large,
+                paddingHorizontal: Inset.card,
+                height: 52,
+                borderWidth: 1,
+                borderColor: Colors.border,
+              }}>
+              <Icon name={{ ios: 'magnifyingglass', android: 'search', web: 'search' }} size={18} color={Colors.textSecondary} />
+              <AppText size={15} color={Colors.textSecondary}>
+                Produkt oder Marke suchen
+              </AppText>
+            </Pressable>
+          </Link>
           <Pressable
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: Spacing.two,
-              backgroundColor: Colors.card,
-              borderRadius: Radius.large,
-              paddingHorizontal: Inset.card,
-              height: 52,
-              borderWidth: 1,
-              borderColor: Colors.border,
-            }}>
-            <Icon name={{ ios: 'magnifyingglass', android: 'search', web: 'search' }} size={18} color={Colors.textSecondary} />
-            <AppText size={15} color={Colors.textSecondary}>
-              Produkt oder Marke suchen
-            </AppText>
+            onPress={() => router.push('/scanner')}
+            accessibilityLabel="Barcode scannen"
+            style={{ width: 52, height: 52, borderRadius: Radius.large, backgroundColor: Colors.text, alignItems: 'center', justifyContent: 'center' }}>
+            <Icon name={{ ios: 'barcode.viewfinder', android: 'barcode_scanner', web: 'barcode_scanner' }} size={22} color="#FFFFFF" />
           </Pressable>
-        </Link>
+        </View>
+
+        <OfflineBanner />
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: Spacing.two }}>
           {QUICK_SEARCHES.map((term) => (

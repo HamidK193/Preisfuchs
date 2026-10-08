@@ -45,6 +45,15 @@
           "cameraPermission": "Preisfuchs nutzt die Kamera nur für ein Foto vom Preisschild, wenn du einen Preis meldest.",
           "photosPermission": "Preisfuchs nutzt deine Fotos nur, wenn du ein Foto vom Preisschild zu einer Preismeldung hinzufügst."
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Preisfuchs nutzt die Kamera, um Barcodes von Produkten zu scannen und Fotos von Preisschildern aufzunehmen.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": true
+        }
       ]
     ],
     "experiments": {

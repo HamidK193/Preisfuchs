@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 
 import { getChain, type Branch, type Store, type StoreId } from '@/data/stores';
-import { addRealProducts } from '@/data/products';
+import { addRealProducts, type Product } from '@/data/products';
 import type { CartLine } from '@/lib/pricing';
 import { loadRealProducts } from '@/lib/prices';
 
@@ -49,7 +49,14 @@ type PersistedState = {
   notifications: NotificationSettings;
   consent: ConsentSettings;
   alarms: PriceAlarm[];
+  // true nach dem Onboarding (Intro, Einwilligung, Standort, Maerkte, Mitteilungen).
+  onboarded: boolean;
+  recentSearches: string[];
 };
+
+// Herkunft der angezeigten echten Preise:
+// live = gerade geladen, cached = ohne Verbindung aus dem Zwischenspeicher, offline = nur Demo-Daten.
+export type PriceDataStatus = { kind: 'live' | 'cached' | 'offline' | 'demo'; loadedAt?: string; reloading: boolean };
 
 type AppState = PersistedState & {
   addToCart: (productId: string, quantity?: number) => void;
@@ -65,6 +72,11 @@ type AppState = PersistedState & {
   saveAlarm: (alarm: PriceAlarm) => void;
   removeAlarm: (productId: string) => void;
   resetAllData: () => void;
+  completeOnboarding: () => void;
+  addRecentSearch: (term: string) => void;
+  removeRecentSearch: (term: string) => void;
+  priceData: PriceDataStatus;
+  reloadPrices: () => void;
   cartCount: number;
   // true, sobald der gespeicherte Zustand geladen ist.
   loaded: boolean;
@@ -74,6 +86,29 @@ type AppState = PersistedState & {
 export const FREE_ALARM_LIMIT = 3;
 
 const STORAGE_KEY = 'preisfuchs-state-v1';
+// Zuletzt geladene echte Preise fuer die Nutzung ohne Verbindung.
+const PRICE_CACHE_KEY = 'preisfuchs-prices-v1';
+const MAX_RECENT_SEARCHES = 6;
+
+type PriceCache = { loadedAt: string; products: Product[] };
+
+// Echte Preise laden; ohne Verbindung die zuletzt gespeicherten verwenden.
+async function fetchPrices(): Promise<Omit<PriceDataStatus, 'reloading'>> {
+  try {
+    const real = await loadRealProducts();
+    if (real.length === 0) return { kind: 'demo' };
+    addRealProducts(real);
+    const cache: PriceCache = { loadedAt: new Date().toISOString(), products: real };
+    AsyncStorage.setItem(PRICE_CACHE_KEY, JSON.stringify(cache)).catch(() => undefined);
+    return { kind: 'live', loadedAt: cache.loadedAt };
+  } catch {
+    const raw = await AsyncStorage.getItem(PRICE_CACHE_KEY).catch(() => null);
+    if (!raw) return { kind: 'offline' };
+    const cache = JSON.parse(raw) as PriceCache;
+    addRealProducts(cache.products);
+    return { kind: 'cached', loadedAt: cache.loadedAt };
+  }
+}
 
 const initialState: PersistedState = {
   cart: [
@@ -93,6 +128,8 @@ const initialState: PersistedState = {
   notifications: { priceAlerts: true, cartChanges: true, weeklyOffers: true, weekday: 'Mo', quietHours: true },
   consent: { personalizedAds: false, analytics: false },
   alarms: [],
+  onboarded: false,
+  recentSearches: [],
 };
 
 // Uebernimmt gespeicherte Werte und fuellt fehlende Felder aus aelteren Versionen auf.
@@ -104,6 +141,8 @@ function restore(raw: string): PersistedState {
   return {
     ...initialState,
     ...saved,
+    // Wer schon vor dem Onboarding einen Standort hatte, sieht es nicht noch einmal.
+    onboarded: saved.onboarded ?? true,
     location: { ...initialState.location, ...saved.location },
     notifications: { ...initialState.notifications, ...saved.notifications },
     consent: { ...initialState.consent, ...saved.consent },
@@ -115,6 +154,7 @@ const AppStateContext = createContext<AppState | null>(null);
 export function AppStateProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<PersistedState>(initialState);
   const [loaded, setLoaded] = useState(false);
+  const [priceData, setPriceData] = useState<PriceDataStatus>({ kind: 'demo', reloading: false });
 
   useEffect(() => {
     const savedState = AsyncStorage.getItem(STORAGE_KEY)
@@ -124,12 +164,15 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         }
       })
       .catch(() => undefined);
-    // Echte Preise aus Supabase vor dem ersten Anzeigen laden; ohne Netz bleiben die Demo-Daten.
-    const realPrices = loadRealProducts()
-      .then(addRealProducts)
-      .catch(() => undefined);
+    // Echte Preise aus Supabase vor dem ersten Anzeigen laden; ohne Netz den Zwischenspeicher bzw. Demo-Daten.
+    const realPrices = fetchPrices().then((status) => setPriceData({ ...status, reloading: false }));
     Promise.all([savedState, realPrices]).finally(() => setLoaded(true));
   }, []);
+
+  const reloadPrices = () => {
+    setPriceData((current) => ({ ...current, reloading: true }));
+    fetchPrices().then((status) => setPriceData({ ...status, reloading: false }));
+  };
 
   useEffect(() => {
     if (loaded) {
@@ -228,6 +271,22 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       setState((current) => ({ ...current, alarms: current.alarms.filter((item) => item.productId !== productId) })),
     resetAllData: () =>
       setState({ ...initialState, cart: [], favorites: [], alarms: [] }),
+    completeOnboarding: () => setState((current) => ({ ...current, onboarded: true })),
+    addRecentSearch: (term) => {
+      const clean = term.trim();
+      if (clean.length < 2) return;
+      setState((current) => ({
+        ...current,
+        recentSearches: [clean, ...current.recentSearches.filter((item) => item.toLowerCase() !== clean.toLowerCase())].slice(
+          0,
+          MAX_RECENT_SEARCHES,
+        ),
+      }));
+    },
+    removeRecentSearch: (term) =>
+      setState((current) => ({ ...current, recentSearches: current.recentSearches.filter((item) => item !== term) })),
+    priceData,
+    reloadPrices,
   };
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;

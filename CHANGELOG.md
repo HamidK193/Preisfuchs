@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- App (`mobile/`): Onboarding beim ersten Start (3 Intro-Seiten, Datenschutz-Einwilligung
+  mit gleichwertigem Ablehnen/Akzeptieren, Standort, Lieblingsmärkte, Mitteilungen);
+  bestehende Nutzer mit Standort überspringen es. Barcode-Scanner (`expo-camera`, EAN-8/13,
+  UPC) mit manueller Eingabe und „Kein Treffer“-Zustand; Scan-Button auf Start und in der
+  Suche. Suche mit „Zuletzt gesucht“, „Beliebt“, Filter-Sheet (Sortierung Grundpreis/Preis/
+  Rabatt, Nur Angebote, Nur Bio, Märkte) und „Meintest du …“ bei keinem Treffer.
+  Systemzustände: Fehler-Screen (Router-ErrorBoundary), echte Preise werden lokal
+  zwischengespeichert und ohne Verbindung mit Datum angezeigt („Erneut laden“).
+  Typecheck, Lint, expo-doctor (21/21) und iOS-Bundle bestanden; noch nicht auf dem
+  iPhone getestet.
+
 - Echte Preise für ganz Deutschland: `open_prices_de_agent.py` holt täglich alle
   neuen deutschen Open-Prices-Beobachtungen (kein Serverfilter vorhanden, daher
   Cursor über alle Preise). Jede GTIN wird ein eigenes Produkt (`gtin_<EAN>`,
