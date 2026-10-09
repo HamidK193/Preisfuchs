@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- App (`mobile/`): Mehrere Einkaufslisten („Meine Listen“, neu/umbenennen/löschen, Symbol);
+  der Warenkorb zeigt die aktive Liste, alter Warenkorb wird zur Liste „Wocheneinkauf“.
+  Liste teilen als Text oder als Link (`preisfuchs://liste?...`), der in Preisfuchs als
+  eigene Kopie übernommen wird (kein Live-Abgleich; Mitglieder kommen mit Familie &
+  Gruppen). „Einkauf abgeschlossen“ nach dem Einkaufsmodus mit geschätzter Summe und
+  Ersparnis (Vergleich zum Durchschnitt der aktiven Märkte, als Schätzung gekennzeichnet);
+  Profil zeigt die geschätzte Monatsersparnis. Leerer Warenkorb mit Vorschlägen und Scanner.
+  Benachrichtigungs-Inbox (Glocke auf Start, Profil): erreichte Wunschpreise und
+  Wochenangebote, gelesen/ungelesen, lange drücken entfernt; kein Push.
+  Typecheck, Lint, expo-doctor (21/21) und iOS-Bundle bestanden; nicht auf dem iPhone getestet.
+
 - App (`mobile/`): Onboarding beim ersten Start (3 Intro-Seiten, Datenschutz-Einwilligung
   mit gleichwertigem Ablehnen/Akzeptieren, Standort, Lieblingsmärkte, Mitteilungen);
   bestehende Nutzer mit Standort überspringen es. Barcode-Scanner (`expo-camera`, EAN-8/13,

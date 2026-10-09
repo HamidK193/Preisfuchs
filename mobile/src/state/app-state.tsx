@@ -1,9 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import { getChain, type Branch, type Store, type StoreId } from '@/data/stores';
-import { addRealProducts, type Product } from '@/data/products';
-import type { CartLine } from '@/lib/pricing';
+import { addRealProducts, products, type Product } from '@/data/products';
+import { buildInbox, type InboxItem } from '@/lib/inbox';
+import { tripSummary, type CartLine, type CompletedTrip } from '@/lib/pricing';
 import { loadRealProducts } from '@/lib/prices';
 
 export type Location = {
@@ -35,10 +36,20 @@ export type PriceAlarm = {
   push: boolean;
 };
 
-type PersistedState = {
-  cart: CartLine[];
-  favorites: string[];
+// Eine Einkaufsliste; der Warenkorb zeigt immer die aktive Liste.
+export type ShoppingList = {
+  id: string;
+  name: string;
+  emoji: string;
+  lines: CartLine[];
   checked: string[];
+  createdAt: string;
+};
+
+type PersistedState = {
+  lists: ShoppingList[];
+  activeListId: string;
+  favorites: string[];
   location: Location;
   // Naechste Filiale je Kette und alle Filialen am gewaehlten Standort.
   stores: Store[];
@@ -52,6 +63,10 @@ type PersistedState = {
   // true nach dem Onboarding (Intro, Einwilligung, Standort, Maerkte, Mitteilungen).
   onboarded: boolean;
   recentSearches: string[];
+  trips: CompletedTrip[];
+  // Gelesene bzw. entfernte Eintraege der Benachrichtigungs-Inbox.
+  inboxRead: string[];
+  inboxDismissed: string[];
 };
 
 // Herkunft der angezeigten echten Preise:
@@ -59,6 +74,20 @@ type PersistedState = {
 export type PriceDataStatus = { kind: 'live' | 'cached' | 'offline' | 'demo'; loadedAt?: string; reloading: boolean };
 
 type AppState = PersistedState & {
+  // Artikel und erledigte Artikel der aktiven Liste.
+  cart: CartLine[];
+  checked: string[];
+  activeList: ShoppingList;
+  createList: (name: string, emoji: string, lines?: CartLine[]) => string;
+  updateList: (id: string, changes: Pick<ShoppingList, 'name' | 'emoji'>) => void;
+  deleteList: (id: string) => void;
+  setActiveList: (id: string) => void;
+  // Speichert die erledigten Artikel als abgeschlossenen Einkauf und entfernt sie aus der Liste.
+  finishShopping: (storeId: StoreId) => CompletedTrip | undefined;
+  inbox: InboxItem[];
+  unreadCount: number;
+  markInboxRead: (ids: string[]) => void;
+  dismissInboxItem: (id: string) => void;
   addToCart: (productId: string, quantity?: number) => void;
   setQuantity: (productId: string, quantity: number) => void;
   toggleChecked: (productId: string) => void;
@@ -89,6 +118,13 @@ const STORAGE_KEY = 'preisfuchs-state-v1';
 // Zuletzt geladene echte Preise fuer die Nutzung ohne Verbindung.
 const PRICE_CACHE_KEY = 'preisfuchs-prices-v1';
 const MAX_RECENT_SEARCHES = 6;
+const MAX_TRIPS = 50;
+const MAX_INBOX_IDS = 200;
+const FIRST_LIST_ID = 'wocheneinkauf';
+
+function newId(): string {
+  return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
+}
 
 type PriceCache = { loadedAt: string; products: Product[] };
 
@@ -111,14 +147,23 @@ async function fetchPrices(): Promise<Omit<PriceDataStatus, 'reloading'>> {
 }
 
 const initialState: PersistedState = {
-  cart: [
-    { productId: 'butter_250', quantity: 1 },
-    { productId: 'milk_15', quantity: 2 },
-    { productId: 'bananas_1kg', quantity: 1 },
-    { productId: 'pasta_500', quantity: 2 },
+  lists: [
+    {
+      id: FIRST_LIST_ID,
+      name: 'Wocheneinkauf',
+      emoji: '🛒',
+      lines: [
+        { productId: 'butter_250', quantity: 1 },
+        { productId: 'milk_15', quantity: 2 },
+        { productId: 'bananas_1kg', quantity: 1 },
+        { productId: 'pasta_500', quantity: 2 },
+      ],
+      checked: [],
+      createdAt: '2026-10-02T00:00:00.000Z',
+    },
   ],
+  activeListId: FIRST_LIST_ID,
   favorites: ['coffee_500', 'butter_250'],
-  checked: [],
   // Kein Standard-Standort: die App fragt beim ersten Start danach.
   location: { street: '', plz: '', city: '', radiusKm: 5, latitude: 0, longitude: 0 },
   stores: [],
@@ -130,17 +175,37 @@ const initialState: PersistedState = {
   alarms: [],
   onboarded: false,
   recentSearches: [],
+  trips: [],
+  inboxRead: [],
+  inboxDismissed: [],
 };
+
+type SavedState = Partial<PersistedState> & { cart?: CartLine[]; checked?: string[] };
+
+// Aeltere Versionen hatten nur einen Warenkorb: er wird zur ersten Liste.
+function restoreLists(saved: SavedState): Pick<PersistedState, 'lists' | 'activeListId'> {
+  if (saved.lists && saved.lists.length > 0) {
+    const active = saved.lists.find((list) => list.id === saved.activeListId) ?? saved.lists[0];
+    return { lists: saved.lists, activeListId: active.id };
+  }
+  const first = initialState.lists[0];
+  return {
+    lists: [{ ...first, lines: saved.cart ?? first.lines, checked: saved.checked ?? [] }],
+    activeListId: first.id,
+  };
+}
 
 // Uebernimmt gespeicherte Werte und fuellt fehlende Felder aus aelteren Versionen auf.
 function restore(raw: string): PersistedState {
-  const saved = JSON.parse(raw) as Partial<PersistedState>;
+  const { cart, checked, ...saved } = JSON.parse(raw) as SavedState;
+  const lists = restoreLists({ ...saved, cart, checked });
   if (!saved.storesFromOsm) {
-    return { ...initialState, cart: saved.cart ?? initialState.cart, favorites: saved.favorites ?? initialState.favorites };
+    return { ...initialState, ...lists, favorites: saved.favorites ?? initialState.favorites };
   }
   return {
     ...initialState,
     ...saved,
+    ...lists,
     // Wer schon vor dem Onboarding einen Standort hatte, sieht es nicht noch einmal.
     onboarded: saved.onboarded ?? true,
     location: { ...initialState.location, ...saved.location },
@@ -180,44 +245,116 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     }
   }, [state, loaded]);
 
-  const setQuantity = (productId: string, quantity: number) =>
+  // Aendert nur die aktive Liste.
+  const updateActive = (change: (list: ShoppingList) => ShoppingList) =>
     setState((current) => ({
       ...current,
-      cart:
-        quantity <= 0
-          ? current.cart.filter((line) => line.productId !== productId)
-          : current.cart.map((line) => (line.productId === productId ? { ...line, quantity } : line)),
-      checked: quantity <= 0 ? current.checked.filter((id) => id !== productId) : current.checked,
+      lists: current.lists.map((list) => (list.id === current.activeListId ? change(list) : list)),
     }));
+
+  const setQuantity = (productId: string, quantity: number) =>
+    updateActive((list) => ({
+      ...list,
+      lines:
+        quantity <= 0
+          ? list.lines.filter((line) => line.productId !== productId)
+          : list.lines.map((line) => (line.productId === productId ? { ...line, quantity } : line)),
+      checked: quantity <= 0 ? list.checked.filter((id) => id !== productId) : list.checked,
+    }));
+
+  const activeList = state.lists.find((list) => list.id === state.activeListId) ?? state.lists[0];
+
+  // Inbox aus ausgeloesten Preisalarmen und Wochenangeboten; nur gelesen/entfernt wird gespeichert.
+  const { alarms, activeStoreIds, notifications, inboxRead, inboxDismissed } = state;
+  const inbox = useMemo(
+    () =>
+      buildInbox({ products, alarms, activeStoreIds, notifications })
+        .filter((item) => !inboxDismissed.includes(item.id))
+        .map((item) => ({ ...item, read: inboxRead.includes(item.id) })),
+    // products aendert sich nur, wenn Preise neu geladen wurden (priceData).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [alarms, activeStoreIds, notifications, inboxRead, inboxDismissed, priceData],
+  );
 
   const value: AppState = {
     ...state,
     loaded,
-    cartCount: state.cart.reduce((sum, line) => sum + line.quantity, 0),
+    cart: activeList.lines,
+    checked: activeList.checked,
+    activeList,
+    cartCount: activeList.lines.reduce((sum, line) => sum + line.quantity, 0),
     addToCart: (productId, quantity = 1) =>
-      setState((current) => {
-        const existing = current.cart.find((line) => line.productId === productId);
-        const cart = existing
-          ? current.cart.map((line) =>
+      updateActive((list) => {
+        const existing = list.lines.find((line) => line.productId === productId);
+        const lines = existing
+          ? list.lines.map((line) =>
               line.productId === productId ? { ...line, quantity: line.quantity + quantity } : line,
             )
-          : [...current.cart, { productId, quantity }];
-        return { ...current, cart };
+          : [...list.lines, { productId, quantity }];
+        return { ...list, lines };
       }),
     setQuantity,
     toggleChecked: (productId) =>
-      setState((current) => ({
-        ...current,
-        checked: current.checked.includes(productId)
-          ? current.checked.filter((id) => id !== productId)
-          : [...current.checked, productId],
+      updateActive((list) => ({
+        ...list,
+        checked: list.checked.includes(productId)
+          ? list.checked.filter((id) => id !== productId)
+          : [...list.checked, productId],
       })),
     clearChecked: () =>
-      setState((current) => ({
-        ...current,
-        cart: current.cart.filter((line) => !current.checked.includes(line.productId)),
+      updateActive((list) => ({
+        ...list,
+        lines: list.lines.filter((line) => !list.checked.includes(line.productId)),
         checked: [],
       })),
+    createList: (name, emoji, lines = []) => {
+      const list: ShoppingList = { id: newId(), name, emoji, lines, checked: [], createdAt: new Date().toISOString() };
+      setState((current) => ({ ...current, lists: [...current.lists, list], activeListId: list.id }));
+      return list.id;
+    },
+    updateList: (id, changes) =>
+      setState((current) => ({
+        ...current,
+        lists: current.lists.map((list) => (list.id === id ? { ...list, ...changes } : list)),
+      })),
+    deleteList: (id) =>
+      setState((current) => {
+        // Mindestens eine Liste bleibt bestehen.
+        if (current.lists.length <= 1) return current;
+        const lists = current.lists.filter((list) => list.id !== id);
+        return { ...current, lists, activeListId: current.activeListId === id ? lists[0].id : current.activeListId };
+      }),
+    setActiveList: (id) => setState((current) => ({ ...current, activeListId: id })),
+    finishShopping: (storeId) => {
+      const done = activeList.lines.filter((line) => activeList.checked.includes(line.productId));
+      if (done.length === 0) return undefined;
+      const trip: CompletedTrip = {
+        id: newId(),
+        listName: activeList.name,
+        storeId,
+        finishedAt: new Date().toISOString(),
+        ...tripSummary(done, products, storeId, activeStoreIds),
+      };
+      setState((current) => ({
+        ...current,
+        trips: [trip, ...current.trips].slice(0, MAX_TRIPS),
+        lists: current.lists.map((list) =>
+          list.id === activeList.id
+            ? { ...list, lines: list.lines.filter((line) => !list.checked.includes(line.productId)), checked: [] }
+            : list,
+        ),
+      }));
+      return trip;
+    },
+    inbox,
+    unreadCount: inbox.filter((item) => !item.read).length,
+    markInboxRead: (ids) =>
+      setState((current) => ({
+        ...current,
+        inboxRead: [...new Set([...current.inboxRead, ...ids])].slice(-MAX_INBOX_IDS),
+      })),
+    dismissInboxItem: (id) =>
+      setState((current) => ({ ...current, inboxDismissed: [...current.inboxDismissed, id].slice(-MAX_INBOX_IDS) })),
     toggleFavorite: (productId) =>
       setState((current) => ({
         ...current,
@@ -270,7 +407,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     removeAlarm: (productId) =>
       setState((current) => ({ ...current, alarms: current.alarms.filter((item) => item.productId !== productId) })),
     resetAllData: () =>
-      setState({ ...initialState, cart: [], favorites: [], alarms: [] }),
+      setState({ ...initialState, lists: [{ ...initialState.lists[0], lines: [] }], favorites: [], alarms: [] }),
     completeOnboarding: () => setState((current) => ({ ...current, onboarded: true })),
     addRecentSearch: (term) => {
       const clean = term.trim();

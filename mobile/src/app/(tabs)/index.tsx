@@ -15,7 +15,7 @@ import { useAppState } from '@/state/app-state';
 const QUICK_SEARCHES = ['Milch', 'Butter', 'Eier', 'Bananen', 'Kaffee'];
 
 export default function StartScreen() {
-  const { cart, activeStoreIds, location, stores } = useAppState();
+  const { cart, activeStoreIds, location, stores, unreadCount } = useAppState();
   const nearbyStores = stores.filter((store) => activeStoreIds.includes(store.id) && store.distanceKm <= location.radiusKm);
   const deals = products
     .filter((product) => discountPercent(sortedPrices(product, activeStoreIds)[0]))
@@ -39,6 +39,21 @@ export default function StartScreen() {
               Preisfuchs
             </AppText>
           </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.two }}>
+          <Pressable
+            onPress={() => router.push('/benachrichtigungen')}
+            accessibilityLabel={unreadCount > 0 ? `Benachrichtigungen, ${unreadCount} ungelesen` : 'Benachrichtigungen'}
+            hitSlop={6}
+            style={{ width: 36, height: 36, borderRadius: Radius.pill, borderWidth: 1, borderColor: Colors.border, alignItems: 'center', justifyContent: 'center' }}>
+            <Icon name={{ ios: 'bell', android: 'notifications', web: 'notifications' }} size={17} color={Colors.text} />
+            {unreadCount > 0 ? (
+              <View style={{ position: 'absolute', top: -4, right: -4, minWidth: 18, height: 18, borderRadius: 9, paddingHorizontal: 4, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' }}>
+                <AppText weight="bold" size={10} color="#FFFFFF">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </AppText>
+              </View>
+            ) : null}
+          </Pressable>
           <Pressable
             onPress={() => router.push('/einstellungen/standort')}
             style={{ backgroundColor: Colors.card, borderRadius: Radius.pill, paddingHorizontal: Inset.compact, paddingVertical: Inset.stepperV, borderWidth: 1, borderColor: Colors.border }}>
@@ -49,6 +64,7 @@ export default function StartScreen() {
               </AppText>
             </View>
           </Pressable>
+          </View>
         </View>
 
         <AppText weight="extrabold" size={28} style={{ lineHeight: 34 }}>

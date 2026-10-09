@@ -79,6 +79,12 @@ function AppNavigator() {
       <Stack.Screen name="konto" options={sheetOptions([0.7])} />
       <Stack.Screen name="plus" options={{ presentation: 'modal', headerShown: false }} />
       <Stack.Screen name="scanner" options={{ presentation: 'fullScreenModal', headerShown: false }} />
+      <Stack.Screen name="listen" options={sheetOptions([0.7, 1])} />
+      <Stack.Screen name="liste-bearbeiten" options={sheetOptions([0.6])} />
+      <Stack.Screen name="liste-teilen/[id]" options={sheetOptions([0.8])} />
+      <Stack.Screen name="liste" options={{ title: 'Liste übernehmen', headerLargeTitle: false }} />
+      <Stack.Screen name="einkauf-fertig" options={{ presentation: 'fullScreenModal', headerShown: false, gestureEnabled: false }} />
+      <Stack.Screen name="benachrichtigungen" options={{ title: 'Benachrichtigungen' }} />
       <Stack.Screen name="angebote" options={{ title: 'Angebote' }} />
       <Stack.Screen name="kategorie/[id]" options={{ title: 'Kategorie' }} />
       <Stack.Screen name="marktvergleich" options={{ title: 'Marktvergleich' }} />

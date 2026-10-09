@@ -132,6 +132,16 @@
 
 ## Offene Punkte
 
+### 2026-10-09: Block C+D (Listen, Teilen, Einkauf abgeschlossen, Inbox)
+- Zustand: `lists` + `activeListId` statt `cart`/`checked` (Migration in `restore`);
+  `cart`/`checked` bleiben als abgeleitete Werte der aktiven Liste erhalten. Neu `trips`,
+  `inboxRead`, `inboxDismissed`.
+- Inbox wird aus Alarmen/Angeboten abgeleitet (`lib/inbox.ts`), nicht gespeichert; Push fehlt
+  weiterhin (expo-notifications, Development Build).
+- Teilen ohne Konto per Link (`lib/share-list.ts`); kein QR-Code (bräuchte Zusatzpaket),
+  kein Live-Sync. In Expo Go ist der Link `exp://…`, erst im eigenen Build `preisfuchs://`.
+- Nächstes: F (RevenueCat, AdMob, Partnerlinks) und G (Login, Familie) – Development Build nötig.
+
 ### 2026-10-08: App-Lücken A+B+E (Onboarding, Suche, Systemzustände)
 - Umgesetzt in `mobile/`: `components/onboarding.tsx`, `app/scanner.tsx`,
   `components/search-filter-sheet.tsx`, `components/system-states.tsx`; Zustand um

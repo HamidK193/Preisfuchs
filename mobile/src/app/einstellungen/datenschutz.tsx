@@ -10,10 +10,10 @@ export default function PrivacyScreen() {
   const { consent, updateConsent, resetAllData } = state;
 
   const exportData = () => {
-    const { cart, favorites, location, activeStoreIds, notifications, alarms } = state;
+    const { lists, favorites, location, activeStoreIds, notifications, alarms, trips } = state;
     Share.share({
       title: 'Preisfuchs-Daten',
-      message: JSON.stringify({ cart, favorites, location, activeStoreIds, notifications, consent, alarms }, null, 2),
+      message: JSON.stringify({ lists, favorites, location, activeStoreIds, notifications, consent, alarms, trips }, null, 2),
     });
   };
 

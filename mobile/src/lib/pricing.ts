@@ -130,3 +130,46 @@ export function bestTwoStoreSplit(lines: CartLine[], products: Product[], storeI
   }
   return best;
 }
+
+// Abgeschlossener Einkauf; Summe und Ersparnis sind Schaetzungen aus beobachteten Preisen.
+export type CompletedTrip = {
+  id: string;
+  listName: string;
+  storeId: StoreId;
+  finishedAt: string;
+  itemCount: number;
+  total: number;
+  // Abstand zum Durchschnittspreis der aktiven Maerkte, nie negativ.
+  estimatedSaving: number;
+  // Artikel ohne bekannten Preis in diesem Markt (nicht eingerechnet).
+  unpricedCount: number;
+};
+
+export function tripSummary(
+  lines: CartLine[],
+  products: Product[],
+  storeId: StoreId,
+  storeIds: StoreId[],
+): Pick<CompletedTrip, 'itemCount' | 'total' | 'estimatedSaving' | 'unpricedCount'> {
+  let total = 0;
+  let estimatedSaving = 0;
+  let unpricedCount = 0;
+  for (const line of lines) {
+    const product = products.find((item) => item.id === line.productId);
+    const price = product?.prices.find((item) => item.storeId === storeId)?.price;
+    if (!product || price === undefined) {
+      unpricedCount += 1;
+      continue;
+    }
+    const compared = sortedPrices(product, storeIds);
+    const average = compared.reduce((sum, item) => sum + item.price, 0) / compared.length;
+    total += price * line.quantity;
+    estimatedSaving += Math.max(0, average - price) * line.quantity;
+  }
+  return {
+    itemCount: lines.reduce((sum, line) => sum + line.quantity, 0),
+    total,
+    estimatedSaving,
+    unpricedCount,
+  };
+}

@@ -12,7 +12,7 @@ import { useAppState } from '@/state/app-state';
 // Einkaufen im Markt: Artikel nach Kategorie, grosse Zeilen zum Abhaken.
 export default function ShoppingModeScreen() {
   const { markt } = useLocalSearchParams<{ markt: StoreId }>();
-  const { cart, checked, toggleChecked, clearChecked, getStore } = useAppState();
+  const { cart, checked, toggleChecked, finishShopping, getStore } = useAppState();
   const store = getStore(markt);
 
   const lines = cart
@@ -113,12 +113,16 @@ export default function ShoppingModeScreen() {
       <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: Inset.card, paddingBottom: Spacing.six, backgroundColor: Colors.card, borderTopWidth: 1, borderTopColor: Colors.border }}>
         <Pressable
           onPress={() => {
-            clearChecked();
-            router.back();
+            const trip = finishShopping(store.id);
+            if (trip) {
+              router.replace({ pathname: '/einkauf-fertig', params: { id: trip.id } });
+            } else {
+              router.back();
+            }
           }}
           style={({ pressed }) => ({ backgroundColor: pressed ? Colors.primaryDark : Colors.primary, borderRadius: Radius.pill, paddingVertical: Inset.buttonV, alignItems: 'center' })}>
           <AppText weight="bold" size={15} color="#FFFFFF">
-            {done > 0 ? `Einkauf abschließen · ${done} erledigt entfernen` : 'Einkauf beenden'}
+            {done > 0 ? `Einkauf abschließen · ${done} erledigt` : 'Einkauf beenden'}
           </AppText>
         </Pressable>
       </View>

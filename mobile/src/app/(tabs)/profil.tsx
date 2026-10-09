@@ -5,6 +5,7 @@ import { Group, Row } from '@/components/settings';
 import { AppText, FoxLogo, Icon, type IconName } from '@/components/ui';
 import { APP_VERSION } from '@/constants/app';
 import { Colors, Inset, Radius, Spacing } from '@/constants/theme';
+import { formatEuro } from '@/lib/pricing';
 import { useAppState } from '@/state/app-state';
 
 type Entry = { icon: IconName; tint: string; label: string; href?: Href; detail?: string; badge?: string };
@@ -25,7 +26,9 @@ function Stat({ value, label }: { value: string; label: string }) {
 const PLUS_BENEFITS = ['Werbefrei', 'Unbegrenzte Preisalarme', 'Familie bis 6 Personen', '12 Monate Preisverlauf'];
 
 export default function ProfileScreen() {
-  const { favorites, location, activeStoreIds, alarms, stores } = useAppState();
+  const { favorites, location, activeStoreIds, alarms, stores, trips, lists, unreadCount } = useAppState();
+  const month = new Date().toISOString().slice(0, 7);
+  const monthSaving = trips.filter((trip) => trip.finishedAt.startsWith(month)).reduce((sum, trip) => sum + trip.estimatedSaving, 0);
 
   const sections: { title: string; rows: Entry[] }[] = [
     {
@@ -33,12 +36,14 @@ export default function ProfileScreen() {
       rows: [
         { icon: { ios: 'location.fill', android: 'location_on', web: 'location_on' }, tint: '#E8692B', label: 'Standort & Radius', href: '/einstellungen/standort', detail: `${location.plz} · ${location.radiusKm} km` },
         { icon: { ios: 'storefront.fill', android: 'storefront', web: 'storefront' }, tint: '#1F7A4D', label: 'Meine Märkte', href: '/einstellungen/maerkte', detail: `${activeStoreIds.length} aktiv` },
+        { icon: { ios: 'list.bullet', android: 'list', web: 'list' }, tint: '#C2362B', label: 'Meine Listen', href: '/listen', detail: String(lists.length) },
         { icon: { ios: 'person.3.fill', android: 'groups', web: 'groups' }, tint: '#3B6FD8', label: 'Familie & Gruppen', href: '/konto', badge: 'Bald' },
       ],
     },
     {
       title: 'App',
       rows: [
+        { icon: { ios: 'tray.fill', android: 'inbox', web: 'inbox' }, tint: '#E8692B', label: 'Benachrichtigungen', href: '/benachrichtigungen', badge: unreadCount > 0 ? String(unreadCount) : undefined },
         { icon: { ios: 'bell.fill', android: 'notifications', web: 'notifications' }, tint: '#D9443B', label: 'Mitteilungen', href: '/einstellungen/mitteilungen' },
         { icon: { ios: 'hand.raised.fill', android: 'privacy_tip', web: 'privacy_tip' }, tint: '#6B5BD2', label: 'Datenschutz & Werbung', href: '/einstellungen/datenschutz' },
       ],
@@ -78,7 +83,7 @@ export default function ProfileScreen() {
         <View style={{ flexDirection: 'row', gap: Spacing.two }}>
           <Stat value={String(favorites.length)} label="Favoriten" />
           <Stat value={String(alarms.length)} label="Preisalarme" />
-          <Stat value={String(activeStoreIds.length)} label="Märkte aktiv" />
+          <Stat value={`ca. ${formatEuro(monthSaving)}`} label="gespart im Monat (geschätzt)" />
         </View>
         <View style={{ gap: Spacing.two }}>
           <Pressable
