@@ -161,3 +161,14 @@ export function SecondaryButton({ label, onPress, style }: { label: string; onPr
     </Pressable>
   );
 }
+
+// Einheitliches Eingabefeld fuer Formulare.
+export const inputStyle = {
+  borderWidth: 1,
+  borderColor: Colors.border,
+  borderRadius: Radius.medium,
+  padding: Inset.compact,
+  fontSize: 17,
+  color: Colors.text,
+  backgroundColor: Colors.card,
+} as const;

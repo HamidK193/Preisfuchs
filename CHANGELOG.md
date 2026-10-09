@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- App (`mobile/`): Familie & Gruppen. Optionales Konto per E-Mail-Code (Supabase Auth,
+  Sitzung bleibt auf dem Gerät), Konto löschen. Gruppen (Familie/WG/Freunde, max. 6)
+  erstellen, per 8-stelligem Code (7 Tage gültig) einladen und beitreten, verlassen.
+  Eigene Listen mit der Gruppe teilen; gemeinsame Listen werden live abgeglichen
+  (Supabase Realtime) und zeigen „von …“/„abgehakt …“ sowie den letzten Abgleich.
+  Schema in `backend/supabase/households.sql` (RLS, RPC-Funktionen). Datenschutztext ergänzt.
+
 - App (`mobile/`): Mehrere Einkaufslisten („Meine Listen“, neu/umbenennen/löschen, Symbol);
   der Warenkorb zeigt die aktive Liste, alter Warenkorb wird zur Liste „Wocheneinkauf“.
   Liste teilen als Text oder als Link (`preisfuchs://liste?...`), der in Preisfuchs als

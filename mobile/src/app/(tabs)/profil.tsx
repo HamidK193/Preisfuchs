@@ -7,6 +7,7 @@ import { APP_VERSION } from '@/constants/app';
 import { Colors, Inset, Radius, Spacing } from '@/constants/theme';
 import { formatEuro } from '@/lib/pricing';
 import { useAppState } from '@/state/app-state';
+import { useFamily } from '@/state/family-state';
 
 type Entry = { icon: IconName; tint: string; label: string; href?: Href; detail?: string; badge?: string };
 
@@ -27,6 +28,7 @@ const PLUS_BENEFITS = ['Werbefrei', 'Unbegrenzte Preisalarme', 'Familie bis 6 Pe
 
 export default function ProfileScreen() {
   const { favorites, location, activeStoreIds, alarms, stores, trips, lists, unreadCount } = useAppState();
+  const { households, session } = useFamily();
   const month = new Date().toISOString().slice(0, 7);
   const monthSaving = trips.filter((trip) => trip.finishedAt.startsWith(month)).reduce((sum, trip) => sum + trip.estimatedSaving, 0);
 
@@ -37,7 +39,7 @@ export default function ProfileScreen() {
         { icon: { ios: 'location.fill', android: 'location_on', web: 'location_on' }, tint: '#E8692B', label: 'Standort & Radius', href: '/einstellungen/standort', detail: `${location.plz} · ${location.radiusKm} km` },
         { icon: { ios: 'storefront.fill', android: 'storefront', web: 'storefront' }, tint: '#1F7A4D', label: 'Meine Märkte', href: '/einstellungen/maerkte', detail: `${activeStoreIds.length} aktiv` },
         { icon: { ios: 'list.bullet', android: 'list', web: 'list' }, tint: '#C2362B', label: 'Meine Listen', href: '/listen', detail: String(lists.length) },
-        { icon: { ios: 'person.3.fill', android: 'groups', web: 'groups' }, tint: '#3B6FD8', label: 'Familie & Gruppen', href: '/konto', badge: 'Bald' },
+        { icon: { ios: 'person.3.fill', android: 'groups', web: 'groups' }, tint: '#3B6FD8', label: 'Familie & Gruppen', href: '/familie', detail: households.length ? String(households.length) : undefined },
       ],
     },
     {
@@ -76,7 +78,7 @@ export default function ProfileScreen() {
               Hallo, Sparfuchs!
             </AppText>
             <AppText size={13} color={Colors.textSecondary}>
-              Du nutzt Preisfuchs ohne Konto.
+              {session ? `Angemeldet als ${session.user.email}` : 'Du nutzt Preisfuchs ohne Konto.'}
             </AppText>
           </View>
         </View>
@@ -97,11 +99,11 @@ export default function ProfileScreen() {
               backgroundColor: pressed ? Colors.tile : Colors.card,
             })}>
             <AppText weight="bold" size={14}>
-              Konto anlegen (optional)
+              {session ? 'Konto verwalten' : 'Anmelden (optional)'}
             </AppText>
           </Pressable>
           <AppText size={12} color={Colors.textSecondary} style={{ textAlign: 'center' }}>
-            Nur nötig, um Warenkörbe mit Familie oder Freunden zu teilen.
+            Nur nötig, um Listen mit Familie oder Freunden live zu teilen.
           </AppText>
         </View>
       </View>

@@ -9,6 +9,7 @@ import { Colors, Radius, Spacing, Inset } from '@/constants/theme';
 import { products } from '@/data/products';
 import { bestTwoStoreSplit, cheapestPrice, formatEuro, totalsPerStore } from '@/lib/pricing';
 import { useAppState } from '@/state/app-state';
+import { useFamily } from '@/state/family-state';
 
 type Mode = 'ein-markt' | 'aufteilen';
 
@@ -16,9 +17,32 @@ type Mode = 'ein-markt' | 'aufteilen';
 const STAPLES = ['milk_15', 'butter_250', 'bananas_1kg', 'pasta_500', 'coffee_500'];
 
 // Kopf mit Listen-Auswahl und Teilen.
+// Hinweis bei gemeinsamen Listen: Gruppe und letzter Abgleich.
+function SyncLine() {
+  const { activeList } = useAppState();
+  const { households, syncStatus } = useFamily();
+  if (!activeList.shared) return null;
+  const household = households.find((item) => item.id === activeList.shared?.householdId);
+  const status = syncStatus[activeList.shared.listId];
+  const time = status?.syncedAt ? new Date(status.syncedAt).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : undefined;
+  return (
+    <Pressable
+      onPress={() => household && router.push({ pathname: '/familie/[id]', params: { id: household.id } })}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.two, backgroundColor: status?.error ? '#FFF6E5' : Colors.greenSoft, borderRadius: Radius.medium, paddingHorizontal: Inset.compact, paddingVertical: Inset.stepperV }}>
+      <Icon name={{ ios: 'person.2.fill', android: 'group', web: 'group' }} size={14} color={status?.error ? Colors.warning : Colors.green} />
+      <AppText size={12} weight="semibold" color={status?.error ? Colors.warning : Colors.green} style={{ flex: 1 }}>
+        {status?.error
+          ? 'Abgleich gerade nicht möglich – Änderungen werden nachgeholt'
+          : `Gemeinsam mit ${household ? `${household.emoji} ${household.name}` : 'deiner Gruppe'}${time ? ` · synchronisiert ${time}` : ''}`}
+      </AppText>
+    </Pressable>
+  );
+}
+
 function ListHeader() {
   const { activeList, lists } = useAppState();
   return (
+    <View style={{ gap: Spacing.two }}>
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.three }}>
       <Pressable
         onPress={() => router.push('/listen')}
@@ -42,6 +66,8 @@ function ListHeader() {
         style={{ width: 40, height: 40, borderRadius: Radius.medium, borderWidth: 1, borderColor: Colors.border, alignItems: 'center', justifyContent: 'center' }}>
         <Icon name={{ ios: 'square.and.arrow.up', android: 'share', web: 'share' }} size={18} color={Colors.primary} />
       </Pressable>
+    </View>
+    <SyncLine />
     </View>
   );
 }
@@ -112,7 +138,16 @@ function EmptyCart() {
 }
 
 export default function CartScreen() {
-  const { cart, checked, setQuantity, toggleChecked, clearChecked, activeStoreIds, getStore } = useAppState();
+  const { cart, checked, setQuantity, toggleChecked, clearChecked, activeStoreIds, getStore, activeList } = useAppState();
+  const { itemMeta, memberName, session } = useFamily();
+  const meta = activeList.shared ? itemMeta[activeList.shared.listId] : undefined;
+  // Bei gemeinsamen Listen: wer etwas hinzugefuegt bzw. abgehakt hat (nicht man selbst).
+  const personLabel = (entry: { addedBy: string | null; checkedBy: string | null } | undefined, isChecked: boolean) => {
+    const userId = isChecked ? entry?.checkedBy : entry?.addedBy;
+    if (!userId || userId === session?.user.id) return '';
+    const name = memberName(userId);
+    return name ? ` · ${isChecked ? 'abgehakt' : 'von'} ${name}` : '';
+  };
   const [mode, setMode] = useState<Mode>('ein-markt');
 
   if (cart.length === 0) {
@@ -192,6 +227,7 @@ export default function CartScreen() {
                   {assignedStore ? <StoreBadge storeId={assignedStore} /> : null}
                   <AppText size={12} color={Colors.textSecondary}>
                     {product.packageSize} · ab {formatEuro(price.price)}
+                    {personLabel(meta?.[product.id], isChecked)}
                   </AppText>
                 </View>
               </View>

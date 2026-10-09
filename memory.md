@@ -132,6 +132,20 @@
 
 ## Offene Punkte
 
+### 2026-10-09: Block G (Login, Familie & Gruppen)
+- Login nur per E-Mail-Code (`signInWithOtp` + `verifyOtp`); Apple/Google brauchen einen
+  Development Build. Dafür muss die Supabase-Vorlage „Magic Link“ `{{ .Token }}` enthalten
+  (Dashboard → Auth → Email Templates). Der eingebaute Supabase-Mailversand ist stark
+  begrenzt (wenige Mails pro Stunde) – vor dem Launch eigenen SMTP eintragen.
+- Schema `backend/supabase/households.sql`: Mitgliedschaft nur über RPCs (create_household,
+  create_household_invite, preview_household_invite, join_household, leave_household,
+  delete_my_account), Listen/Artikel per RLS nur für Mitglieder, Realtime-Publication.
+- Sync (`state/family-state.tsx`): Snapshot je gemeinsamer Liste; lokale Änderungen werden als
+  Diff hochgeladen, Server-Änderungen ersetzen die lokale Liste (letzter Schreiber gewinnt).
+  Offline-Änderungen an gemeinsamen Listen können beim nächsten Laden überschrieben werden.
+- Noch nicht gebaut: Aktivitäts-Verlauf (Screen 50), Push „Papa hat 3 Artikel abgehakt“,
+  „Ich gehe zu Lidl“.
+
 ### 2026-10-09: Block C+D (Listen, Teilen, Einkauf abgeschlossen, Inbox)
 - Zustand: `lists` + `activeListId` statt `cart`/`checked` (Migration in `restore`);
   `cart`/`checked` bleiben als abgeleitete Werte der aktiven Liste erhalten. Neu `trips`,

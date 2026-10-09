@@ -1,55 +1,153 @@
 import { router } from 'expo-router';
-import { Alert, Pressable, View } from 'react-native';
+import { useState } from 'react';
+import { ActivityIndicator, Alert, Pressable, TextInput, View } from 'react-native';
 
+import { inputStyle, PrimaryButton, SecondaryButton } from '@/components/settings';
 import { SheetScroll } from '@/components/sheet';
-import { AppText, FoxLogo, Icon, type IconName } from '@/components/ui';
-import { Colors, Inset, Radius, Spacing } from '@/constants/theme';
+import { AppText, FoxLogo } from '@/components/ui';
+import { Colors, Inset, Spacing } from '@/constants/theme';
+import { useFamily } from '@/state/family-state';
 
-function LoginButton({ label, icon, dark, iconColor }: { label: string; icon: IconName; dark?: boolean; iconColor?: string }) {
-  return (
-    <Pressable
-      onPress={() => Alert.alert('Bald verfügbar', 'Konten zum Teilen und Synchronisieren kommen in einer der nächsten Versionen.')}
-      style={({ pressed }) => ({
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: Spacing.two,
-        height: 52,
-        borderRadius: Radius.medium,
-        borderWidth: dark ? 0 : 1,
-        borderColor: Colors.border,
-        backgroundColor: dark ? '#000000' : pressed ? Colors.tile : Colors.card,
-        opacity: pressed && dark ? 0.85 : 1,
-      })}>
-      <Icon name={icon} size={18} color={iconColor ?? (dark ? '#FFFFFF' : Colors.text)} />
-      <AppText weight="bold" size={16} color={dark ? '#FFFFFF' : Colors.text}>
-        {label}
-      </AppText>
-    </Pressable>
-  );
-}
-
+// Anmelden per E-Mail-Code. Ein Konto braucht man nur fuer Familie & Gruppen.
 export default function AccountSheet() {
+  const { available, session, sendCode, verifyCode, signOut, deleteAccount } = useFamily();
+  const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
+  const [step, setStep] = useState<'email' | 'code'>('email');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | undefined>();
+
+  const run = async (action: () => Promise<void>, failText: string) => {
+    setBusy(true);
+    setError(undefined);
+    try {
+      await action();
+    } catch {
+      setError(failText);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (session) {
+    return (
+      <SheetScroll contentContainerStyle={{ padding: Spacing.five, paddingTop: Spacing.six, gap: Spacing.four }}>
+        <View style={{ alignItems: 'center', gap: Spacing.three }}>
+          <FoxLogo size={72} />
+          <AppText weight="extrabold" size={22}>
+            Angemeldet
+          </AppText>
+          <AppText size={15} color={Colors.textSecondary}>
+            {session.user.email}
+          </AppText>
+        </View>
+        <PrimaryButton label="Familie & Gruppen" onPress={() => router.replace('/familie')} />
+        <SecondaryButton label="Abmelden" onPress={() => run(signOut, 'Abmelden hat nicht geklappt.')} />
+        <AppText size={12} color={Colors.textSecondary} style={{ textAlign: 'center' }}>
+          Nach dem Abmelden bleiben deine Listen auf diesem Gerät, werden aber nicht mehr abgeglichen.
+        </AppText>
+        <Pressable
+          onPress={() =>
+            Alert.alert('Konto löschen?', 'Du verlässt alle Gruppen, und dein Konto wird endgültig gelöscht. Deine Listen bleiben auf diesem Gerät.', [
+              { text: 'Abbrechen', style: 'cancel' },
+              { text: 'Löschen', style: 'destructive', onPress: () => run(deleteAccount, 'Das Konto konnte nicht gelöscht werden.') },
+            ])
+          }
+          style={{ alignItems: 'center', paddingVertical: Inset.compact }}>
+          <AppText weight="bold" size={14} color={Colors.danger}>
+            Konto löschen
+          </AppText>
+        </Pressable>
+        {error ? (
+          <AppText size={13} color={Colors.danger} style={{ textAlign: 'center' }}>
+            {error}
+          </AppText>
+        ) : null}
+      </SheetScroll>
+    );
+  }
+
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
   return (
-    <SheetScroll contentContainerStyle={{ padding: Spacing.five, paddingTop: Spacing.six, gap: Spacing.four }}>
+    <SheetScroll contentContainerStyle={{ padding: Spacing.five, paddingTop: Spacing.six, gap: Spacing.four }} keyboardShouldPersistTaps="handled">
       <View style={{ alignItems: 'center', gap: Spacing.three }}>
-        <FoxLogo size={88} />
+        <FoxLogo size={80} />
         <AppText weight="extrabold" size={24}>
           Gemeinsam einkaufen
         </AppText>
         <AppText size={15} color={Colors.textSecondary} style={{ textAlign: 'center' }}>
-          Ein Konto brauchst du nur, um Warenkörbe mit Familie oder Freunden zu teilen und zu synchronisieren.
+          Ein Konto brauchst du nur, um Listen mit Familie oder Freunden live zu teilen. Alles andere geht ohne.
         </AppText>
       </View>
 
-      <View style={{ gap: Spacing.three, marginTop: Spacing.two }}>
-        <LoginButton label="Mit Apple anmelden" icon={{ ios: 'apple.logo', android: 'phone_iphone', web: 'phone_iphone' }} dark />
-        <LoginButton label="Mit Google anmelden" icon={{ ios: 'g.circle.fill', android: 'account_circle', web: 'account_circle' }} iconColor="#4285F4" />
-        <LoginButton label="Mit E-Mail fortfahren" icon={{ ios: 'envelope', android: 'mail', web: 'mail' }} />
-      </View>
+      {!available ? (
+        <AppText size={14} color={Colors.warning} style={{ textAlign: 'center' }}>
+          Anmelden ist in dieser Version nicht verfügbar (kein Server konfiguriert).
+        </AppText>
+      ) : step === 'email' ? (
+        <View style={{ gap: Spacing.three }}>
+          <TextInput
+            value={email}
+            onChangeText={setEmail}
+            placeholder="E-Mail-Adresse"
+            placeholderTextColor={Colors.textSecondary}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoComplete="email"
+            textContentType="emailAddress"
+            style={inputStyle}
+          />
+          <PrimaryButton
+            label={busy ? 'Wird gesendet …' : 'Code per E-Mail senden'}
+            disabled={!emailValid || busy}
+            onPress={() =>
+              run(async () => {
+                await sendCode(email);
+                setStep('code');
+              }, 'Die E-Mail konnte nicht gesendet werden. Prüfe die Adresse oder versuch es später noch einmal.')
+            }
+          />
+        </View>
+      ) : (
+        <View style={{ gap: Spacing.three }}>
+          <AppText size={14} color={Colors.textSecondary}>
+            Wir haben einen 6-stelligen Code an {email.trim()} geschickt.
+          </AppText>
+          <TextInput
+            value={code}
+            onChangeText={(text) => setCode(text.replace(/\D/g, '').slice(0, 6))}
+            placeholder="123456"
+            placeholderTextColor={Colors.textSecondary}
+            keyboardType="number-pad"
+            textContentType="oneTimeCode"
+            autoComplete="one-time-code"
+            autoFocus
+            style={[inputStyle, { fontSize: 24, letterSpacing: 6, textAlign: 'center', fontWeight: '700' }]}
+          />
+          <PrimaryButton
+            label={busy ? 'Wird geprüft …' : 'Anmelden'}
+            disabled={code.length !== 6 || busy}
+            onPress={() => run(() => verifyCode(email, code), 'Der Code stimmt nicht oder ist abgelaufen.')}
+          />
+          <Pressable onPress={() => setStep('email')} style={{ alignItems: 'center' }}>
+            <AppText weight="bold" size={14} color={Colors.primary}>
+              Andere E-Mail-Adresse
+            </AppText>
+          </Pressable>
+        </View>
+      )}
+
+      {busy ? <ActivityIndicator color={Colors.primary} /> : null}
+      {error ? (
+        <AppText size={13} color={Colors.danger} style={{ textAlign: 'center' }}>
+          {error}
+        </AppText>
+      ) : null}
 
       <AppText size={12} color={Colors.textSecondary} style={{ textAlign: 'center' }}>
-        Mit der Anmeldung akzeptierst du die Nutzungsbedingungen und die Datenschutzerklärung.
+        Gespeichert werden deine E-Mail-Adresse, dein Anzeigename in Gruppen und die geteilten Listen. Anmelden mit Apple
+        oder Google folgt mit der eigenen App-Version.
       </AppText>
 
       <Pressable onPress={() => router.back()} style={{ alignItems: 'center', paddingVertical: Inset.compact }}>

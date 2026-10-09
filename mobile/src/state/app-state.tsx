@@ -44,6 +44,8 @@ export type ShoppingList = {
   lines: CartLine[];
   checked: string[];
   createdAt: string;
+  // Gesetzt, wenn die Liste mit einer Gruppe geteilt ist und live abgeglichen wird.
+  shared?: { listId: string; householdId: string };
 };
 
 type PersistedState = {
@@ -78,8 +80,10 @@ type AppState = PersistedState & {
   cart: CartLine[];
   checked: string[];
   activeList: ShoppingList;
-  createList: (name: string, emoji: string, lines?: CartLine[]) => string;
-  updateList: (id: string, changes: Pick<ShoppingList, 'name' | 'emoji'>) => void;
+  createList: (name: string, emoji: string, lines?: CartLine[], shared?: ShoppingList['shared']) => string;
+  updateList: (id: string, changes: Partial<Pick<ShoppingList, 'name' | 'emoji' | 'shared'>>) => void;
+  // Uebernimmt den Stand einer gemeinsamen Liste vom Server.
+  replaceListContent: (id: string, lines: CartLine[], checked: string[]) => void;
   deleteList: (id: string) => void;
   setActiveList: (id: string) => void;
   // Speichert die erledigten Artikel als abgeschlossenen Einkauf und entfernt sie aus der Liste.
@@ -307,8 +311,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         lines: list.lines.filter((line) => !list.checked.includes(line.productId)),
         checked: [],
       })),
-    createList: (name, emoji, lines = []) => {
-      const list: ShoppingList = { id: newId(), name, emoji, lines, checked: [], createdAt: new Date().toISOString() };
+    createList: (name, emoji, lines = [], shared) => {
+      const list: ShoppingList = { id: newId(), name, emoji, lines, checked: [], createdAt: new Date().toISOString(), shared };
       setState((current) => ({ ...current, lists: [...current.lists, list], activeListId: list.id }));
       return list.id;
     },
@@ -316,6 +320,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       setState((current) => ({
         ...current,
         lists: current.lists.map((list) => (list.id === id ? { ...list, ...changes } : list)),
+      })),
+    replaceListContent: (id, lines, checked) =>
+      setState((current) => ({
+        ...current,
+        lists: current.lists.map((list) => (list.id === id ? { ...list, lines, checked } : list)),
       })),
     deleteList: (id) =>
       setState((current) => {

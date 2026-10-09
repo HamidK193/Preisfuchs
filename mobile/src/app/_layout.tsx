@@ -8,6 +8,7 @@ import { LocationSetup } from '@/components/location-setup';
 import { Onboarding } from '@/components/onboarding';
 import { Colors } from '@/constants/theme';
 import { AppStateProvider, useAppState } from '@/state/app-state';
+import { FamilyProvider } from '@/state/family-state';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -85,6 +86,10 @@ function AppNavigator() {
       <Stack.Screen name="liste" options={{ title: 'Liste übernehmen', headerLargeTitle: false }} />
       <Stack.Screen name="einkauf-fertig" options={{ presentation: 'fullScreenModal', headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name="benachrichtigungen" options={{ title: 'Benachrichtigungen' }} />
+      <Stack.Screen name="familie/index" options={{ title: 'Familie & Gruppen' }} />
+      <Stack.Screen name="familie/neu" options={{ title: 'Gruppe erstellen', headerLargeTitle: false }} />
+      <Stack.Screen name="familie/beitreten" options={{ title: 'Gruppe beitreten', headerLargeTitle: false }} />
+      <Stack.Screen name="familie/[id]" options={{ title: 'Gruppe' }} />
       <Stack.Screen name="angebote" options={{ title: 'Angebote' }} />
       <Stack.Screen name="kategorie/[id]" options={{ title: 'Kategorie' }} />
       <Stack.Screen name="marktvergleich" options={{ title: 'Marktvergleich' }} />
@@ -106,8 +111,10 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={theme}>
       <AppStateProvider>
-        <StatusBar style="dark" />
-        <AppNavigator />
+        <FamilyProvider>
+          <StatusBar style="dark" />
+          <AppNavigator />
+        </FamilyProvider>
       </AppStateProvider>
     </ThemeProvider>
   );

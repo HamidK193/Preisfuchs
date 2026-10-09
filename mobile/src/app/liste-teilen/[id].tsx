@@ -56,10 +56,10 @@ export default function ShareListScreen() {
             Gemeinsam bearbeiten
           </AppText>
           <AppText size={12} color={Colors.textSecondary}>
-            Mitglieder, die dieselbe Liste live abhaken, kommen mit „Familie & Gruppen“ (Konto nötig).
+            Mit „Familie & Gruppen“ sehen alle Mitglieder Änderungen sofort (Anmeldung per E-Mail).
           </AppText>
         </View>
-        <AppText weight="bold" size={13} color={Colors.primary} onPress={() => router.push('/konto')}>
+        <AppText weight="bold" size={13} color={Colors.primary} onPress={() => router.push('/familie')}>
           Mehr
         </AppText>
       </Card>
