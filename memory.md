@@ -156,6 +156,9 @@
   `mobile/src/constants/app.ts`). App-ID `de.preisfuchs.app` steht jetzt in app.json.
   Supabase Google-Provider: beide Client-IDs (Web zuerst), Secret vom Web-Client, „Skip nonce checks“ an.
   Android-Client fehlt noch (braucht SHA-1 aus dem ersten Build).
+- E-Mail-Vorlagen in `backend/supabase/email-templates/` (magic-link.html, confirm-signup.html).
+  Neue Adressen bekommen bei „Confirm email“ = an die Vorlage „Confirm signup“, nicht „Magic link“ –
+  beide brauchen `{{ .Token }}`. verifyOtp type 'email' deckt beide ab.
 - Noch nicht gebaut: Aktivitäts-Verlauf (Screen 50), Push „Papa hat 3 Artikel abgehakt“,
   „Ich gehe zu Lidl“.
 
