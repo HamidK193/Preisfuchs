@@ -148,6 +148,10 @@
   SQL-Probedurchlauf mit 3 Testnutzern (zurückgerollt): Erstellen, Einladen, Beitreten, Abhaken,
   Fremde sehen nichts, Admin-Übergabe, Konto löschen – alles bestanden. Advisor-Warnungen zu
   SECURITY-DEFINER-RPCs sind gewollt.
+- Login-Plan (Nutzer, 10.10.): Google jetzt, Apple-Login später (eingeplant, braucht Apple
+  Developer Account + Development Build). App-ID-Vorschlag `de.preisfuchs.app` (noch nicht in app.json).
+  Google Cloud: eigenes Projekt „Preisfuchs“ (ID `stunning-choir-511210-b0`), getrennt vom
+  Make-Projekt „Gmail Integration Make“. Client-Secret trägt der Nutzer selbst in Supabase ein.
 - Noch nicht gebaut: Aktivitäts-Verlauf (Screen 50), Push „Papa hat 3 Artikel abgehakt“,
   „Ich gehe zu Lidl“.
 
