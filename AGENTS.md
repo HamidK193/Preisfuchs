@@ -46,7 +46,9 @@ Design duerfen keine Region fest voraussetzen.
 
 - `mobile/`: neue App (Expo / React Native, iOS + Android) nach dem Stitch-Design;
   Test auf dem iPhone ueber Expo Go (`cd mobile; npx expo start --lan`)
-- `ios/Preisfuchs/`: bisherige native iOS-App (SwiftUI)
+  **Eingefroren** bis die SwiftUI-App fertig ist (nur kritische Fixes), danach angleichen.
+- `ios/`: native SwiftUI-App, aktuelle Hauptentwicklung (Plan: `docs/SWIFTUI_PLAN.md`,
+  Entwicklung auf einem MacBook)
 - `backend/supabase/schema.sql`: Datenbankschema
 - `backend/jobs/price_update_job.py`: taeglicher Preis-Update-Job
 - `.github/workflows/daily-price-update.yml`: geplanter GitHub-Actions-Lauf

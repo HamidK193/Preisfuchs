@@ -67,16 +67,28 @@ Der aelteste oeffentliche Preis ueberschreitet am 18.10. die 90-Tage-Grenze, und
 - **Ehrliche Einschraenkung:** Ohne jeden Mac gibt es keine SwiftUI-Vorschau und keinen Simulator, die UI-Arbeit wird also langsam. Ein Cloud-Mac bei Scaleway kostet ab etwa 0,22 €/h netto, mindestens 24 h am Stueck.
 - **Hinweis:** TestFlight wuerde auch mit einem Expo-Build funktionieren. Der Wechsel zu SwiftUI ist eine Produktentscheidung und kostet die Android-Version.
 
+## Getroffene Entscheidungen (10.10.2026)
+
+- **Expo-App und Android:** bleiben Teil des Produkts, sind aber bis zur Fertigstellung der SwiftUI-App **eingefroren**. In `mobile/` kommen nur kritische Fixes. Am Ende wird die Expo-App an den Stand der SwiftUI-App angeglichen.
+- **Mac-Zugang:** Entwickelt wird auf dem MacBook eines Kollegen. Der User verbindet sich per Orca, pullt das Repo und arbeitet dort mit Claude weiter. GitHub Actions bleibt zusaetzlich die CI.
+
+## Start auf dem MacBook
+
+1. Xcode 26 aus dem App Store installieren, einmal starten und die Zusatzkomponenten installieren lassen.
+2. Repo klonen bzw. pullen: `git clone https://github.com/HamidK193/Preisfuchs` oder `git pull --rebase`.
+3. `brew install xcodegen`, falls Homebrew fehlt: https://brew.sh.
+4. Supabase-URL und Anon-Key in `ios/Config/Secrets.xcconfig` eintragen. Die Werte vom User holen, **nie committen**.
+5. Phase 0 aus diesem Plan abarbeiten, beginnend mit Teilplan 01, Abschnitt 9.
+6. Den Kollegen-Account nicht als Apple-ID fuer die App verwenden. Signieren und TestFlight laufen ueber das Developer-Konto des Users.
+
 ## Offene Entscheidungen fuer dich
 
 Die wichtigsten sind zuerst genannt, die vollstaendigen Listen stehen in den Teilplaenen.
 
-1. **Apple Developer Program buchen?** Das waere eine bewusste Ausnahme von „keine Bezahl-APIs“ in `AGENTS.md`. Ohne das Programm gibt es weder TestFlight noch Push.
-2. **Expo-App und Android:** einfrieren oder weiter pflegen?
-3. **Mac-Zugang:** nur ueber CI, tageweise ein Cloud-Mac oder ein eigener Mac?
-4. **Repo:** bleibt es oeffentlich (dann ist CI gratis)? Und GitHub Actions oder Xcode Cloud?
-5. **Mindestversion:** iOS 17 oder iOS 18?
-6. **Login:** zusaetzlich Sign in with Apple? Moeglicherweise ist das Pflicht, sobald Google-Login angeboten wird (App Store Richtlinie 4.8, noch nicht geprueft).
-7. **Daten:** BW-Seed-Job abschalten? Welche Prospektquelle? Weitere Haendler und Drogerien aufnehmen?
-8. **Design:** endgueltiges Farbschema, Eckenradius, Dark Mode schon im MVP, iPad-Layout?
-9. **TestFlight:** intern ohne Pruefung durch Apple oder extern per oeffentlichem Link (erster Build wird von Apple geprueft)?
+1. **Apple Developer Program buchen?** Das waere eine bewusste Ausnahme von „keine Bezahl-APIs“ in `AGENTS.md`. Ohne das Programm gibt es weder TestFlight noch Push. Auf dem MacBook kann man aber auch ohne das Programm im Simulator und mit kostenloser Signierung auf dem eigenen iPhone testen; diese Signierung laeuft nach 7 Tagen ab.
+2. **Repo:** bleibt es oeffentlich (dann ist CI gratis)? Und GitHub Actions oder Xcode Cloud?
+3. **Mindestversion:** iOS 17 oder iOS 18?
+4. **Login:** zusaetzlich Sign in with Apple? Moeglicherweise ist das Pflicht, sobald Google-Login angeboten wird (App Store Richtlinie 4.8, noch nicht geprueft).
+5. **Daten:** BW-Seed-Job abschalten? Welche Prospektquelle? Weitere Haendler und Drogerien aufnehmen?
+6. **Design:** endgueltiges Farbschema, Eckenradius, Dark Mode schon im MVP, iPad-Layout?
+7. **TestFlight:** intern ohne Pruefung durch Apple oder extern per oeffentlichem Link (erster Build wird von Apple geprueft)?
