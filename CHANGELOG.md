@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- App (`mobile/`): „Mit Google anmelden“ (`@react-native-google-signin/google-signin`,
+  Supabase `signInWithIdToken`), nur im eigenen Build sichtbar, nicht in Expo Go.
+  App-ID `de.preisfuchs.app` (iOS und Android) in `app.json`. Google-Cloud-Projekt
+  „Preisfuchs“ mit Web-Client (Supabase) und iOS-Client angelegt.
+
 - App (`mobile/`): Familie & Gruppen. Optionales Konto per E-Mail-Code (Supabase Auth,
   Sitzung bleibt auf dem Gerät), Konto löschen. Gruppen (Familie/WG/Freunde, max. 6)
   erstellen, per 8-stelligem Code (7 Tage gültig) einladen und beitreten, verlassen.

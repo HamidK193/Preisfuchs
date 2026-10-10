@@ -152,6 +152,10 @@
   Developer Account + Development Build). App-ID-Vorschlag `de.preisfuchs.app` (noch nicht in app.json).
   Google Cloud: eigenes Projekt „Preisfuchs“ (ID `stunning-choir-511210-b0`), getrennt vom
   Make-Projekt „Gmail Integration Make“. Client-Secret trägt der Nutzer selbst in Supabase ein.
+  Web-Client „Preisfuchs Supabase (Web)“ und iOS-Client „Preisfuchs iOS“ angelegt (IDs in
+  `mobile/src/constants/app.ts`). App-ID `de.preisfuchs.app` steht jetzt in app.json.
+  Supabase Google-Provider: beide Client-IDs (Web zuerst), Secret vom Web-Client, „Skip nonce checks“ an.
+  Android-Client fehlt noch (braucht SHA-1 aus dem ersten Build).
 - Noch nicht gebaut: Aktivitäts-Verlauf (Screen 50), Push „Papa hat 3 Artikel abgehakt“,
   „Ich gehe zu Lidl“.
 

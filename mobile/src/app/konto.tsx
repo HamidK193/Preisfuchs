@@ -5,7 +5,8 @@ import { ActivityIndicator, Alert, Pressable, TextInput, View } from 'react-nati
 import { inputStyle, PrimaryButton, SecondaryButton } from '@/components/settings';
 import { SheetScroll } from '@/components/sheet';
 import { AppText, FoxLogo } from '@/components/ui';
-import { Colors, Inset, Spacing } from '@/constants/theme';
+import { Colors, Inset, Radius, Spacing } from '@/constants/theme';
+import { googleSignInAvailable, signInWithGoogle } from '@/lib/google-auth';
 import { useFamily } from '@/state/family-state';
 
 // Anmelden per E-Mail-Code. Ein Konto braucht man nur fuer Familie & Gruppen.
@@ -87,6 +88,38 @@ export default function AccountSheet() {
         </AppText>
       ) : step === 'email' ? (
         <View style={{ gap: Spacing.three }}>
+          {googleSignInAvailable ? (
+            <>
+              <Pressable
+                disabled={busy}
+                onPress={() =>
+                  run(async () => {
+                    await signInWithGoogle();
+                  }, 'Die Anmeldung mit Google hat nicht geklappt.')
+                }
+                style={({ pressed }) => ({
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: Spacing.two,
+                  height: 52,
+                  borderRadius: Radius.medium,
+                  borderWidth: 1,
+                  borderColor: Colors.border,
+                  backgroundColor: pressed ? Colors.tile : Colors.card,
+                })}>
+                <AppText weight="extrabold" size={18} color="#4285F4">
+                  G
+                </AppText>
+                <AppText weight="bold" size={16}>
+                  Mit Google anmelden
+                </AppText>
+              </Pressable>
+              <AppText size={13} color={Colors.textSecondary} style={{ textAlign: 'center' }}>
+                oder mit E-Mail-Code
+              </AppText>
+            </>
+          ) : null}
           <TextInput
             value={email}
             onChangeText={setEmail}
@@ -146,8 +179,8 @@ export default function AccountSheet() {
       ) : null}
 
       <AppText size={12} color={Colors.textSecondary} style={{ textAlign: 'center' }}>
-        Gespeichert werden deine E-Mail-Adresse, dein Anzeigename in Gruppen und die geteilten Listen. Anmelden mit Apple
-        oder Google folgt mit der eigenen App-Version.
+        Gespeichert werden deine E-Mail-Adresse, dein Anzeigename in Gruppen und die geteilten Listen.
+        {googleSignInAvailable ? '' : ' Anmelden mit Google gibt es in der eigenen App-Version.'}
       </AppText>
 
       <Pressable onPress={() => router.back()} style={{ alignItems: 'center', paddingVertical: Inset.compact }}>
