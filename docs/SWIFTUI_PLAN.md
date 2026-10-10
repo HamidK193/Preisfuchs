@@ -34,7 +34,7 @@ Der aelteste oeffentliche Preis ueberschreitet am 18.10. die 90-Tage-Grenze, und
   - OFF-Agent einmal manuell laufen lassen.
   - Eigenen SMTP-Server fuer Login-Mails einrichten.
 - **iOS:**
-  - `ios/project.yml` anlegen, `.gitignore` um `*.xcconfig` ergaenzen, Config-Struktur aufsetzen.
+  - `ios/project.yml` anlegen, `.gitignore` um `ios/Config/Secrets.xcconfig` ergaenzen, Config-Struktur aufsetzen.
   - `PreisfuchsKit` mit der portierten Vergleichslogik aus `PriceModels.swift` und Tests.
 - **CI:** `ios-checks.yml` auf einem `macos-26`-Runner gruen bekommen.
 - **Spike:** TabView-Grundgeruest mit einer Abfrage auf `current_price_observations` und E-Mail-Code-Login.
@@ -77,7 +77,7 @@ Der aelteste oeffentliche Preis ueberschreitet am 18.10. die 90-Tage-Grenze, und
 1. Xcode 26 aus dem App Store installieren, einmal starten und die Zusatzkomponenten installieren lassen.
 2. Repo klonen bzw. pullen: `git clone https://github.com/HamidK193/Preisfuchs` oder `git pull --rebase`.
 3. `brew install xcodegen`, falls Homebrew fehlt: https://brew.sh.
-4. Supabase-URL und Anon-Key in `ios/Config/Secrets.xcconfig` eintragen. Die Werte vom User holen, **nie committen**.
+4. `ios/Config/Secrets.example.xcconfig` nach `ios/Config/Secrets.xcconfig` kopieren und `SUPABASE_HOST` (ohne https://) sowie `SUPABASE_ANON_KEY` eintragen. Die Werte vom User holen, **nie committen**.
 5. Phase 0 aus diesem Plan abarbeiten, beginnend mit Teilplan 01, Abschnitt 9.
 6. Den Kollegen-Account nicht als Apple-ID fuer die App verwenden. Signieren und TestFlight laufen ueber das Developer-Konto des Users.
 

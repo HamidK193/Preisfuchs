@@ -35,3 +35,16 @@ backend/jobs/Lib/
 backend/jobs/Scripts/
 .obsidian/
 /preisfuchs-*.png
+
+# iOS: secrets, generated project, signing, per-user Xcode state
+ios/Config/Secrets.xcconfig
+ios/*.xcodeproj/
+ios/Preisfuchs/Info.plist
+ios/.spm/
+xcuserdata/
+GoogleService-Info.plist
+*.p8
+*.p12
+*.cer
+*.mobileprovision
+*.provisionprofile
