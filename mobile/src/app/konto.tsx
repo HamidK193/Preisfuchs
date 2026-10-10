@@ -145,11 +145,11 @@ export default function AccountSheet() {
       ) : (
         <View style={{ gap: Spacing.three }}>
           <AppText size={14} color={Colors.textSecondary}>
-            Wir haben dir einen Code an {email.trim()} geschickt.
+            Wir haben einen 6-stelligen Code an {email.trim()} geschickt.
           </AppText>
           <TextInput
             value={code}
-            onChangeText={(text) => setCode(text.replace(/\D/g, '').slice(0, 8))}
+            onChangeText={(text) => setCode(text.replace(/\D/g, '').slice(0, 6))}
             placeholder="123456"
             placeholderTextColor={Colors.textSecondary}
             keyboardType="number-pad"
@@ -160,7 +160,7 @@ export default function AccountSheet() {
           />
           <PrimaryButton
             label={busy ? 'Wird geprüft …' : 'Anmelden'}
-            disabled={code.length < 6 || busy}
+            disabled={code.length !== 6 || busy}
             onPress={() => run(() => verifyCode(email, code), 'Der Code stimmt nicht oder ist abgelaufen.')}
           />
           <Pressable onPress={() => setStep('email')} style={{ alignItems: 'center' }}>
