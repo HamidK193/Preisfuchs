@@ -222,6 +222,10 @@ grant update (display_name) on public.household_members to authenticated;
 revoke update on public.households from authenticated;
 grant update (name, emoji) on public.households to authenticated;
 
+-- Das Projekt vergibt keine Standardrechte; Zugriff regeln danach die Policies.
+grant select on public.households, public.household_members to authenticated;
+grant select, insert, update, delete on public.shared_lists, public.shared_list_items to authenticated;
+
 drop policy if exists shared_lists_all on public.shared_lists;
 create policy shared_lists_all on public.shared_lists for all to authenticated
   using ((select public.is_household_member(household_id)))

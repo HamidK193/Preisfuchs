@@ -143,6 +143,11 @@
 - Sync (`state/family-state.tsx`): Snapshot je gemeinsamer Liste; lokale Änderungen werden als
   Diff hochgeladen, Server-Änderungen ersetzen die lokale Liste (letzter Schreiber gewinnt).
   Offline-Änderungen an gemeinsamen Listen können beim nächsten Laden überschrieben werden.
+- Am 10.10. in Supabase eingespielt (Migrationen `households_and_shared_lists`, `households_grants`).
+  Das Projekt vergibt keine Standard-Tabellenrechte -> neue Tabellen brauchen explizite GRANTs.
+  SQL-Probedurchlauf mit 3 Testnutzern (zurückgerollt): Erstellen, Einladen, Beitreten, Abhaken,
+  Fremde sehen nichts, Admin-Übergabe, Konto löschen – alles bestanden. Advisor-Warnungen zu
+  SECURITY-DEFINER-RPCs sind gewollt.
 - Noch nicht gebaut: Aktivitäts-Verlauf (Screen 50), Push „Papa hat 3 Artikel abgehakt“,
   „Ich gehe zu Lidl“.
 
