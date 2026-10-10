@@ -160,6 +160,10 @@
   Neue Adressen bekommen bei „Confirm email“ = an die Vorlage „Confirm signup“, nicht „Magic link“ –
   beide brauchen `{{ .Token }}`. verifyOtp type 'email' deckt beide ab.
   Code-Länge: Nutzer will genau 6 Ziffern (Supabase „Email OTP Length“ = 6, App nimmt nur 6 an).
+- Google in Expo Go: Browser-OAuth (signInWithOAuth + openAuthSessionAsync, flowType pkce).
+  Supabase → Auth → URL Configuration → Redirect URLs muss `exp://**` und `preisfuchs://**` erlauben.
+- Nutzerwunsch: Abläufe gängiger Apps nachbauen; Skill „REA – Reverse Engineer Anything“ ist
+  unbekannt, Quelle/Link vom Nutzer erbeten (nichts ungeprüft installieren).
 - Noch nicht gebaut: Aktivitäts-Verlauf (Screen 50), Push „Papa hat 3 Artikel abgehakt“,
   „Ich gehe zu Lidl“.
 

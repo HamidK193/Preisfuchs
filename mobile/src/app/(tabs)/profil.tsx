@@ -27,7 +27,7 @@ function Stat({ value, label }: { value: string; label: string }) {
 const PLUS_BENEFITS = ['Werbefrei', 'Unbegrenzte Preisalarme', 'Familie bis 6 Personen', '12 Monate Preisverlauf'];
 
 export default function ProfileScreen() {
-  const { favorites, location, activeStoreIds, alarms, stores, trips, lists, unreadCount } = useAppState();
+  const { favorites, location, activeStoreIds, alarms, stores, trips, lists, unreadCount, restartOnboarding } = useAppState();
   const { households, session } = useFamily();
   const month = new Date().toISOString().slice(0, 7);
   const monthSaving = trips.filter((trip) => trip.finishedAt.startsWith(month)).reduce((sum, trip) => sum + trip.estimatedSaving, 0);
@@ -155,6 +155,12 @@ export default function ProfileScreen() {
           ))}
         </Group>
       ))}
+
+      <Pressable onPress={restartOnboarding} accessibilityRole="button" style={{ alignItems: 'center' }}>
+        <AppText weight="bold" size={14} color={Colors.primary}>
+          Einführung erneut ansehen
+        </AppText>
+      </Pressable>
 
       <View style={{ alignItems: 'center', gap: 4 }}>
         <AppText size={12} color={Colors.textSecondary}>

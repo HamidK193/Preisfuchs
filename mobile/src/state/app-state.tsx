@@ -106,6 +106,8 @@ type AppState = PersistedState & {
   removeAlarm: (productId: string) => void;
   resetAllData: () => void;
   completeOnboarding: () => void;
+  // Zeigt das Onboarding beim naechsten Rendern erneut (Standort und Daten bleiben).
+  restartOnboarding: () => void;
   addRecentSearch: (term: string) => void;
   removeRecentSearch: (term: string) => void;
   priceData: PriceDataStatus;
@@ -418,6 +420,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     resetAllData: () =>
       setState({ ...initialState, lists: [{ ...initialState.lists[0], lines: [] }], favorites: [], alarms: [] }),
     completeOnboarding: () => setState((current) => ({ ...current, onboarded: true })),
+    restartOnboarding: () => setState((current) => ({ ...current, onboarded: false })),
     addRecentSearch: (term) => {
       const clean = term.trim();
       if (clean.length < 2) return;

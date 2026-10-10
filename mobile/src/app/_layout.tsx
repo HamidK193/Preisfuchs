@@ -86,6 +86,7 @@ function AppNavigator() {
       <Stack.Screen name="liste" options={{ title: 'Liste übernehmen', headerLargeTitle: false }} />
       <Stack.Screen name="einkauf-fertig" options={{ presentation: 'fullScreenModal', headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name="benachrichtigungen" options={{ title: 'Benachrichtigungen' }} />
+      <Stack.Screen name="auth/callback" options={{ headerShown: false, animation: 'none' }} />
       <Stack.Screen name="familie/index" options={{ title: 'Familie & Gruppen' }} />
       <Stack.Screen name="familie/neu" options={{ title: 'Gruppe erstellen', headerLargeTitle: false }} />
       <Stack.Screen name="familie/beitreten" options={{ title: 'Gruppe beitreten', headerLargeTitle: false }} />

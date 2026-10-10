@@ -6,9 +6,11 @@ import { LocationSetup } from '@/components/location-setup';
 import { Group, PrimaryButton, SecondaryButton, ToggleRow } from '@/components/settings';
 import { AppText, FoxLogo, Icon, StoreBadge, type IconName } from '@/components/ui';
 import { Colors, Inset, Radius, Spacing } from '@/constants/theme';
+import { LoginPanel } from '@/components/login-panel';
 import { useAppState } from '@/state/app-state';
+import { useFamily } from '@/state/family-state';
 
-type Step = 'intro' | 'consent' | 'location' | 'stores' | 'notifications';
+type Step = 'intro' | 'account' | 'consent' | 'location' | 'stores' | 'notifications';
 
 // Schritte mit Fortschrittsanzeige (das Intro hat eigene Punkte).
 const PROGRESS_STEPS: Step[] = ['consent', 'location', 'stores', 'notifications'];
@@ -31,15 +33,24 @@ const SLIDES: { icon: IconName; title: string; text: string }[] = [
   },
 ];
 
-// Erster Start: kurzes Intro, Einwilligung, Standort, Lieblingsmaerkte, Mitteilungen.
+// Erster Start: kurzes Intro, Anmelden (optional), Einwilligung, Standort, Lieblingsmaerkte, Mitteilungen.
 export function Onboarding() {
   const { storesFromOsm, completeOnboarding } = useAppState();
+  const { session } = useFamily();
   const [selectedStep, setStep] = useState<Step>('intro');
-  // Sobald der Standort gesetzt ist, geht es mit den Maerkten weiter.
-  const step: Step = selectedStep === 'location' && storesFromOsm ? 'stores' : selectedStep;
+  // Nach der Anmeldung geht es weiter; sobald der Standort gesetzt ist, mit den Maerkten.
+  const step: Step =
+    selectedStep === 'account' && session
+      ? 'consent'
+      : selectedStep === 'location' && storesFromOsm
+        ? 'stores'
+        : selectedStep;
 
   if (step === 'intro') {
-    return <Intro onDone={() => setStep('consent')} />;
+    return <Intro onDone={() => setStep('account')} />;
+  }
+  if (step === 'account') {
+    return <AccountStep onSkip={() => setStep('consent')} />;
   }
   if (step === 'location') {
     return <LocationSetup />;
@@ -269,5 +280,33 @@ function NotificationsStep({ onDone }: { onDone: () => void }) {
       </AppText>
       <PrimaryButton label="Fertig" onPress={onDone} />
     </ScrollView>
+  );
+}
+
+// Willkommen: anmelden mit Google oder E-Mail – oder ohne Konto weiter.
+function AccountStep({ onSkip }: { onSkip: () => void }) {
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, padding: Spacing.five, gap: Spacing.five, justifyContent: 'center' }} keyboardShouldPersistTaps="handled">
+        <View style={{ alignItems: 'center', gap: Spacing.three }}>
+          <FoxLogo size={96} />
+          <AppText weight="extrabold" size={26} style={{ textAlign: 'center' }}>
+            Willkommen bei Preisfuchs
+          </AppText>
+          <AppText size={15} color={Colors.textSecondary} style={{ textAlign: 'center', lineHeight: 21 }}>
+            Mit Konto teilst du Einkaufslisten mit Familie, WG oder Freunden und siehst sofort, was schon im Wagen liegt.
+          </AppText>
+        </View>
+        <LoginPanel />
+        <Pressable onPress={onSkip} accessibilityRole="button" style={{ alignItems: 'center', paddingVertical: Inset.compact }}>
+          <AppText weight="bold" size={15} color={Colors.textSecondary}>
+            Ohne Konto weiter
+          </AppText>
+        </Pressable>
+        <AppText size={12} color={Colors.textSecondary} style={{ textAlign: 'center' }}>
+          Preise vergleichen und Listen anlegen geht auch ohne Konto. Anmelden kannst du dich später im Profil.
+        </AppText>
+      </ScrollView>
+    </SafeAreaView>
   );
 }

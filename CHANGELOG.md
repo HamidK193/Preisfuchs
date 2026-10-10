@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- App (`mobile/`): Onboarding hat nach dem Intro einen Willkommens-Screen mit „Mit Google
+  fortfahren“, E-Mail-Code und „Ohne Konto weiter“ (gemeinsame `LoginPanel`-Komponente,
+  auch im Konto-Sheet). Google-Anmeldung funktioniert jetzt auch in Expo Go über den Browser
+  (Supabase OAuth mit PKCE, WebCrypto-Ersatz über expo-crypto); im eigenen Build nativ.
+  „Einführung erneut ansehen“ im Profil. „Code erneut senden“ beim E-Mail-Login.
+
 - App (`mobile/`): „Mit Google anmelden“ (`@react-native-google-signin/google-signin`,
   Supabase `signInWithIdToken`), nur im eigenen Build sichtbar, nicht in Expo Go.
   App-ID `de.preisfuchs.app` (iOS und Android) in `app.json`. Google-Cloud-Projekt

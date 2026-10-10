@@ -1,6 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
+import * as Crypto from 'expo-crypto';
 import { AppState, Platform } from 'react-native';
+
+// React Native hat kein WebCrypto. Supabase braucht SHA-256 fuer PKCE (Google-Anmeldung im
+// Browser); ohne das faellt es auf das schwaechere "plain"-Verfahren zurueck.
+if (Platform.OS !== 'web' && !globalThis.crypto?.subtle) {
+  const subtle = { digest: (algorithm: string, data: BufferSource) => Crypto.digest(algorithm as Crypto.CryptoDigestAlgorithm, data) };
+  globalThis.crypto = {
+    ...globalThis.crypto,
+    getRandomValues: Crypto.getRandomValues,
+    subtle,
+  } as unknown as typeof globalThis.crypto;
+}
 
 // Nur oeffentliche Werte (URL und anon-Key, siehe mobile/.env.local). Nie den Service-Role-Key eintragen.
 const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
@@ -16,6 +28,8 @@ export const supabase =
           persistSession: true,
           autoRefreshToken: true,
           detectSessionInUrl: false,
+          // PKCE fuer die Google-Anmeldung im Browser (Code statt Token in der Rueckleitung).
+          flowType: 'pkce',
         },
       })
     : null;
