@@ -20,5 +20,6 @@ public enum PriceDecoding {
                 debugDescription: "Invalid ISO 8601 timestamp: \(value)"
             )
         }
+        return decoder
     }
 }

@@ -1,12 +1,17 @@
 import SwiftUI
 
-// Minimaler Einstieg aus WP0, damit XcodeGen und der Build laufen.
-// WP4 ersetzt diese Datei durch die App-Shell.
 @main
 struct PreisfuchsApp: App {
+    @State private var model: PriceListModel
+
+    init() {
+        _model = State(initialValue: PriceListModel(environment: .bootstrap()))
+    }
+
     var body: some Scene {
         WindowGroup {
-            Text("Preisfuchs")
+            RootTabView(model: model)
+                .tint(Color(red: 0.12, green: 0.38, blue: 0.27))
         }
     }
 }

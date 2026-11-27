@@ -114,8 +114,8 @@ private func observation(
         confidence: 1,
         offerType: offerType,
         requiresApp: requiresApp,
-        validUntil: validUntil.flatMap(LocalDate.init(string:)),
-        personalized: personalized
+        personalized: personalized,
+        validUntil: validUntil.flatMap(LocalDate.init(string:))
     )
 }
 
