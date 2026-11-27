@@ -1,4 +1,5 @@
 import Foundation
+import PreisfuchsDomain
 
 public struct PackageInfo: Codable, Hashable, Sendable {
     public let unit: String?
