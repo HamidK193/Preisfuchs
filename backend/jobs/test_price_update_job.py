@@ -14,6 +14,7 @@ from price_update_job import (
     collect_prices,
     open_price_rejection,
     publication_allowed,
+    bw_seed_job_enabled,
 )
 
 
@@ -37,6 +38,15 @@ def observation(**overrides):
 
 
 class OpenPricesNormalizationTests(unittest.TestCase):
+    def test_bw_seed_job_is_opt_in(self) -> None:
+        with patch.dict("os.environ", {}, clear=True):
+            self.assertFalse(bw_seed_job_enabled())
+        for value in ("true", "TRUE", "1", "yes"):
+            with self.subTest(value=value), patch.dict("os.environ", {"ENABLE_BW_SEED_JOB": value}, clear=True):
+                self.assertTrue(bw_seed_job_enabled())
+        with patch.dict("os.environ", {"ENABLE_BW_SEED_JOB": "false"}, clear=True):
+            self.assertFalse(bw_seed_job_enabled())
+
     def test_seed_catalog_contains_only_unique_valid_barcodes(self) -> None:
         products = load_products()
         barcodes = [barcode for product in products for barcode in product.barcodes]

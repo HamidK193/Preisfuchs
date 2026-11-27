@@ -1,5 +1,8 @@
 project_id = "eanggjsdpjjskqycvknx"
 
+[functions.report-price]
+verify_jwt = true # Legacy anon JWT is sent by the client.
+
 [api]
 enabled = true
 

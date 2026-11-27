@@ -763,8 +763,16 @@ def publication_allowed(row: dict, was_approved: bool, publish_reviewed: bool) -
     return not row["review_reasons"] and (was_approved or publish_reviewed)
 
 
+def bw_seed_job_enabled() -> bool:
+    """The legacy Baden-Wuerttemberg seed import is opt-in."""
+    return os.getenv("ENABLE_BW_SEED_JOB", "").strip().lower() in {"1", "true", "yes"}
+
+
 def main() -> None:
     load_dotenv()
+    if not bw_seed_job_enabled():
+        print("BW seed job disabled (set ENABLE_BW_SEED_JOB=true to enable).")
+        return
     products = load_products()
     rules, corrections = load_rules(), load_corrections()
     if set(product.id for product in products) - set(rules):
