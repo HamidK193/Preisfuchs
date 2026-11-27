@@ -8,6 +8,7 @@
     "brand_type": "manufacturer",
     "package": { "unit": "l", "total": "1E+0", "original": "1 l" },
     "comparison_key": "gtin:4001234567890",
+    "product_type": "Milch",
     "retailer_id": "f2c1d18e-9c24-4af9-881a-fc0da086ab31",
     "retailer_name": "Lidl",
     "price": 0.79,

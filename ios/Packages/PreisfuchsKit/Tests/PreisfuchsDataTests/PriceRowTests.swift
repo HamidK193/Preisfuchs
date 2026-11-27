@@ -14,7 +14,9 @@ struct PriceRowTests {
         #expect(row.price == Decimal(string: "0.79"))
         #expect(row.regularPrice == Decimal(string: "1.05"))
         #expect(row.gtin == "4001234567890")
+        #expect(row.productType == "Milch")
         #expect(row.package?.total?.value == Decimal(1))
+        #expect(row.validFrom == nil)
         #expect(row.validUntil?.description == "2026-11-28")
         #expect(row.storeId != nil)
     }

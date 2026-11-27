@@ -22,7 +22,7 @@ public struct PackageInfo: Codable, Hashable, Sendable {
 public struct PriceRow: Codable, Identifiable, Hashable, Sendable {
     public static let selectColumns = [
         "id", "product_id", "article_id", "article_name", "brand_name", "brand_type", "package",
-        "comparison_key", "retailer_id", "retailer_name", "price", "regular_price", "offer_type",
+        "comparison_key", "product_type", "retailer_id", "retailer_name", "price", "regular_price", "offer_type",
         "requires_app", "app_name", "is_personalized", "observed_at", "valid_from", "valid_until",
         "unit_price", "unit", "coupon_activation_required", "discount_description", "confidence",
         "region", "source", "source_url", "source_license", "location_label", "store_id"
@@ -36,6 +36,7 @@ public struct PriceRow: Codable, Identifiable, Hashable, Sendable {
     public let brandType: String?
     public let package: PackageInfo?
     public let comparisonKey: String?
+    public let productType: String?
     public let retailerId: UUID?
     public let retailerName: String
     public let price: Decimal
@@ -78,6 +79,7 @@ public struct PriceRow: Codable, Identifiable, Hashable, Sendable {
         case brandType
         case package
         case comparisonKey
+        case productType
         case retailerId
         case retailerName
         case price
@@ -112,6 +114,7 @@ public struct PriceRow: Codable, Identifiable, Hashable, Sendable {
         brandType = try? container.decodeIfPresent(String.self, forKey: .brandType)
         package = try? container.decodeIfPresent(PackageInfo.self, forKey: .package)
         comparisonKey = try? container.decodeIfPresent(String.self, forKey: .comparisonKey)
+        productType = try? container.decodeIfPresent(String.self, forKey: .productType)
         retailerId = try? container.decodeIfPresent(UUID.self, forKey: .retailerId)
         retailerName = try container.decode(String.self, forKey: .retailerName)
         price = try container.decode(FlexibleNumber.self, forKey: .price).value
