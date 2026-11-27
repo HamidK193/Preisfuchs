@@ -294,14 +294,12 @@ public enum PriceFormatting {
     }
 
     public static func date(_ value: Date) -> String {
-        value.formatted(
-            .dateTime
-                .day(.twoDigits)
-                .month(.twoDigits)
-                .year()
-                .locale(locale)
-                .timeZone(Calendar.preisfuchs.timeZone)
-        )
+        let formatter = DateFormatter()
+        formatter.locale = locale
+        formatter.calendar = .preisfuchs
+        formatter.timeZone = Calendar.preisfuchs.timeZone
+        formatter.dateFormat = "dd.MM.yyyy"
+        return formatter.string(from: value)
     }
 
     public static func date(_ value: LocalDate) -> String {
