@@ -304,6 +304,10 @@ public enum PriceFormatting {
         )
     }
 
+    public static func date(_ value: LocalDate) -> String {
+        String(format: "%02d.%02d.%04d", value.day, value.month, value.year)
+    }
+
     public static func freshnessText(observedAt: Date, now: Date, calendar: Calendar = .preisfuchs) -> String {
         let observedDay = calendar.startOfDay(for: observedAt)
         let currentDay = calendar.startOfDay(for: now)
@@ -318,6 +322,6 @@ public enum PriceFormatting {
 
     public static func validityText(_ value: LocalDate?) -> String? {
         guard let value else { return nil }
-        return "gültig bis \(value.description)"
+        return "gültig bis \(date(value))"
     }
 }

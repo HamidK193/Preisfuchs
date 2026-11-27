@@ -77,6 +77,8 @@ struct PriceModelsTests {
             observedAt: date("2026-10-01T12:00:00Z"),
             now: date("2026-11-27T12:00:00Z")
         ).contains("möglicherweise veraltet"))
+        let expiry = LocalDate(string: "2026-11-27")!
+        #expect(PriceFormatting.validityText(expiry) == "gültig bis 27.11.2026")
     }
 }
 

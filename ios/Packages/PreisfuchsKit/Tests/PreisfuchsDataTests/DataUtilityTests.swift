@@ -41,6 +41,31 @@ struct DataUtilityTests {
         #expect(config?.anonKey == "anon-example")
     }
 
+    @Test("E-Mail wird normalisiert und unvollständige Eingaben werden abgelehnt")
+    func emailNormalization() {
+        #expect(LoginInput.normalizedEmail("  User+Test@Example.COM  ") == "user+test@example.com")
+        #expect(LoginInput.normalizedEmail("no-at-sign") == nil)
+        #expect(LoginInput.normalizedEmail("user@localhost") == nil)
+        #expect(LoginInput.normalizedEmail("user name@example.com") == nil)
+    }
+
+    @Test("OTP akzeptiert genau sechs ASCII-Ziffern")
+    func otpRequiresExactlySixAsciiDigits() {
+        #expect(LoginInput.isValidCode("012345"))
+        #expect(!LoginInput.isValidCode("12345"))
+        #expect(!LoginInput.isValidCode("1234567"))
+        #expect(!LoginInput.isValidCode("12 456"))
+        #expect(!LoginInput.isValidCode("١٢٣٤٥٦"))
+    }
+
+    @Test("Auth-Fehler liefern kurze deutsche UI-Texte")
+    func authFailuresHaveUserMessages() {
+        #expect(AuthFailure.invalidCode.userMessage.contains("sechs Ziffern"))
+        #expect(AuthFailure.expired.userMessage.contains("abgelaufen"))
+        #expect(AuthFailure.unknown("sensitive detail").userMessage.contains("später erneut"))
+        #expect(!AuthFailure.unknown("sensitive detail").userMessage.contains("sensitive detail"))
+    }
+
     @Test("Leere Abfrage beendet die Paginierung")
     func emptyPageStopsLoading() async throws {
         let result = try await PagedLoader.loadAll(pageSize: 2) { from, _ in
