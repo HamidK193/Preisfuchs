@@ -166,7 +166,7 @@ struct PriceObservation: Identifiable, Codable, Hashable {
         return "gültig bis \(Self.dateFormatter.string(from: validUntil))"
     }
 
-    private static let currencyFormatter: NumberFormatter = {
+    nonisolated(unsafe) private static let currencyFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.currencyCode = "EUR"
@@ -174,7 +174,7 @@ struct PriceObservation: Identifiable, Codable, Hashable {
         return formatter
     }()
 
-    private static let dateFormatter: DateFormatter = {
+    nonisolated(unsafe) private static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "de_DE")
         formatter.dateStyle = .medium

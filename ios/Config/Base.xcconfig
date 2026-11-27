@@ -1,0 +1,14 @@
+// Gemeinsame Build-Einstellungen fuer alle Konfigurationen.
+// Werte aus Secrets.xcconfig (lokal, gitignored) ueberschreiben die Defaults unten.
+
+// Supabase: Host ohne "https://" (die URL baut AppConfig zusammen).
+// Leer = Demo-Modus.
+SUPABASE_HOST =
+SUPABASE_ANON_KEY =
+
+// Signierung: leer = keine Team-ID. Fuer kostenlose Signierung auf dem eigenen
+// iPhone in Secrets.xcconfig die Personal-Team-ID und eine eigene Bundle-ID setzen.
+DEVELOPMENT_TEAM =
+PF_BUNDLE_ID = de.preisfuchs.app
+
+#include? "Secrets.xcconfig"

@@ -129,6 +129,17 @@
   explizit in Schema/Migrationen gesetzt; npm-Direktabhängigkeiten sind gepinnt.
 - Freie Open-Food-Facts-Bildsuchen sind im Browser standardmäßig deaktiviert;
   das Entwicklungs-Opt-in ist auf 4 Suchen pro Ladevorgang begrenzt.
+- SwiftUI-App (Phase 0, WP0): XcodeGen-Projekt `ios/project.yml` (das `.xcodeproj` ist
+  gitignored, nach jedem Pull `xcodegen generate`), Swift-Paket `ios/Packages/PreisfuchsKit`
+  (`PreisfuchsDomain`, `PreisfuchsData`, ohne supabase-swift, läuft auf Linux).
+  supabase-swift ist nur im App-Target und exakt gepinnt. Secrets liegen in
+  `ios/Config/Secrets.xcconfig` (gitignored, Vorlage `Secrets.example.xcconfig`):
+  `SUPABASE_HOST` ohne `https://`, leer = Demo-Modus. CI: `ios-checks.yml`
+  (Linux-Kit-Tests + macOS-Simulator-Build); `ios-testflight.yml` läuft nur manuell
+  und nur mit Repo-Variable `IOS_TESTFLIGHT_ENABLED=true`.
+- Kollegen-Tests über Expo Go sind gescheitert (Oktober 2026): Expo Go verlangt denselben
+  Expo-Account in CLI und App, auch über den Tunnel. Verteilung an Tester daher über
+  TestFlight (braucht das Apple Developer Program, 99 €/Jahr, Entscheidung beim User).
 
 ## Offene Punkte
 

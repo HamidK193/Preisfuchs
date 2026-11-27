@@ -1,0 +1,162 @@
+name: iOS checks
+
+on:
+  pull_request:
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios-checks.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios-checks.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Schnelle Testschleife ohne Mac: PreisfuchsKit hat keine Abhaengigkeit
+  # zu supabase-swift oder Apple-Frameworks und laeuft deshalb auf Linux.
+  kit-linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      # Digest gepinnt (Docker Hub, 27.11.2026). Beim Update Tag und Digest gemeinsam aendern.
+      image: swift:6.1@sha256:6d5517e79420e85f3269422c4cc64c61a75ba5b1489565eea72f01f5be504780
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - name: Show Swift version
+        run: swift --version
+
+      - name: Test PreisfuchsKit (swift test)
+        run: swift test --package-path ios/Packages/PreisfuchsKit
+
+  app-macos:
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      XCODE_APP: /Applications/Xcode_26.6.app # bewusst gepinnt, Image-Default kann wechseln
+      SIM_PREFERRED: iPhone 17
+    defaults:
+      run:
+        working-directory: ios
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - name: Select Xcode
+        # Faellt auf den Image-Default zurueck, wenn die gepinnte Version entfernt wurde.
+        run: |
+          if [ -d "$XCODE_APP" ]; then
+            sudo xcode-select -s "$XCODE_APP"
+          else
+            echo "::warning::$XCODE_APP fehlt im Image, nutze Default: $(xcode-select -p)"
+            ls -d /Applications/Xcode*.app || true
+          fi
+          xcodebuild -version
+
+      - name: Install tools
+        run: brew install xcodegen
+
+      # Phase 0: nur Hinweis, bis die Formatter-Entscheidung gefallen ist.
+      # SwiftLint folgt, sobald ios/.swiftlint.yml existiert.
+      - name: Format check (swift-format, advisory)
+        continue-on-error: true
+        run: xcrun swift-format lint --strict --recursive --parallel Preisfuchs Packages PreisfuchsTests
+
+      - name: Dummy secrets (demo mode)
+        # Keine echten Werte im Check-Lauf: leere Werte -> Demo-Modus.
+        # Dank `#include?` in Base.xcconfig baut das Projekt auch ohne Datei.
+        run: |
+          if [ -f Config/Secrets.example.xcconfig ]; then
+            cp Config/Secrets.example.xcconfig Config/Secrets.xcconfig
+          else
+            echo "Config/Secrets.example.xcconfig fehlt, baue ohne Secrets.xcconfig"
+          fi
+
+      - name: Cache SwiftPM
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ios/.spm
+            ios/Packages/PreisfuchsKit/.build
+          key: spm-${{ runner.os }}-xcode26.6-${{ hashFiles('ios/project.yml', 'ios/Packages/**/Package.swift', 'ios/Packages/**/Package.resolved') }}
+          restore-keys: spm-${{ runner.os }}-xcode26.6-
+
+      - name: Test PreisfuchsKit (swift test)
+        run: swift test --package-path Packages/PreisfuchsKit --parallel
+
+      - name: Generate Xcode project
+        run: xcodegen generate --spec project.yml
+
+      - name: List available simulators
+        run: xcrun simctl list devices available
+
+      - name: Pick simulator destination
+        # Bevorzugt "iPhone 17" in der neuesten iOS-Laufzeit; fehlt das Geraet,
+        # wird das erste verfuegbare iPhone der neuesten Laufzeit genommen.
+        run: |
+          xcrun simctl list devices available -j > "$RUNNER_TEMP/simctl.json"
+          dest=$(python3 - "$RUNNER_TEMP/simctl.json" "$SIM_PREFERRED" <<'PY'
+          import json, re, sys
+          data = json.load(open(sys.argv[1]))["devices"]
+          preferred = sys.argv[2]
+          runtimes = []
+          for key, devices in data.items():
+              m = re.search(r"SimRuntime\.iOS-(\d+)-(\d+)(?:-(\d+))?$", key)
+              if not m:
+                  continue
+              version = tuple(int(x) for x in m.groups() if x is not None)
+              iphones = [d for d in devices if d.get("isAvailable", True) and d["name"].startswith("iPhone")]
+              if iphones:
+                  runtimes.append((version, iphones))
+          if not runtimes:
+              sys.exit("Kein iPhone-Simulator verfuegbar")
+          runtimes.sort(key=lambda r: r[0], reverse=True)
+          for version, iphones in runtimes:
+              for d in iphones:
+                  if d["name"] == preferred:
+                      print(f"platform=iOS Simulator,id={d['udid']}  # {d['name']}, iOS {'.'.join(map(str, version))}")
+                      sys.exit(0)
+          version, iphones = runtimes[0]
+          d = iphones[0]
+          print(f"platform=iOS Simulator,id={d['udid']}  # Fallback {d['name']}, iOS {'.'.join(map(str, version))}")
+          PY
+          )
+          echo "Destination: $dest"
+          echo "SIM_DEST=${dest%%  #*}" >> "$GITHUB_ENV"
+
+      - name: Build and unit-test app (simulator, unsigned)
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project Preisfuchs.xcodeproj -scheme Preisfuchs \
+            -destination "$SIM_DEST" \
+            -only-testing:PreisfuchsTests \
+            -clonedSourcePackagesDirPath .spm \
+            -resultBundlePath TestResults.xcresult \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            | tee xcodebuild.log
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ios-test-results
+          path: |
+            ios/TestResults.xcresult
+            ios/xcodebuild.log
+          retention-days: 7
+          if-no-files-found: ignore

@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- iOS (`ios/`): Phase 0, WP0. Neues Gerüst für die SwiftUI-App mit XcodeGen (`project.yml`),
+  xcconfig-Konfiguration mit gitignorierten Secrets (Demo-Modus ohne Werte) und Swift-Paket
+  `PreisfuchsKit` (Domain/Data mit Platzhaltern). Das alte Xcode-Projekt und der Stub sind
+  entfernt, `PriceModels.swift` liegt als Portierungsquelle im Kit. CI `ios-checks.yml`
+  (Kit-Tests auf Linux, App-Build und Tests im Simulator auf macOS), dazu die abgeschaltete
+  Skizze `ios-testflight.yml` (nur manuell, nur mit Repo-Variable).
+
 - App (`mobile/`): Onboarding hat nach dem Intro einen Willkommens-Screen mit „Mit Google
   fortfahren“, E-Mail-Code und „Ohne Konto weiter“ (gemeinsame `LoginPanel`-Komponente,
   auch im Konto-Sheet). Google-Anmeldung funktioniert jetzt auch in Expo Go über den Browser

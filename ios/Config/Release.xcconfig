@@ -1,0 +1,2 @@
+// Release-Konfiguration. Unterschiede zu Debug kommen spaeter hierher.
+#include "Base.xcconfig"
