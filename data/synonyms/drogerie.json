@@ -1,0 +1,17 @@
+[
+  {"canonical": "zahnpasta", "terms": ["zahnpasta", "zahncreme", "zahnpasten"]},
+  {"canonical": "zahnbürste", "terms": ["zahnbürste", "zahnbuerste", "handzahnbürste"]},
+  {"canonical": "zahnseide", "terms": ["zahnseide", "zahn-seide", "dentalfloss"]},
+  {"canonical": "mundspülung", "terms": ["mundspülung", "mundspuelung", "mundspüllösung"]},
+  {"canonical": "shampoo", "terms": ["shampoo", "schampon", "haarwaschmittel"]},
+  {"canonical": "haarspülung", "terms": ["haarspülung", "haarspuelung", "conditioner"]},
+  {"canonical": "duschgel", "terms": ["duschgel", "dusch-gel", "duschbad"]},
+  {"canonical": "flüssigseife", "terms": ["flüssigseife", "fluessigseife", "flüssige handseife"]},
+  {"canonical": "deodorant", "terms": ["deodorant", "deo", "deodorants"]},
+  {"canonical": "toilettenpapier", "terms": ["toilettenpapier", "klopapier", "wc-papier"]},
+  {"canonical": "küchenrolle", "terms": ["küchenrolle", "kuechenrolle", "haushaltsrolle", "küchenpapier"]},
+  {"canonical": "papiertaschentücher", "terms": ["papiertaschentücher", "papiertaschentuecher", "papier-taschentücher"]},
+  {"canonical": "geschirrspülmittel", "terms": ["geschirrspülmittel", "geschirrspuelmittel", "handspülmittel"]},
+  {"canonical": "vollwaschmittel", "terms": ["vollwaschmittel", "voll-waschmittel", "universalwaschmittel"]},
+  {"canonical": "müllbeutel", "terms": ["müllbeutel", "muellbeutel", "abfallbeutel"]}
+]

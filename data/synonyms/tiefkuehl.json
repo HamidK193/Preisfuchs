@@ -1,0 +1,17 @@
+[
+  {"canonical": "tiefkühlpizza", "terms": ["tiefkühlpizza", "tiefkuehlpizza", "tk-pizza", "tiefgekühlte pizza"]},
+  {"canonical": "pommes frites", "terms": ["pommes frites", "pommes", "fritten"]},
+  {"canonical": "kroketten", "terms": ["kroketten", "kartoffelkroketten", "kartoffel-kroketten"]},
+  {"canonical": "rösti", "terms": ["rösti", "roesti", "kartoffelrösti"]},
+  {"canonical": "fischstäbchen", "terms": ["fischstäbchen", "fischstaebchen", "fisch-stäbchen"]},
+  {"canonical": "rahmspinat", "terms": ["rahmspinat", "rahm-spinat", "spinat mit rahm"]},
+  {"canonical": "tk-erbsen", "terms": ["tk-erbsen", "tiefkühlerbsen", "tiefgekühlte erbsen"]},
+  {"canonical": "tk-brokkoli", "terms": ["tk-brokkoli", "tiefkühlbrokkoli", "tiefgekühlter brokkoli"]},
+  {"canonical": "tk-gemüsemischung", "terms": ["tk-gemüsemischung", "tiefkühlgemüsemischung", "tiefgekühlte gemüsemischung"]},
+  {"canonical": "tk-erdbeeren", "terms": ["tk-erdbeeren", "tiefkühlerdbeeren", "tiefgekühlte erdbeeren"]},
+  {"canonical": "tk-himbeeren", "terms": ["tk-himbeeren", "tiefkühlhimbeeren", "tiefgekühlte himbeeren"]},
+  {"canonical": "tk-beerenmischung", "terms": ["tk-beerenmischung", "tiefkühlbeerenmischung", "tiefgekühlte beerenmischung"]},
+  {"canonical": "vanilleeis", "terms": ["vanilleeis", "vanille-eis", "eis vanille"]},
+  {"canonical": "schokoladeneis", "terms": ["schokoladeneis", "schokoeis", "schoko-eis"]},
+  {"canonical": "wassereis", "terms": ["wassereis", "wasser-eis", "wassereis am stiel"]}
+]

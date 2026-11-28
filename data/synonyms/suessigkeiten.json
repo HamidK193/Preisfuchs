@@ -1,0 +1,17 @@
+[
+  {"canonical": "vollmilchschokolade", "terms": ["vollmilchschokolade", "vollmilch-schokolade", "milchschokolade"]},
+  {"canonical": "gummibärchen", "terms": ["gummibärchen", "gummibaerchen", "gummibären"]},
+  {"canonical": "fruchtgummi", "terms": ["fruchtgummi", "fruchtgummis", "fruchtgummibonbons"]},
+  {"canonical": "bonbons", "terms": ["bonbons", "bonbon", "bonsche"]},
+  {"canonical": "lutscher", "terms": ["lutscher", "lolli", "lollis"]},
+  {"canonical": "lakritz", "terms": ["lakritz", "lakritze", "lakritzen"]},
+  {"canonical": "schaumküsse", "terms": ["schaumküsse", "schaumkuesse", "schokoküsse"]},
+  {"canonical": "brausepulver", "terms": ["brausepulver", "brause-pulver", "brause in pulverform"]},
+  {"canonical": "nougat", "terms": ["nougat", "nugat", "nussnougat"]},
+  {"canonical": "marzipankartoffeln", "terms": ["marzipankartoffeln", "marzipan-kartoffeln", "marzipankugeln"]},
+  {"canonical": "kaubonbons", "terms": ["kaubonbons", "kaubonbon", "kau-bonbons"]},
+  {"canonical": "karamellbonbons", "terms": ["karamellbonbons", "karamellbonbon", "karamell-bonbons"]},
+  {"canonical": "pralinen", "terms": ["pralinen", "praline", "schokoladenpralinen"]},
+  {"canonical": "schokolinsen", "terms": ["schokolinsen", "schoko-linsen", "schokoladenlinsen"]},
+  {"canonical": "traubenzucker", "terms": ["traubenzucker", "dextrose", "dextrosetabletten"]}
+]

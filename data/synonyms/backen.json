@@ -1,0 +1,17 @@
+[
+  {"canonical": "weizenmehl", "terms": ["weizenmehl", "weizen-mehl", "mehl aus weizen"]},
+  {"canonical": "dinkelmehl", "terms": ["dinkelmehl", "dinkel-mehl", "mehl aus dinkel"]},
+  {"canonical": "roggenmehl", "terms": ["roggenmehl", "roggen-mehl", "mehl aus roggen"]},
+  {"canonical": "puderzucker", "terms": ["puderzucker", "staubzucker", "puder-zucker"]},
+  {"canonical": "vanillezucker", "terms": ["vanillezucker", "vanille-zucker", "zucker mit vanille"]},
+  {"canonical": "vanillinzucker", "terms": ["vanillinzucker", "vanillin-zucker", "zucker mit vanillin"]},
+  {"canonical": "trockenhefe", "terms": ["trockenhefe", "trockenbackhefe", "getrocknete backhefe"]},
+  {"canonical": "frischhefe", "terms": ["frischhefe", "frische hefe", "würfelhefe", "wuerfelhefe"]},
+  {"canonical": "backpulver", "terms": ["backpulver", "back-pulver", "backpulverpäckchen"]},
+  {"canonical": "natron", "terms": ["natron", "speisenatron", "backsoda"]},
+  {"canonical": "speisestärke", "terms": ["speisestärke", "speisestaerke", "speise-stärke"]},
+  {"canonical": "gelatine", "terms": ["gelatine", "speisegelatine", "speise-gelatine"]},
+  {"canonical": "kuvertüre", "terms": ["kuvertüre", "kuvertuere", "schokoladenkuvertüre"]},
+  {"canonical": "semmelbrösel", "terms": ["semmelbrösel", "semmelbroesel", "paniermehl", "weckmehl"]},
+  {"canonical": "zitronat", "terms": ["zitronat", "sukkade", "kandierte zitronenschale"]}
+]

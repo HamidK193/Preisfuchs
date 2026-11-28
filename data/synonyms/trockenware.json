@@ -1,0 +1,17 @@
+[
+  {"canonical": "nudeln", "terms": ["nudeln", "pasta", "teigwaren"]},
+  {"canonical": "spaghetti", "terms": ["spaghetti", "spagetti", "spaghetti-nudeln"]},
+  {"canonical": "basmatireis", "terms": ["basmatireis", "basmati-reis", "basmati reis"]},
+  {"canonical": "couscous", "terms": ["couscous", "kuskus", "cous-cous"]},
+  {"canonical": "bulgur", "terms": ["bulgur", "bulgurweizen", "bulgur-weizen"]},
+  {"canonical": "polenta", "terms": ["polenta", "maisgrieß", "maisgriess"]},
+  {"canonical": "weizengrieß", "terms": ["weizengrieß", "weizengriess", "weizen-grieß"]},
+  {"canonical": "rote linsen", "terms": ["rote linsen", "getrocknete rote linsen", "rote linsen getrocknet"]},
+  {"canonical": "kichererbsen", "terms": ["kichererbsen", "kichererbse", "kicher-erbsen"]},
+  {"canonical": "dosentomaten", "terms": ["dosentomaten", "tomaten aus der dose", "tomatenkonserve"]},
+  {"canonical": "passierte tomaten", "terms": ["passierte tomaten", "passata", "tomatenpassata"]},
+  {"canonical": "tomatenmark", "terms": ["tomatenmark", "tomatenkonzentrat", "tomaten-mark"]},
+  {"canonical": "gemüsebrühe", "terms": ["gemüsebrühe", "gemuesebruehe", "gemüsebouillon"]},
+  {"canonical": "kartoffelpüreeflocken", "terms": ["kartoffelpüreeflocken", "kartoffelpuereeflocken", "kartoffelbreiflocken"]},
+  {"canonical": "kokosmilch", "terms": ["kokosmilch", "kokosnussmilch", "kokos-milch"]}
+]

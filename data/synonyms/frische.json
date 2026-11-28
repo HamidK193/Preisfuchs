@@ -1,0 +1,17 @@
+[
+  {"canonical": "eier", "terms": ["eier", "ei", "hühnereier", "huehnereier"]},
+  {"canonical": "tofu", "terms": ["tofu", "naturtofu", "tofu natur"]},
+  {"canonical": "räuchertofu", "terms": ["räuchertofu", "raeuchertofu", "geräucherter tofu"]},
+  {"canonical": "seitan", "terms": ["seitan", "weizenfleisch", "weizeneiweißzubereitung"]},
+  {"canonical": "hummus", "terms": ["hummus", "humus", "kichererbsencreme"]},
+  {"canonical": "guacamole", "terms": ["guacamole", "avocadodip", "avocado-dip"]},
+  {"canonical": "tzatziki", "terms": ["tzatziki", "tsatsiki", "zaziki"]},
+  {"canonical": "kartoffelsalat", "terms": ["kartoffelsalat", "erdäpfelsalat", "erdaepfelsalat"]},
+  {"canonical": "krautsalat", "terms": ["krautsalat", "weißkohlsalat", "weisskohlsalat"]},
+  {"canonical": "fleischsalat", "terms": ["fleischsalat", "fleisch-salat", "fleischwurstsalat"]},
+  {"canonical": "eiersalat", "terms": ["eiersalat", "eier-salat", "ei-salat"]},
+  {"canonical": "maultaschen", "terms": ["maultaschen", "maultasche", "schwäbische maultaschen"]},
+  {"canonical": "schupfnudeln", "terms": ["schupfnudeln", "fingernudeln", "bubenspitzle"]},
+  {"canonical": "spätzle", "terms": ["spätzle", "spaetzle", "spatzen"]},
+  {"canonical": "blätterteig", "terms": ["blätterteig", "blaetterteig", "blätterteigrolle"]}
+]
