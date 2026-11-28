@@ -17,7 +17,11 @@ struct AppEnvironment: Sendable {
         )
     }
 
-    static func bootstrap(info: [String: Any] = Bundle.main.infoDictionary ?? [:]) -> AppEnvironment {
+    static func bootstrap(
+        info: [String: Any] = Bundle.main.infoDictionary ?? [:],
+        arguments: [String] = ProcessInfo.processInfo.arguments
+    ) -> AppEnvironment {
+        if arguments.contains("--demo-data") { return .demo }
         guard let config = AppConfig(info: info) else { return .demo }
         return .live(config: config)
     }

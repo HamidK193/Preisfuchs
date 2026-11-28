@@ -1,3 +1,4 @@
+import Foundation
 import PreisfuchsData
 import Testing
 @testable import Preisfuchs
@@ -43,5 +44,40 @@ struct AppEnvironmentTests {
         model.toggleShopping(milk)
         #expect(model.favoriteIDs.contains(milk.id))
         #expect(model.shoppingIDs.contains(milk.id))
+    }
+
+    @Test("Ein fehlgeschlagenes Neuladen behält die letzten Beobachtungen samt Datenstand")
+    @MainActor
+    func failedRefreshRetainsSnapshot() async throws {
+        let snapshot = try await DemoPriceService().loadCurrentPrices()
+        let service = FirstSnapshotThenFailure(snapshot: snapshot)
+        let environment = AppEnvironment(origin: .demo, prices: service, auth: nil)
+        let model = PriceListModel(environment: environment)
+        await model.loadIfNeeded()
+        let products = model.products
+        await model.reload()
+        #expect(!products.isEmpty)
+        #expect(model.products == products)
+        #expect(model.loadedAt == snapshot.loadedAt)
+        #expect(model.errorMessage != nil)
+        #expect(!model.isLoading)
+    }
+
+    @Test("Das Startargument für UI-Tests erzwingt klar gekennzeichnete Demodaten")
+    func demoLaunchArgument() {
+        #expect(AppEnvironment.bootstrap(info: [:], arguments: ["--demo-data"]).origin == .demo)
+    }
+}
+
+private actor FirstSnapshotThenFailure: PriceServicing {
+    let snapshot: PriceSnapshot
+    private var calls = 0
+
+    init(snapshot: PriceSnapshot) { self.snapshot = snapshot }
+
+    func loadCurrentPrices() async throws -> PriceSnapshot {
+        calls += 1
+        if calls > 1 { throw URLError(.notConnectedToInternet) }
+        return snapshot
     }
 }

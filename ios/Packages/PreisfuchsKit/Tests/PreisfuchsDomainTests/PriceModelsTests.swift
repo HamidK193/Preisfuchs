@@ -38,6 +38,39 @@ struct PriceModelsTests {
         )?.id == "personal")
     }
 
+    @Test("Die Marktpreisliste ist unabhängig von der Eingabereihenfolge nach Preis sortiert")
+    func sortedComparisonIsStable() {
+        let observations = [
+            observation("rewe", retailer: "Rewe", price: "1.20"),
+            observation("lidl", retailer: "Lidl", price: "0.99"),
+            observation("edeka", retailer: "Edeka", price: "1.20"),
+            observation("aldi", retailer: "Aldi Nord", price: "0.99")
+        ]
+        let now = date("2026-11-27T12:00:00Z")
+        let expected = ["aldi", "lidl", "edeka", "rewe"]
+        #expect(product(prices: observations).comparisonPrices(now: now).map(\.id) == expected)
+        #expect(product(prices: Array(observations.reversed())).comparisonPrices(now: now).map(\.id) == expected)
+    }
+
+    @Test("Gleiche Beobachtungszeit und gleicher Preis haben einen stabilen ID-Tiebreak")
+    func duplicateObservationsHaveStableWinner() {
+        let observations = [observation("b", retailer: "Lidl"), observation("a", retailer: "Lidl")]
+        let now = date("2026-11-27T12:00:00Z")
+        #expect(product(prices: observations).comparisonPrices(now: now).map(\.id) == ["a"])
+        #expect(product(prices: Array(observations.reversed())).comparisonPrices(now: now).map(\.id) == ["a"])
+    }
+
+    @Test("Alte Beobachtungen bleiben vergleichbar und werden als veraltet markiert")
+    func staleObservationsRemainVisible() {
+        let old = observation("old", retailer: "Lidl", price: "0.50", observedAt: "2026-10-01T12:00:00Z")
+        let recent = observation("recent", retailer: "Rewe", price: "1.00")
+        let now = date("2026-11-27T12:00:00Z")
+        let prices = product(prices: [recent, old]).comparisonPrices(now: now)
+        #expect(prices.map(\.id) == ["old", "recent"])
+        #expect(prices.first?.isStale(at: now) == true)
+        #expect(!recent.isStale(at: now))
+    }
+
     @Test("Preis ist bis zum Ende des Berliner Gültigkeitstags aktiv")
     func validUntilIncludesBerlinDay() {
         let price = observation("valid", retailer: "Rewe", validUntil: "2026-11-27")

@@ -80,6 +80,18 @@ public struct GroceryProduct: Identifiable, Codable, Hashable, Sendable {
     public let packageSize: String
     public let symbolName: String
     public let prices: [PriceObservation]
+    public let imageURL: URL?
+    public let imageSourceURL: URL?
+    public let imageLicense: String?
+    public let imageAttribution: String?
+
+    // Compatible with both ordinary Codable and snake_case cache encoders/decoders.
+    private enum CodingKeys: String, CodingKey {
+        case id, name, category, packageSize, symbolName, prices
+        case imageURL = "imageUrl"
+        case imageSourceURL = "imageSourceUrl"
+        case imageLicense, imageAttribution
+    }
 
     public init(
         id: String,
@@ -87,7 +99,11 @@ public struct GroceryProduct: Identifiable, Codable, Hashable, Sendable {
         category: String,
         packageSize: String,
         symbolName: String,
-        prices: [PriceObservation]
+        prices: [PriceObservation],
+        imageURL: URL? = nil,
+        imageSourceURL: URL? = nil,
+        imageLicense: String? = nil,
+        imageAttribution: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -95,6 +111,10 @@ public struct GroceryProduct: Identifiable, Codable, Hashable, Sendable {
         self.packageSize = packageSize
         self.symbolName = symbolName
         self.prices = prices
+        self.imageURL = imageURL
+        self.imageSourceURL = imageSourceURL
+        self.imageLicense = imageLicense
+        self.imageAttribution = imageAttribution
     }
 
     public func cheapestPrice(
@@ -127,7 +147,8 @@ public struct GroceryProduct: Identifiable, Codable, Hashable, Sendable {
                 return
             }
             if candidate.observedAt > current.observedAt
-                || (candidate.observedAt == current.observedAt && candidate.price < current.price) {
+                || (candidate.observedAt == current.observedAt && candidate.price < current.price)
+                || (candidate.observedAt == current.observedAt && candidate.price == current.price && candidate.id < current.id) {
                 result[key] = candidate
             }
         }

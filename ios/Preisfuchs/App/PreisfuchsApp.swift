@@ -11,7 +11,7 @@ struct PreisfuchsApp: App {
     var body: some Scene {
         WindowGroup {
             RootTabView(model: model)
-                .tint(Color(red: 0.12, green: 0.38, blue: 0.27))
+                .tint(.primary)
         }
     }
 }

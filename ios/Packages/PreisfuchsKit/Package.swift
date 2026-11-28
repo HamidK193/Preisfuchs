@@ -24,5 +24,6 @@ let package = Package(
             dependencies: ["PreisfuchsData", "PreisfuchsDomain"],
             resources: [.copy("Fixtures")]
         ),
-    ]
+    ],
+    swiftLanguageModes: [.v6]
 )
