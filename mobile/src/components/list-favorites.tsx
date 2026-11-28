@@ -1,7 +1,8 @@
 import { Image } from 'expo-image';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { Pressable, ScrollView, View } from 'react-native';
 
+import { ListState } from '@/components/system-states';
 import { AppText, Icon, PriceLevelPill, SourceLine, StoreBadge } from '@/components/ui';
 import { Colors, Radius, Spacing, Inset } from '@/constants/theme';
 import { catalogProducts, products } from '@/data/products';
@@ -28,15 +29,13 @@ export default function FavoritesScreen() {
       </View>
 
       {items.length === 0 ? (
-        <View style={{ alignItems: 'center', gap: Spacing.three, paddingVertical: Inset.empty }}>
-          <AppText size={96}>🦊</AppText>
-          <AppText weight="extrabold" size={18}>
-            Noch keine Favoriten
-          </AppText>
-          <AppText size={14} color={Colors.textSecondary} style={{ textAlign: 'center' }}>
-            Tippe im Produkt auf das Herz, um es hier zu speichern.
-          </AppText>
-        </View>
+        <ListState
+          status="empty"
+          title="Noch keine Favoriten"
+          text="Tippe im Produkt auf das Herz, um es hier zu speichern."
+          onRetry={() => router.push('/suche')}
+          actionLabel="Produkte suchen"
+        />
       ) : null}
 
       {items.map((product) => {

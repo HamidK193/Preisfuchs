@@ -1,9 +1,10 @@
 import { Image } from 'expo-image';
-import { Link, Stack, useLocalSearchParams } from 'expo-router';
+import { Link, router, Stack, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 
 import { AppText, StoreBadge } from '@/components/ui';
+import { ListState } from '@/components/system-states';
 import { Colors, Inset, Radius, Spacing } from '@/constants/theme';
 import { categories, products } from '@/data/products';
 import { cheapestPrice, formatEuro, unitPriceLabel } from '@/lib/pricing';
@@ -77,9 +78,14 @@ export default function CategoryScreen() {
 
       <View style={{ paddingHorizontal: Spacing.four, gap: Spacing.three }}>
         {items.length === 0 ? (
-          <AppText size={14} color={Colors.textSecondary}>
-            In dieser Kategorie gibt es noch keine Preise.
-          </AppText>
+          <ListState
+            status="empty"
+            title="Noch keine Preise in dieser Kategorie"
+            text="Suche im Katalog nach weiteren Produkten."
+            onRetry={() => router.push({ pathname: '/suche', params: { kategorie: id } })}
+            actionLabel="Produkte suchen"
+            compact
+          />
         ) : null}
         {items.map((product) => {
           const best = cheapestPrice(product, activeStoreIds);

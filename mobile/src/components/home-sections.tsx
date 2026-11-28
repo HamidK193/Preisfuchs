@@ -3,6 +3,7 @@ import { Link, router } from 'expo-router';
 import { Pressable, ScrollView, TextInput, View } from 'react-native';
 
 import { ProductCard } from '@/components/product-card';
+import { ListState } from '@/components/system-states';
 import { AppText, Icon, SectionHeader } from '@/components/ui';
 import { Colors, Inset, Radius, Spacing } from '@/constants/theme';
 import { categories, type Product, type PriceObservation } from '@/data/products';
@@ -57,6 +58,7 @@ export function HomeCategories() {
 export function HomeSlider({ title, items, action, onAction, empty }: {
   title: string; items: { product: Product; price: PriceObservation }[]; action: string; onAction: () => void; empty: string;
 }) {
+  const { priceData, reloadPrices } = useAppState();
   return (
     <View style={{ gap: Spacing.three }}>
       <View style={{ paddingHorizontal: Spacing.four }}><SectionHeader title={title} action={action} onAction={onAction} /></View>
@@ -64,7 +66,17 @@ export function HomeSlider({ title, items, action, onAction, empty }: {
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: Spacing.three, paddingHorizontal: Spacing.four }}>
           {items.map(({ product, price }) => <ProductCard key={product.id} product={product} storeId={price.storeId} />)}
         </ScrollView>
-      ) : <AppText size={13} color={Colors.textSecondary} style={{ paddingHorizontal: Spacing.four }}>{empty}</AppText>}
+      ) : (
+        <ListState
+          status={priceData.kind === 'offline' || priceData.kind === 'cached' ? 'offline' : 'empty'}
+          title={empty}
+          loadedAt={priceData.loadedAt}
+          text={priceData.kind === 'offline' || priceData.kind === 'cached' ? undefined : 'Aktualisiere die Preisbeobachtungen oder prüfe später erneut.'}
+          onRetry={reloadPrices}
+          actionLabel="Erneut laden"
+          compact
+        />
+      )}
     </View>
   );
 }

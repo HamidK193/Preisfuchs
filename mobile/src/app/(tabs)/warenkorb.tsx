@@ -3,7 +3,7 @@ import { Link, router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 
-import { EmptyState } from '@/components/system-states';
+import { ListState } from '@/components/system-states';
 import FavoritesScreen from '@/components/list-favorites';
 import { AppText, Card, DemoNotice, Icon, SourceLine, StoreBadge } from '@/components/ui';
 import { Colors, Radius, Spacing, Inset } from '@/constants/theme';
@@ -86,23 +86,20 @@ function EmptyCart() {
       style={{ backgroundColor: Colors.background }}
       contentContainerStyle={{ padding: Spacing.four, gap: Spacing.four, paddingBottom: Spacing.six }}>
       <ListHeader />
-      <EmptyState title="Diese Liste ist noch leer" text="Füge Artikel hinzu – wir zeigen dir, wo dein Einkauf am günstigsten ist.">
-        <View style={{ flexDirection: 'row', gap: Spacing.two }}>
-          <Link href="/suche" asChild>
-            <Pressable style={{ backgroundColor: Colors.primary, borderRadius: Radius.pill, paddingHorizontal: Inset.buttonH, paddingVertical: Inset.buttonV }}>
-              <AppText weight="bold" color="#FFFFFF">
-                Erste Artikel hinzufügen
-              </AppText>
-            </Pressable>
-          </Link>
-          <Pressable
-            onPress={() => router.push('/scanner')}
-            accessibilityLabel="Barcode scannen"
-            style={{ width: 50, borderRadius: Radius.pill, backgroundColor: Colors.text, alignItems: 'center', justifyContent: 'center' }}>
-            <Icon name={{ ios: 'barcode.viewfinder', android: 'barcode_scanner', web: 'barcode_scanner' }} size={20} color="#FFFFFF" />
-          </Pressable>
-        </View>
-      </EmptyState>
+      <ListState
+        status="empty"
+        title="Diese Liste ist noch leer"
+        text="Füge Artikel hinzu – wir zeigen dir, wo dein Einkauf am günstigsten ist."
+        onRetry={() => router.push('/suche')}
+        actionLabel="Erste Artikel hinzufügen">
+        <Pressable
+          onPress={() => router.push('/scanner')}
+          accessibilityRole="button"
+          accessibilityLabel="Barcode scannen"
+          style={{ width: 50, borderRadius: Radius.pill, backgroundColor: Colors.text, alignItems: 'center', justifyContent: 'center', padding: Inset.compact }}>
+          <Icon name={{ ios: 'barcode.viewfinder', android: 'barcode_scanner', web: 'barcode_scanner' }} size={20} color="#FFFFFF" />
+        </Pressable>
+      </ListState>
 
       {suggestions.length > 0 ? (
         <View style={{ gap: Spacing.two }}>

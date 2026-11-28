@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
 
 import { ProductCard } from '@/components/product-card';
+import { ListState } from '@/components/system-states';
 import { AppText, StoreBadge } from '@/components/ui';
 import { Colors, Inset, Radius, Spacing } from '@/constants/theme';
 import { products } from '@/data/products';
@@ -12,7 +13,7 @@ import { useAppState } from '@/state/app-state';
 type Sort = 'rabatt' | 'preis';
 
 export default function OffersScreen() {
-  const { activeStoreIds, stores } = useAppState();
+  const { activeStoreIds, stores, priceData, reloadPrices } = useAppState();
   const { width } = useWindowDimensions();
   const [storeFilter, setStoreFilter] = useState<StoreId | undefined>();
   const [sort, setSort] = useState<Sort>('rabatt');
@@ -93,9 +94,14 @@ export default function OffersScreen() {
       </View>
 
       {offers.length === 0 ? (
-        <AppText size={14} color={Colors.textSecondary} style={{ paddingHorizontal: Spacing.four }}>
-          Für diesen Markt liegen keine Angebotsbeobachtungen vor.
-        </AppText>
+        <ListState
+          status={priceData.kind === 'offline' || priceData.kind === 'cached' ? 'offline' : 'empty'}
+          title="Keine Angebotsbeobachtungen"
+          text="Für diesen Markt liegen keine Angebotsbeobachtungen vor."
+          loadedAt={priceData.loadedAt}
+          onRetry={reloadPrices}
+          actionLabel="Erneut laden"
+        />
       ) : null}
 
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.three, paddingHorizontal: Spacing.four, rowGap: Spacing.five }}>

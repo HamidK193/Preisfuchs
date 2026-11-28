@@ -3,7 +3,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { SearchFilterSheet, type SearchFilters } from '@/components/search-filter-sheet';
 import { SearchResultRow } from '@/components/search-result-row';
-import { EmptyState, OfflineBanner } from '@/components/system-states';
+import { ListState, OfflineBanner } from '@/components/system-states';
 import { AppText, DemoNotice, StoreBadge } from '@/components/ui';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 import { categories, type Product, type PriceObservation } from '@/data/products';
@@ -61,6 +61,7 @@ export default function SearchScreen() {
     state.addRecentSearch(query);
     router.push({ pathname: '/produkt/[id]', params: { id: product.id } });
   };
+  const resetSearch = () => { setQuery(''); setCategory(undefined); setFilters(DEFAULT); };
   return <>
     <FlatList data={rows} keyExtractor={(row) => row.key} keyboardShouldPersistTaps="handled"
       style={{ backgroundColor: Colors.background }} contentInsetAdjustmentBehavior="automatic"
@@ -91,9 +92,16 @@ export default function SearchScreen() {
         {mode === 'market' ? <AppText size={12}>Nur Märkte mit Preisbeobachtung; Katalogprodukte ohne Preis findest du unter „Nach Produkt“.</AppText> : null}
         <DemoNotice />
       </View>}
-      ListEmptyComponent={!catalog.loading ? <EmptyState title="Keine Treffer" text="Versuche einen anderen Begriff oder passe die Filter an.">
-        {button('Suche zurücksetzen', () => { setQuery(''); setCategory(undefined); setFilters(DEFAULT); })}
-      </EmptyState> : null}
+      ListEmptyComponent={catalog.loading ? <ListState status="loading" /> : rows.length === 0 ? (
+        <ListState
+          status={catalog.error || state.priceData.kind === 'offline' || state.priceData.kind === 'cached' ? 'offline' : 'empty'}
+          title={catalog.error ? 'Suche gerade nicht verfügbar' : 'Keine Treffer'}
+          text={catalog.error ? 'Der Katalog ist nicht erreichbar. Du kannst es erneut versuchen.' : 'Versuche einen anderen Begriff oder passe die Filter an.'}
+          loadedAt={state.priceData.loadedAt}
+          onRetry={catalog.error ? state.reloadPrices : resetSearch}
+          actionLabel={catalog.error ? 'Erneut versuchen' : 'Suche zurücksetzen'}
+        />
+      ) : null}
       ListFooterComponent={catalog.hasMore ? button('Weitere Produkte laden', catalog.loadMore) : null}
       renderItem={({ item }) => {
         if (item.group) {

@@ -7,6 +7,60 @@ import { Colors, Inset, Radius, Spacing } from '@/constants/theme';
 import { formatDate } from '@/lib/pricing';
 import { useAppState } from '@/state/app-state';
 
+type ListStateProps = {
+  status: 'loading' | 'empty' | 'offline';
+  title?: string;
+  text?: string;
+  loadedAt?: string;
+  onRetry?: () => void;
+  actionLabel?: string;
+  children?: React.ReactNode;
+  compact?: boolean;
+};
+
+// A common loading, empty or offline treatment for catalog and list screens.
+export function ListState({ status, title, text, loadedAt, onRetry, actionLabel, children, compact }: ListStateProps) {
+  if (status === 'loading') {
+    return (
+      <View accessibilityLabel="Produkte werden geladen" accessibilityRole="progressbar" style={{ flexDirection: 'row', gap: Spacing.three, paddingHorizontal: compact ? Spacing.four : 0 }}>
+        {[0, 1].map((item) => (
+          <View key={item} style={{ width: compact ? 148 : '100%', gap: Spacing.two }}>
+            <View accessibilityLabel="Produktbild-Platzhalter" accessibilityRole="image" style={{ aspectRatio: 1, borderRadius: Radius.large, backgroundColor: Colors.tile }} />
+            <View style={{ height: 12, width: '72%', borderRadius: Radius.pill, backgroundColor: Colors.tile }} />
+            <View style={{ height: 10, width: '48%', borderRadius: Radius.pill, backgroundColor: Colors.tile }} />
+          </View>
+        ))}
+      </View>
+    );
+  }
+
+  if (status === 'offline') {
+    const dated = loadedAt ? `Datenstand: ${formatDate(loadedAt.slice(0, 10))}.` : undefined;
+    const offlineText = [text ?? 'Keine Verbindung. Du siehst zuletzt gespeicherte Daten.', dated].filter(Boolean).join(' ');
+    return (
+      <EmptyState title={title ?? 'Gerade offline'} text={offlineText} style={compact ? { paddingVertical: Spacing.two } : undefined}>
+        {children}
+        {onRetry ? <ListStateAction label={actionLabel ?? 'Erneut versuchen'} onPress={onRetry} /> : null}
+      </EmptyState>
+    );
+  }
+
+  return (
+    <EmptyState title={title ?? 'Noch keine Produkte'} text={text ?? 'Hier gibt es noch nichts zu sehen.'} style={compact ? { paddingVertical: Spacing.two } : undefined}>
+      {children}
+      {onRetry ? <ListStateAction label={actionLabel ?? 'Anderen Begriff versuchen'} onPress={onRetry} /> : null}
+    </EmptyState>
+  );
+}
+
+function ListStateAction({ label, onPress }: { label: string; onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={{ alignItems: 'center', borderRadius: Radius.pill, backgroundColor: Colors.primary, paddingHorizontal: Inset.buttonH, paddingVertical: Inset.buttonV }}>
+      <AppText weight="bold" size={14} color="#FFFFFF">{label}</AppText>
+    </Pressable>
+  );
+}
+
 // Leerer Zustand mit grossem Fuchs, Titel, Text und optionalen Aktionen.
 export function EmptyState({ title, text, children, style }: { title: string; text?: string; children?: React.ReactNode; style?: ViewStyle }) {
   return (
