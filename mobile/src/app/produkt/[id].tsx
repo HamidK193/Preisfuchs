@@ -7,7 +7,7 @@ import { PriceChart } from '@/components/price-chart';
 import { CatalogProductSheet } from '@/components/catalog-product-sheet';
 import { SheetScroll } from '@/components/sheet';
 import { ProductCard } from '@/components/product-card';
-import { AppText, Card, Icon, Pill, PriceLevelPill, SourceLine, sourceText, StoreBadge } from '@/components/ui';
+import { AppText, Card, Icon, Pill, PriceLevelPill, PriceRanking, SourceLine, sourceText, StoreBadge } from '@/components/ui';
 import { isStale } from '@/lib/prices';
 import { Colors, Inset, Radius, Spacing } from '@/constants/theme';
 import { getProduct, products, type Product } from '@/data/products';
@@ -40,7 +40,7 @@ function cheaperAlternatives(product: Product, storeIds: StoreId[]): Product[] {
 export default function ProductSheet() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const product = getProduct(id);
-  const { addToCart, favorites, toggleFavorite, activeStoreIds, alarms, stores, getStore } = useAppState();
+  const { addToCart, favorites, toggleFavorite, activeStoreIds, alarms, getStore } = useAppState();
   const [quantity, setQuantity] = useState(1);
   const [range, setRange] = useState<Range>('8w');
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -62,12 +62,6 @@ export default function ProductSheet() {
   const alarm = alarms.find((item) => item.productId === product.id);
   const alternatives = cheaperAlternatives(product, activeStoreIds);
   const bestStore = getStore(best.storeId);
-
-  // Aktive Maerkte: mit Preis aufsteigend, ohne Preis am Ende.
-  const rows = stores
-    .filter((store) => activeStoreIds.includes(store.id))
-    .map((store) => ({ store, observation: product.prices.find((price) => price.storeId === store.id) }))
-    .sort((a, b) => (a.observation?.price ?? Infinity) - (b.observation?.price ?? Infinity));
 
   // Feste Leiste unten: Menge und Zum Warenkorb.
   const footer = (
@@ -179,51 +173,9 @@ export default function ProductSheet() {
 
         <PriceLevelPill level={level} percent={Math.abs(percentVsAverage)} />
 
-        {/* Alle aktiven Maerkte */}
+        {/* Preisbeobachtungen bleiben strikt getrennt von der Anzeige. */}
         <Section title="Preise in deiner Nähe">
-          <View style={{ borderRadius: Radius.large, borderWidth: 1, borderColor: Colors.border, overflow: 'hidden' }}>
-            {rows.map(({ store, observation }, index) => {
-              const cheapest = observation?.storeId === best.storeId;
-              return (
-                <View
-                  key={store.id}
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: Spacing.three,
-                    padding: Inset.row,
-                    backgroundColor: cheapest ? Colors.greenSoft : Colors.card,
-                    borderTopWidth: index === 0 ? 0 : 1,
-                    borderTopColor: Colors.border,
-                  }}>
-                  <StoreBadge storeId={store.id} size="large" />
-                  <View style={{ flex: 1, gap: 2 }}>
-                    <AppText weight="bold" size={15}>
-                      {store.name}
-                    </AppText>
-                    <AppText size={12} color={Colors.textSecondary}>
-                      {store.address} · {store.distanceKm.toLocaleString('de-DE')} km
-                    </AppText>
-                    {observation ? <SourceLine observation={observation} /> : null}
-                  </View>
-                  {observation ? (
-                    <View style={{ alignItems: 'flex-end', gap: 2 }}>
-                      <AppText weight="extrabold" size={17} color={cheapest ? Colors.green : Colors.text}>
-                        {formatEuro(observation.price)}
-                      </AppText>
-                      <AppText size={11} color={Colors.textSecondary}>
-                        {unitPriceLabel(product, observation.price)}
-                      </AppText>
-                    </View>
-                  ) : (
-                    <AppText size={12} color={Colors.textSecondary} style={{ width: 80, textAlign: 'right' }}>
-                      kein Preis bekannt
-                    </AppText>
-                  )}
-                </View>
-              );
-            })}
-          </View>
+          <PriceRanking product={product} showAd={false} />
         </Section>
 
         {/* Sekundaere Aktionen, erst nach dem Preisvergleich */}

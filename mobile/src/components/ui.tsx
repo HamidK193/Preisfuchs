@@ -4,9 +4,9 @@ import { Pressable, Text, View, type TextProps, type ViewStyle } from 'react-nat
 
 import { Colors, FontWeights, Radius, Spacing, Inset } from '@/constants/theme';
 import { getChain, type StoreId } from '@/data/stores';
-import type { PriceObservation } from '@/data/products';
+import type { PriceObservation, Product } from '@/data/products';
 import { isStale } from '@/lib/prices';
-import { formatDate, type PriceLevel } from '@/lib/pricing';
+import { formatDate, formatEuro, type PriceLevel, unitPriceLabel } from '@/lib/pricing';
 
 type Weight = keyof typeof FontWeights;
 
@@ -163,6 +163,67 @@ export function Card({ children, style }: { children: React.ReactNode; style?: V
         style,
       ]}>
       {children}
+    </View>
+  );
+}
+
+export function PriceRanking({ product, showAd }: { product: Product; showAd: boolean }) {
+  const rows = [...product.prices].sort((a, b) => {
+    const byPrice = a.price - b.price;
+    return byPrice || getChain(a.storeId).name.localeCompare(getChain(b.storeId).name, 'de');
+  });
+
+  return (
+    <View style={{ gap: Spacing.three }}>
+      <View
+        accessibilityLabel="Preisvergleich"
+        accessibilityRole="list"
+        style={{ borderRadius: Radius.large, borderWidth: 1, borderColor: Colors.border, overflow: 'hidden' }}>
+        {rows.length ? rows.map((observation, index) => {
+          const store = getChain(observation.storeId);
+          return (
+            <View
+              key={`${observation.storeId}-${observation.observedAt}-${observation.price}`}
+              accessible
+              accessibilityRole="text"
+              accessibilityLabel={`Preis bei ${store.name}`}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: Spacing.three,
+                padding: Inset.row,
+                backgroundColor: index === 0 ? Colors.greenSoft : Colors.card,
+                borderTopWidth: index === 0 ? 0 : 1,
+                borderTopColor: Colors.border,
+              }}>
+              <StoreBadge storeId={observation.storeId} size="large" />
+              <View style={{ flex: 1, gap: 3 }}>
+                <AppText weight="bold" size={15}>{store.name}</AppText>
+                <SourceLine observation={observation} />
+              </View>
+              <View style={{ alignItems: 'flex-end', gap: 2 }}>
+                <AppText weight="extrabold" size={17} color={index === 0 ? Colors.green : Colors.text}>
+                  {formatEuro(observation.price)}
+                </AppText>
+                <AppText size={11} color={Colors.textSecondary}>
+                  {unitPriceLabel(product, observation.price)}
+                </AppText>
+              </View>
+            </View>
+          );
+        }) : (
+          <AppText size={13} color={Colors.textSecondary} style={{ padding: Inset.card }}>
+            Noch keine Preisbeobachtungen vorhanden.
+          </AppText>
+        )}
+      </View>
+      {showAd ? (
+        <View
+          accessibilityLabel="Anzeige"
+          style={{ borderRadius: Radius.medium, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.tile, padding: Inset.row }}>
+          <AppText size={11} weight="bold" color={Colors.textSecondary}>Anzeige</AppText>
+        </View>
+      ) : null}
     </View>
   );
 }
