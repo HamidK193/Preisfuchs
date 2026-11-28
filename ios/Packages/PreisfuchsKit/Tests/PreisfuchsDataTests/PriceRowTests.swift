@@ -47,7 +47,7 @@ struct PriceRowTests {
         let row = try #require(PriceDecoding.makeDecoder()
             .decode([PriceRow].self, from: fixture())
             .first)
-        let encoded = try JSONEncoder().encode(row)
+        let encoded = try PriceDecoding.makeCacheEncoder().encode(row)
         let decoded = try PriceDecoding.makeDecoder().decode(PriceRow.self, from: encoded)
 
         #expect(decoded == row)

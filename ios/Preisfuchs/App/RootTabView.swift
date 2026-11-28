@@ -1,5 +1,6 @@
 import PreisfuchsDomain
 import SwiftUI
+import UIKit
 
 struct RootTabView: View {
     @Bindable var model: PriceListModel
