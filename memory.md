@@ -7,6 +7,8 @@
 - SwiftUI: Anzeigename Korbwert, Bundle-ID `de.korbwert.app`; Test-IDs unter derselben Kennung.
 - Expo: nur Anzeigename/Texte ändern; Slug und Scheme `preisfuchs`, Bundle-/Paket-ID
   `de.preisfuchs.app`, OAuth-Redirects, Google-Clients und EAS-Verknüpfung bleiben erhalten.
+- Expo Go iOS-Teststand (28.11.2026): Projekt auf SDK 58.1 aktualisiert, passend zur
+  installierten Expo-Go-Version; SDK-Abhängigkeiten abgestimmt.
 - Bestehende Cloud-Projektnamen, Datenquellen-Werte und lokale Speicher-Schlüssel bleiben
   technische Kennungen. Ältere Einträge unten dokumentieren den damaligen Stand.
 

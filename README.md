@@ -29,8 +29,8 @@ markierte Anzeigen, Partnerlinks; Preis-Rangliste nie käuflich) in
 [Monetarisierung](docs/MONETARISIERUNG.md).
 
 Die native SwiftUI-App unter `ios/` ist die aktuelle iOS-Hauptentwicklung;
-`mobile/` mit Expo (React Native) für iOS und Android ist bis dahin eingefroren.
-Die bestehende Expo-App lässt sich weiterhin mit Expo Go testen: PC und iPhone
+`mobile/` mit Expo (React Native) für iOS und Android ist bis dahin eingefroren;
+SDK 58 ist als kritischer Expo-Go-Kompatibilitätsfix installiert. Die bestehende Expo-App lässt sich mit Expo Go testen: PC und iPhone
 im selben WLAN verbinden, `cd mobile` und `npx expo start --lan` ausführen und
 den QR-Code scannen. Ihre Demo-Daten sind gekennzeichnet.
 

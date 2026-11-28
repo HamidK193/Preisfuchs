@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- App (`mobile/`): Upgrade auf Expo SDK 58, damit die App mit Expo Go SDK 58
+  auf iOS startet. Expo-Abhängigkeiten abgestimmt; `expo-doctor` besteht 20/20
+  Prüfungen und das iOS-JavaScript-Bundle wird erzeugt.
+
 - Umbenennung in Korbwert: Anzeigenamen und Texte in SwiftUI, Expo und Web sowie
   Backend-User-Agent aktualisiert. SwiftUI nutzt `de.korbwert.app` mit eigener
   Test-Bundle-ID; Repo, Swift-Module und Targets behalten den Codenamen Preisfuchs.
