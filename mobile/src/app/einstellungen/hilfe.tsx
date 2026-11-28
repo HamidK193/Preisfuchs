@@ -20,12 +20,12 @@ const FAQ = [
   {
     question: 'Wie funktioniert der Marktvergleich?',
     answer:
-      'Preisfuchs addiert die beobachteten Preise deines Warenkorbs pro Markt. Fehlende Artikel werden nicht eingerechnet, sondern angezeigt. Auf Wunsch rechnet Preisfuchs aus, ob sich zwei Märkte lohnen.',
+      'Korbwert addiert die beobachteten Preise deines Warenkorbs pro Markt. Fehlende Artikel werden nicht eingerechnet, sondern angezeigt. Auf Wunsch rechnet Korbwert aus, ob sich zwei Märkte lohnen.',
   },
   {
-    question: 'Was kostet Preisfuchs Plus?',
+    question: 'Was kostet Korbwert Plus?',
     answer:
-      'Preisfuchs bleibt kostenlos. Plus kostet 14,99 € im Jahr oder 1,99 € im Monat und bringt werbefreie Nutzung, unbegrenzte Preisalarme und Familien-Warenkörbe. Plus ist bald verfügbar.',
+      'Korbwert bleibt kostenlos. Plus kostet 14,99 € im Jahr oder 1,99 € im Monat und bringt werbefreie Nutzung, unbegrenzte Preisalarme und Familien-Warenkörbe. Plus ist bald verfügbar.',
   },
   {
     question: 'Wie lösche ich meine Daten?',
@@ -44,7 +44,7 @@ export default function HelpScreen() {
 
   const sendFeedback = () => {
     const body = `Bewertung: ${stars} von 5\n\n${feedback}`;
-    Linking.openURL(`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Feedback zu Preisfuchs')}&body=${encodeURIComponent(body)}`);
+    Linking.openURL(`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Feedback zu Korbwert')}&body=${encodeURIComponent(body)}`);
   };
 
   return (
@@ -98,7 +98,7 @@ export default function HelpScreen() {
       <Group title="Feedback geben">
         <View style={{ padding: Inset.card, gap: Spacing.three }}>
           <AppText weight="semibold" size={15}>
-            Wie zufrieden bist du mit Preisfuchs?
+            Wie zufrieden bist du mit Korbwert?
           </AppText>
           <View style={{ flexDirection: 'row', gap: Spacing.two }}>
             {[1, 2, 3, 4, 5].map((value) => (

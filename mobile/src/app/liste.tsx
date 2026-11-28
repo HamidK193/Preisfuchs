@@ -23,7 +23,7 @@ export default function ImportListScreen() {
       <Page>
         <EmptyState
           title="Liste nicht lesbar"
-          text="In diesem Link stehen keine Artikel, die Preisfuchs kennt. Vielleicht ist er unvollständig.">
+          text="In diesem Link stehen keine Artikel, die Korbwert kennt. Vielleicht ist er unvollständig.">
           <SecondaryButton label="Zum Warenkorb" onPress={() => router.replace('/warenkorb')} />
         </EmptyState>
       </Page>

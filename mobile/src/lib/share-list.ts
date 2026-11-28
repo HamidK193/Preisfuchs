@@ -5,7 +5,7 @@ import type { CartLine } from '@/lib/pricing';
 import type { ShoppingList } from '@/state/app-state';
 
 // Teilen ohne Konto: die Liste steckt im Link (Artikel-ID*Menge, durch Komma getrennt).
-// Wer den Link in Preisfuchs oeffnet, kann sie als eigene Liste uebernehmen.
+// Wer den Link in Korbwert oeffnet, kann sie als eigene Liste uebernehmen.
 export function shareLink(list: ShoppingList): string {
   const items = list.lines.map((line) => `${line.productId}*${line.quantity}`).join(',');
   return Linking.createURL('liste', { queryParams: { n: list.name, e: list.emoji, a: items } });

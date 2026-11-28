@@ -1,6 +1,6 @@
 {
-  "name": "Preisfuchs",
-  "short_name": "Preisfuchs",
+  "name": "Korbwert",
+  "short_name": "Korbwert",
   "description": "Lebensmittelpreise in Baden-Wuerttemberg vergleichen.",
   "start_url": "/",
   "display": "standalone",

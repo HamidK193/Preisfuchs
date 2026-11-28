@@ -81,7 +81,7 @@ export default function ScannerScreen() {
             Barcode scannen
           </AppText>
           <AppText size={15} color={Colors.textSecondary} style={{ textAlign: 'center', lineHeight: 21 }}>
-            Halte die Kamera auf den Strichcode einer Verpackung – Preisfuchs zeigt dir die Preise in deiner Nähe. Bilder werden
+            Halte die Kamera auf den Strichcode einer Verpackung – Korbwert zeigt dir die Preise in deiner Nähe. Bilder werden
             nicht gespeichert.
           </AppText>
         </View>
@@ -89,7 +89,7 @@ export default function ScannerScreen() {
           <PrimaryButton label="Kamera erlauben" onPress={requestPermission} />
         ) : (
           <AppText size={14} color={Colors.warning} style={{ textAlign: 'center' }}>
-            Die Kamera ist für Preisfuchs gesperrt. Du kannst sie in den iOS-Einstellungen freigeben oder den Barcode unten eintippen.
+            Die Kamera ist für Korbwert gesperrt. Du kannst sie in den iOS-Einstellungen freigeben oder den Barcode unten eintippen.
           </AppText>
         )}
         <ManualEntry value={manual} onChange={setManual} onSubmit={() => lookUp(manual)} />

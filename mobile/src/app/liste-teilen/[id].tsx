@@ -9,7 +9,7 @@ import { products } from '@/data/products';
 import { shareLink, shareText } from '@/lib/share-list';
 import { useAppState } from '@/state/app-state';
 
-// Liste teilen: als Text oder als Link, den Preisfuchs als neue Liste uebernimmt.
+// Liste teilen: als Text oder als Link, den Korbwert als neue Liste uebernimmt.
 export default function ShareListScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { lists } = useAppState();
@@ -41,12 +41,12 @@ export default function ShareListScreen() {
       <PrimaryButton
         label="Link zum Übernehmen teilen"
         disabled={empty}
-        onPress={() => Share.share({ message: `${text}\n\nIn Preisfuchs öffnen: ${shareLink(list)}` })}
+        onPress={() => Share.share({ message: `${text}\n\nIn Korbwert öffnen: ${shareLink(list)}` })}
       />
       <SecondaryButton label="Nur als Text teilen" onPress={() => Share.share({ message: text })} />
 
       <AppText size={12} color={Colors.textSecondary}>
-        Wer den Link in Preisfuchs öffnet, bekommt eine eigene Kopie der Liste. Änderungen werden nicht abgeglichen.
+        Wer den Link in Korbwert öffnet, bekommt eine eigene Kopie der Liste. Änderungen werden nicht abgeglichen.
       </AppText>
 
       <Card style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.three, backgroundColor: Colors.tile, borderColor: Colors.tile }}>

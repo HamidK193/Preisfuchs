@@ -108,7 +108,7 @@ export function LocationSetup() {
         </AppText>
         <AppText size={15} color={Colors.textSecondary} style={{ textAlign: 'center' }}>
           {phase === 'asking'
-            ? 'Preisfuchs braucht deinen Standort, um die Supermärkte in deiner Nähe zu finden. Er bleibt auf deinem Gerät.'
+            ? 'Korbwert braucht deinen Standort, um die Supermärkte in deiner Nähe zu finden. Er bleibt auf deinem Gerät.'
             : 'Einen Moment, wir laden die Filialen aus OpenStreetMap.'}
         </AppText>
         <ActivityIndicator color={Colors.primary} size="large" />

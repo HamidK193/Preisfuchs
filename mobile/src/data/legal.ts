@@ -9,17 +9,17 @@ export const legalDocuments: LegalDocument[] = [
     title: 'Impressum',
     subtitle: 'Angaben gemäß § 5 DDG',
     body: [
-      'Preisfuchs ist eine Testversion und noch nicht öffentlich veröffentlicht.',
+      'Korbwert ist eine Testversion und noch nicht öffentlich veröffentlicht.',
       'Die Angaben zum Anbieter (Name, Anschrift, Kontakt) werden vor der Veröffentlichung im App Store ergänzt.',
     ],
   },
   {
     id: 'datenschutz',
     title: 'Datenschutzerklärung',
-    subtitle: 'Wie Preisfuchs mit deinen Daten umgeht',
+    subtitle: 'Wie Korbwert mit deinen Daten umgeht',
     body: [
-      'Ohne Konto speichert Preisfuchs Warenkorb, Favoriten, Preisalarme und Einstellungen nur auf deinem Gerät.',
-      'Deinen Standort nutzt Preisfuchs nur nach deiner Freigabe, um die Postleitzahl zu bestimmen. Er wird nicht übertragen.',
+      'Ohne Konto speichert Korbwert Warenkorb, Favoriten, Preisalarme und Einstellungen nur auf deinem Gerät.',
+      'Deinen Standort nutzt Korbwert nur nach deiner Freigabe, um die Postleitzahl zu bestimmen. Er wird nicht übertragen.',
       'Anzeigen und Nutzungsstatistik werden nur mit deiner Einwilligung eingesetzt. Du kannst sie unter Profil → Datenschutz & Werbung jederzeit ändern.',
       'Preismeldungen: Du kannst ohne Konto Preise melden. Dafür speichert der Server nur gesalzene Hashwerte einer zufälligen Geräte-Kennung und deiner IP-Adresse, um Missbrauch zu begrenzen. Optionale Belegfotos liegen in einem nicht öffentlichen Speicher und dienen nur zur Prüfung des Preises. Fotografiere bitte nur das Preisschild – keine Gesichter, keine Kartendaten oder andere persönliche Angaben.',
       'Familie & Gruppen (optional): Wenn du dich mit deiner E-Mail-Adresse anmeldest, speichert der Server (Supabase, Rechenzentrum London) deine E-Mail-Adresse, deinen Anzeigenamen in Gruppen sowie die Listen, die du mit einer Gruppe teilst, inklusive wer welchen Artikel hinzugefügt oder abgehakt hat. Diese Daten sehen nur Mitglieder derselben Gruppe. Wenn du eine Gruppe verlässt, wirst du aus ihr entfernt; deine Listen bleiben auf deinem Gerät.',
@@ -29,9 +29,9 @@ export const legalDocuments: LegalDocument[] = [
   {
     id: 'nutzungsbedingungen',
     title: 'Nutzungsbedingungen',
-    subtitle: 'Regeln für die Nutzung von Preisfuchs',
+    subtitle: 'Regeln für die Nutzung von Korbwert',
     body: [
-      'Preise in Preisfuchs sind Beobachtungen aus Prospekten, offenen Datenbanken und Meldungen der Community. Sie sind keine garantierten Marktpreise; im Markt kann der Preis abweichen.',
+      'Preise in Korbwert sind Beobachtungen aus Prospekten, offenen Datenbanken und Meldungen der Community. Sie sind keine garantierten Marktpreise; im Markt kann der Preis abweichen.',
       'Die Preis-Rangliste ist nicht käuflich. Anzeigen und gesponserte Inhalte sind immer gekennzeichnet.',
       'Die vollständigen Nutzungsbedingungen werden vor der Veröffentlichung ergänzt.',
     ],

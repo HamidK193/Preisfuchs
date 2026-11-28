@@ -42,7 +42,7 @@ const SOURCES: Source[] = [
   },
   {
     name: 'Community-Meldungen',
-    provides: 'Hinweise auf falsche oder neue Preise aus der Preisfuchs-Community.',
+    provides: 'Hinweise auf falsche oder neue Preise aus der Korbwert-Community.',
     license: 'freiwillig',
     icon: { ios: 'person.2.fill', android: 'group', web: 'group' },
     tint: '#6B5BD2',

@@ -51,7 +51,7 @@ export default function ProfileScreen() {
       ],
     },
     {
-      title: 'Über Preisfuchs',
+      title: 'Über Korbwert',
       rows: [
         { icon: { ios: 'chart.bar.doc.horizontal.fill', android: 'insights', web: 'insights' }, tint: '#1F4D3A', label: 'Datenquellen', href: '/einstellungen/datenquellen', detail: 'Stand 02.10.' },
         { icon: { ios: 'questionmark.circle.fill', android: 'help', web: 'help' }, tint: '#0E8AA8', label: 'Hilfe & Feedback', href: '/einstellungen/hilfe' },
@@ -78,7 +78,7 @@ export default function ProfileScreen() {
               Hallo, Sparfuchs!
             </AppText>
             <AppText size={13} color={Colors.textSecondary}>
-              {session ? `Angemeldet als ${session.user.email}` : 'Du nutzt Preisfuchs ohne Konto.'}
+              {session ? `Angemeldet als ${session.user.email}` : 'Du nutzt Korbwert ohne Konto.'}
             </AppText>
           </View>
         </View>
@@ -113,7 +113,7 @@ export default function ProfileScreen() {
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <View style={{ backgroundColor: '#FFFFFF33', borderRadius: Radius.pill, paddingHorizontal: Inset.pillH, paddingVertical: Inset.pillV }}>
             <AppText weight="bold" size={11} color="#FFFFFF">
-              PREISFUCHS PLUS · BALD
+              KORBWERT PLUS · BALD
             </AppText>
           </View>
           <Icon name={{ ios: 'crown.fill', android: 'workspace_premium', web: 'workspace_premium' }} color="#FFE1E2" size={26} />
@@ -164,7 +164,7 @@ export default function ProfileScreen() {
 
       <View style={{ alignItems: 'center', gap: 4 }}>
         <AppText size={12} color={Colors.textSecondary}>
-          Preisfuchs {APP_VERSION} · {stores.length} Märkte · Demo-Preise
+          Korbwert {APP_VERSION} · {stores.length} Märkte · Demo-Preise
         </AppText>
         <AppText size={12} color={Colors.textSecondary}>
           Die Preis-Rangliste ist nicht käuflich.

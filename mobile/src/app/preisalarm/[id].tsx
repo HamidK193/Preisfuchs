@@ -138,7 +138,7 @@ export default function PriceAlarmSheet() {
             {FREE_ALARM_LIMIT} von {FREE_ALARM_LIMIT} kostenlosen Alarmen genutzt
           </AppText>
           <AppText size={13} color={Colors.primaryDark}>
-            Mit Preisfuchs Plus werden Preisalarme unbegrenzt – bald verfügbar.
+            Mit Korbwert Plus werden Preisalarme unbegrenzt – bald verfügbar.
           </AppText>
         </View>
       ) : null}

@@ -128,7 +128,7 @@ export default function ProductSheet() {
               <Icon name={isFavorite ? { ios: 'heart.fill', android: 'favorite', web: 'favorite' } : { ios: 'heart', android: 'favorite_border', web: 'favorite_border' }} size={22} color={Colors.primary} />
             </Pressable>
             <Pressable
-              onPress={() => Share.share({ message: `${product.brand} ${product.name} ab ${formatEuro(best.price)} bei ${bestStore.name} – gefunden mit Preisfuchs` })}
+              onPress={() => Share.share({ message: `${product.brand} ${product.name} ab ${formatEuro(best.price)} bei ${bestStore.name} – gefunden mit Korbwert` })}
               hitSlop={8}
               accessibilityLabel="Teilen">
               <Icon name={{ ios: 'square.and.arrow.up', android: 'share', web: 'share' }} size={20} color={Colors.textSecondary} />
@@ -258,7 +258,7 @@ export default function ProductSheet() {
             <View style={{ alignItems: 'center', gap: Spacing.two, paddingVertical: Spacing.four }}>
               <Icon name={{ ios: 'crown.fill', android: 'workspace_premium', web: 'workspace_premium' }} size={26} color={Colors.primary} />
               <AppText weight="bold" size={15}>
-                Längerer Verlauf mit Preisfuchs Plus
+                Längerer Verlauf mit Korbwert Plus
               </AppText>
               <AppText size={13} color={Colors.textSecondary} style={{ textAlign: 'center' }}>
                 Bis zu 12 Monate Preisverlauf – bald verfügbar.

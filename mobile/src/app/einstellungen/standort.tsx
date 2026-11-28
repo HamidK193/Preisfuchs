@@ -131,7 +131,7 @@ export default function LocationScreen() {
   return (
     <Page>
       <AppText size={14} color={Colors.textSecondary}>
-        Preisfuchs sucht die Supermärkte rund um deine Adresse und vergleicht ihre Preise.
+        Korbwert sucht die Supermärkte rund um deine Adresse und vergleicht ihre Preise.
       </AppText>
 
       <Group title="Adresse">

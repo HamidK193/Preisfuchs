@@ -13,7 +13,7 @@ export default function NotificationsScreen() {
   return (
     <Page>
       <AppText size={14} color={Colors.textSecondary}>
-        Lege fest, worüber Preisfuchs dich benachrichtigen soll. Mitteilungen werden in einer späteren Version
+        Lege fest, worüber Korbwert dich benachrichtigen soll. Mitteilungen werden in einer späteren Version
         verschickt – deine Auswahl wird schon gespeichert.
       </AppText>
 

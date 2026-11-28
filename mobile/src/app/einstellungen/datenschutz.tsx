@@ -12,7 +12,7 @@ export default function PrivacyScreen() {
   const exportData = () => {
     const { lists, favorites, location, activeStoreIds, notifications, alarms, trips } = state;
     Share.share({
-      title: 'Preisfuchs-Daten',
+      title: 'Korbwert-Daten',
       message: JSON.stringify({ lists, favorites, location, activeStoreIds, notifications, consent, alarms, trips }, null, 2),
     });
   };
@@ -27,7 +27,7 @@ export default function PrivacyScreen() {
     <Page>
       <View style={{ backgroundColor: Colors.tile, borderRadius: Radius.large, padding: Inset.card }}>
         <AppText size={14} color={Colors.textSecondary}>
-          Preisfuchs finanziert sich über klar gekennzeichnete Anzeigen und das optionale Abo Preisfuchs Plus.
+          Korbwert finanziert sich über klar gekennzeichnete Anzeigen und das optionale Abo Korbwert Plus.
           Warenkorb, Favoriten und Preisalarme bleiben auf deinem Gerät, solange du kein Konto anlegst.
         </AppText>
       </View>

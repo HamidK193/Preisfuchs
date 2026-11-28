@@ -77,7 +77,7 @@ export default function PlusScreen() {
           </AppText>
         </View>
         <AppText weight="extrabold" size={30}>
-          Preisfuchs Plus
+          Korbwert Plus
         </AppText>
         <AppText size={15} color={Colors.textSecondary} style={{ textAlign: 'center' }}>
           Mehr sparen, ohne Werbung – für dich und deine Familie.
@@ -131,7 +131,7 @@ export default function PlusScreen() {
       </View>
 
       <Pressable
-        onPress={() => Alert.alert('Bald verfügbar', 'Preisfuchs Plus startet mit einer der nächsten Versionen. Bis dahin ist alles kostenlos.')}
+        onPress={() => Alert.alert('Bald verfügbar', 'Korbwert Plus startet mit einer der nächsten Versionen. Bis dahin ist alles kostenlos.')}
         style={({ pressed }) => ({ backgroundColor: pressed ? Colors.primaryDark : Colors.primary, borderRadius: Radius.pill, paddingVertical: Inset.buttonV, alignItems: 'center' })}>
         <AppText weight="bold" size={16} color="#FFFFFF">
           14 Tage kostenlos testen

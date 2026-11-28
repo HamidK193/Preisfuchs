@@ -373,8 +373,8 @@ function App() {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: "Mein Preisfuchs-Warenkorb",
-          text: "Vergleiche diesen gemeinsamen Einkaufszettel mit Preisfuchs.",
+          title: "Mein Korbwert-Warenkorb",
+          text: "Vergleiche diesen gemeinsamen Einkaufszettel mit Korbwert.",
           url
         });
         setShareFeedback("Warenkorb wurde zum Teilen geöffnet.");
@@ -392,7 +392,7 @@ function App() {
     return (
       <main className="empty-state">
         <FoxLogo />
-        <h1>Preisfuchs</h1>
+        <h1>Korbwert</h1>
         <p>Im Katalog wurden keine Produkte gefunden.</p>
       </main>
     );
@@ -407,7 +407,7 @@ function App() {
             <FoxLogo />
           </div>
           <div>
-            <h1>Preisfuchs</h1>
+            <h1>Korbwert</h1>
             <p>Dein Einkauf. Gut verglichen.</p>
           </div>
         </div>
@@ -898,7 +898,7 @@ function App() {
 
             <div className="trust-note">
               <ShieldCheck size={18} aria-hidden="true" />
-              <span>Quellen und Aktualität bleiben sichtbar. Preisfuchs behauptet keine Live-Filialpreise.</span>
+              <span>Quellen und Aktualität bleiben sichtbar. Korbwert behauptet keine Live-Filialpreise.</span>
             </div>
           </aside>
         </section>
@@ -1088,7 +1088,7 @@ function ProductImageCredit({ product }: { product: GroceryProduct }) {
 
 function FoxLogo() {
   return (
-    <svg className="fox-logo" viewBox="0 0 64 64" role="img" aria-label="Preisfuchs Logo">
+    <svg className="fox-logo" viewBox="0 0 64 64" role="img" aria-label="Korbwert Logo">
       <path className="fox-ear" d="M12 7l16 9-15 13z" />
       <path className="fox-ear right" d="M52 7l-16 9 15 13z" />
       <path className="fox-head" d="M10 25l12-11 10 5 10-5 12 11-6 21-16 11-16-11z" />

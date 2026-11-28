@@ -48,7 +48,7 @@ export default function GroupScreen() {
       const code = await createInvite(household.id);
       const link = Linking.createURL('familie/beitreten', { queryParams: { code } });
       await Share.share({
-        message: `Komm in unsere Preisfuchs-Gruppe „${household.name}“! Code: ${code} (7 Tage gültig)\n${link}`,
+        message: `Komm in unsere Korbwert-Gruppe „${household.name}“! Code: ${code} (7 Tage gültig)\n${link}`,
       });
     });
 

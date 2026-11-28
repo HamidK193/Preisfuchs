@@ -36,7 +36,7 @@ export default function StartScreen() {
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.two }}>
             <FoxLogo />
             <AppText weight="extrabold" size={22}>
-              Preisfuchs
+              Korbwert
             </AppText>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.two }}>

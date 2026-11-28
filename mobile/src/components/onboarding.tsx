@@ -24,7 +24,7 @@ const SLIDES: { icon: IconName; title: string; text: string }[] = [
   {
     icon: { ios: 'cart.fill', android: 'shopping_cart', web: 'shopping_cart' },
     title: 'Warenkorb clever aufteilen',
-    text: 'Preisfuchs rechnet aus, ob sich ein Markt reicht oder ob zwei Märkte zusammen günstiger sind.',
+    text: 'Korbwert rechnet aus, ob sich ein Markt reicht oder ob zwei Märkte zusammen günstiger sind.',
   },
   {
     icon: { ios: 'checkmark.shield.fill', android: 'verified_user', web: 'verified_user' },
@@ -164,7 +164,7 @@ function ConsentStep({ onDone }: { onDone: () => void }) {
       <StepHeader
         icon={{ ios: 'hand.raised.fill', android: 'privacy_tip', web: 'privacy_tip' }}
         title="Deine Privatsphäre"
-        text="Preisfuchs ist kostenlos und finanziert sich über klar gekennzeichnete Anzeigen und das optionale Abo Plus. Du entscheidest, was erlaubt ist."
+        text="Korbwert ist kostenlos und finanziert sich über klar gekennzeichnete Anzeigen und das optionale Abo Plus. Du entscheidest, was erlaubt ist."
       />
       <Group footer="Du kannst deine Auswahl jederzeit unter Profil › Datenschutz & Werbung ändern.">
         <ToggleRow label="Notwendige Funktionen" subtitle="Warenkorb, Favoriten und Einstellungen speichern" value disabled onValueChange={() => undefined} />
@@ -291,7 +291,7 @@ function AccountStep({ onSkip }: { onSkip: () => void }) {
         <View style={{ alignItems: 'center', gap: Spacing.three }}>
           <FoxLogo size={96} />
           <AppText weight="extrabold" size={26} style={{ textAlign: 'center' }}>
-            Willkommen bei Preisfuchs
+            Willkommen bei Korbwert
           </AppText>
           <AppText size={15} color={Colors.textSecondary} style={{ textAlign: 'center', lineHeight: 21 }}>
             Mit Konto teilst du Einkaufslisten mit Familie, WG oder Freunden und siehst sofort, was schon im Wagen liegt.

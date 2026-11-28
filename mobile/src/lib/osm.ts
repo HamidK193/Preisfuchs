@@ -110,7 +110,7 @@ async function findStoresInOverpass(center: Center, radiusKm: number): Promise<B
 
   const response = await fetch(OVERPASS_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'Preisfuchs-App/1.0 (Testversion)' },
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'Korbwert-App/1.0 (Testversion)' },
     body: `data=${encodeURIComponent(query)}`,
   });
   if (!response.ok) {

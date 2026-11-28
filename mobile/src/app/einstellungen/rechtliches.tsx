@@ -29,7 +29,7 @@ export default function LegalScreen() {
       <View style={{ alignItems: 'center', gap: Spacing.two }}>
         <FoxLogo size={44} />
         <AppText weight="bold" size={14}>
-          Preisfuchs {APP_VERSION}
+          Korbwert {APP_VERSION}
         </AppText>
         <AppText size={12} color={Colors.textSecondary} style={{ textAlign: 'center' }}>
           Alle Markennamen und Logos sind Eigentum der jeweiligen Inhaber.
