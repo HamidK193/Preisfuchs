@@ -43,6 +43,7 @@ export default function ProductSheet() {
   const { addToCart, favorites, toggleFavorite, activeStoreIds, alarms, stores, getStore } = useAppState();
   const [quantity, setQuantity] = useState(1);
   const [range, setRange] = useState<Range>('8w');
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   if (!product) {
     return (
@@ -110,32 +111,21 @@ export default function ProductSheet() {
 
   return (
     <SheetScroll footer={footer} contentContainerStyle={{ padding: Spacing.four, paddingTop: Spacing.five, gap: Spacing.five, paddingBottom: 160 }}>
-        {/* Kopf */}
-        <View style={{ flexDirection: 'row', gap: Spacing.four }}>
-          <View style={{ width: 104, height: 104, borderRadius: Radius.medium, backgroundColor: Colors.tile, overflow: 'hidden' }}>
+        {/* Kopf, kompakt: Preisvergleich steht vor den sekundären Aktionen */}
+        <View style={{ flexDirection: 'row', gap: Spacing.three }}>
+          <View style={{ width: 64, height: 64, borderRadius: Radius.medium, backgroundColor: Colors.tile, overflow: 'hidden' }}>
             <Image source={product.imageUrl} style={{ flex: 1 }} contentFit="cover" />
           </View>
-          <View style={{ flex: 1, gap: 4 }}>
-            <AppText weight="bold" size={12} color={Colors.textSecondary}>
+          <View style={{ flex: 1, gap: 2 }}>
+            <AppText weight="bold" size={11} color={Colors.textSecondary}>
               {product.brand.toUpperCase()}
             </AppText>
-            <AppText weight="extrabold" size={22}>
+            <AppText weight="extrabold" size={18}>
               {product.name}
             </AppText>
-            <AppText size={13} color={Colors.textSecondary}>
+            <AppText size={12} color={Colors.textSecondary}>
               {product.packageSize} · ab {unitPriceLabel(product, best.price)}
             </AppText>
-          </View>
-          <View style={{ gap: Spacing.three }}>
-            <Pressable onPress={() => toggleFavorite(product.id)} hitSlop={8} accessibilityLabel={isFavorite ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'}>
-              <Icon name={isFavorite ? { ios: 'heart.fill', android: 'favorite', web: 'favorite' } : { ios: 'heart', android: 'favorite_border', web: 'favorite_border' }} size={22} color={Colors.primary} />
-            </Pressable>
-            <Pressable
-              onPress={() => Share.share({ message: `${product.brand} ${product.name} ab ${formatEuro(best.price)} bei ${bestStore.name} – gefunden mit Korbwert` })}
-              hitSlop={8}
-              accessibilityLabel="Teilen">
-              <Icon name={{ ios: 'square.and.arrow.up', android: 'share', web: 'share' }} size={20} color={Colors.textSecondary} />
-            </Pressable>
           </View>
         </View>
         {product.imageCredit ? (
@@ -236,42 +226,27 @@ export default function ProductSheet() {
           </View>
         </Section>
 
-        {/* Preisverlauf */}
-        <Card style={{ gap: Spacing.four }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <AppText weight="extrabold" size={18}>
-              Preisverlauf
+        {/* Sekundaere Aktionen, erst nach dem Preisvergleich */}
+        <View style={{ flexDirection: 'row', gap: Spacing.three }}>
+          <Pressable
+            onPress={() => toggleFavorite(product.id)}
+            accessibilityLabel={isFavorite ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'}
+            style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: Spacing.two, paddingVertical: Inset.compact, borderRadius: Radius.large, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.card }}>
+            <Icon name={isFavorite ? { ios: 'heart.fill', android: 'favorite', web: 'favorite' } : { ios: 'heart', android: 'favorite_border', web: 'favorite_border' }} size={16} color={Colors.primary} />
+            <AppText weight="bold" size={14}>
+              {isFavorite ? 'Aus Favoriten' : 'Favorit'}
             </AppText>
-            <View style={{ flexDirection: 'row', backgroundColor: Colors.tile, borderRadius: Radius.pill, padding: Inset.segment }}>
-              {(['8w', '6m'] as Range[]).map((item) => (
-                <Pressable
-                  key={item}
-                  onPress={() => setRange(item)}
-                  style={{ paddingHorizontal: Inset.chipH, paddingVertical: 6, borderRadius: Radius.pill, backgroundColor: range === item ? Colors.card : 'transparent' }}>
-                  <AppText weight="bold" size={12} color={range === item ? Colors.text : Colors.textSecondary}>
-                    {item === '8w' ? '8 Wochen' : '6 Monate'}
-                  </AppText>
-                </Pressable>
-              ))}
-            </View>
-          </View>
-          {range === '8w' ? (
-            <PriceChart values={[...product.history, best.price]} />
-          ) : (
-            <View style={{ alignItems: 'center', gap: Spacing.two, paddingVertical: Spacing.four }}>
-              <Icon name={{ ios: 'crown.fill', android: 'workspace_premium', web: 'workspace_premium' }} size={26} color={Colors.primary} />
-              <AppText weight="bold" size={15}>
-                Längerer Verlauf mit Korbwert Plus
-              </AppText>
-              <AppText size={13} color={Colors.textSecondary} style={{ textAlign: 'center' }}>
-                Bis zu 12 Monate Preisverlauf – bald verfügbar.
-              </AppText>
-            </View>
-          )}
-          <AppText size={11} color={Colors.textSecondary}>
-            {product.prices.some((price) => price.demo) ? 'Durchschnitt beobachteter Preise (Demo).' : 'Beobachtete Preise aus Open Prices.'} Keine Garantie für den Preis im Markt.
-          </AppText>
-        </Card>
+          </Pressable>
+          <Pressable
+            onPress={() => Share.share({ message: `${product.brand} ${product.name} ab ${formatEuro(best.price)} bei ${bestStore.name} – gefunden mit Korbwert` })}
+            accessibilityLabel="Teilen"
+            style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: Spacing.two, paddingVertical: Inset.compact, borderRadius: Radius.large, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.card }}>
+            <Icon name={{ ios: 'square.and.arrow.up', android: 'share', web: 'share' }} size={16} color={Colors.textSecondary} />
+            <AppText weight="bold" size={14}>
+              Teilen
+            </AppText>
+          </Pressable>
+        </View>
 
         {/* Preisalarm */}
         <Link href={{ pathname: '/preisalarm/[id]', params: { id: product.id } }} asChild>
@@ -300,6 +275,51 @@ export default function ProductSheet() {
             <Icon name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }} size={13} color="#B5B1AB" />
           </Pressable>
         </Link>
+
+        {/* Preisverlauf, eingeklappt hinter Disclosure */}
+        <Card style={{ gap: Spacing.four }}>
+          <Pressable
+            onPress={() => setHistoryOpen(!historyOpen)}
+            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+            accessibilityLabel={historyOpen ? 'Preisverlauf einklappen' : 'Preisverlauf anzeigen'}>
+            <AppText weight="extrabold" size={18}>
+              Preisverlauf
+            </AppText>
+            <Icon name={historyOpen ? { ios: 'chevron.up', android: 'expand_less', web: 'expand_less' } : { ios: 'chevron.down', android: 'keyboard_arrow_down', web: 'keyboard_arrow_down' }} size={16} color={Colors.textSecondary} />
+          </Pressable>
+          {historyOpen ? (
+            <>
+              <View style={{ flexDirection: 'row', backgroundColor: Colors.tile, borderRadius: Radius.pill, padding: Inset.segment }}>
+                {(['8w', '6m'] as Range[]).map((item) => (
+                  <Pressable
+                    key={item}
+                    onPress={() => setRange(item)}
+                    style={{ paddingHorizontal: Inset.chipH, paddingVertical: 6, borderRadius: Radius.pill, backgroundColor: range === item ? Colors.card : 'transparent' }}>
+                    <AppText weight="bold" size={12} color={range === item ? Colors.text : Colors.textSecondary}>
+                      {item === '8w' ? '8 Wochen' : '6 Monate'}
+                    </AppText>
+                  </Pressable>
+                ))}
+              </View>
+              {range === '8w' ? (
+                <PriceChart values={[...product.history, best.price]} />
+              ) : (
+                <View style={{ alignItems: 'center', gap: Spacing.two, paddingVertical: Spacing.four }}>
+                  <Icon name={{ ios: 'crown.fill', android: 'workspace_premium', web: 'workspace_premium' }} size={26} color={Colors.primary} />
+                  <AppText weight="bold" size={15}>
+                    Längerer Verlauf mit Korbwert Plus
+                  </AppText>
+                  <AppText size={13} color={Colors.textSecondary} style={{ textAlign: 'center' }}>
+                    Bis zu 12 Monate Preisverlauf – bald verfügbar.
+                  </AppText>
+                </View>
+              )}
+              <AppText size={11} color={Colors.textSecondary}>
+                {product.prices.some((price) => price.demo) ? 'Durchschnitt beobachteter Preise (Demo).' : 'Beobachtete Preise aus Open Prices.'} Keine Garantie für den Preis im Markt.
+              </AppText>
+            </>
+          ) : null}
+        </Card>
 
         {/* Produktinfos */}
         <Section title="Produktinfos">
