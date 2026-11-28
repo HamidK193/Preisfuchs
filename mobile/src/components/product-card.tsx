@@ -1,8 +1,9 @@
 import { Image } from 'expo-image';
 import { Link } from 'expo-router';
+import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 
-import { AppText, Pill, StoreBadge, SourceLine } from '@/components/ui';
+import { AppText, Icon, Pill, StoreBadge, SourceLine } from '@/components/ui';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 import type { Product } from '@/data/products';
 import type { StoreId } from '@/data/stores';
@@ -13,6 +14,7 @@ import { useAppState } from '@/state/app-state';
 // Mit storeId zeigt die Karte den Preis dieses Markts statt des guenstigsten.
 export function ProductCard({ product, width = 156, storeId }: { product: Product; width?: number; storeId?: StoreId }) {
   const { addToCart, activeStoreIds } = useAppState();
+  const [imageFailed, setImageFailed] = useState(false);
   const best = (storeId && product.prices.find((price) => price.storeId === storeId)) || cheapestPrice(product, activeStoreIds);
   const discount = discountPercent(best);
 
@@ -20,7 +22,16 @@ export function ProductCard({ product, width = 156, storeId }: { product: Produc
     <Link href={{ pathname: '/produkt/[id]', params: { id: product.id } }} asChild>
       <Pressable style={{ width }}>
         <View style={{ backgroundColor: Colors.tile, borderRadius: Radius.large, aspectRatio: 1, overflow: 'hidden' }}>
-          <Image source={product.imageUrl} style={{ flex: 1 }} contentFit="cover" transition={150} />
+          {imageFailed ? (
+            <View
+              accessibilityLabel="Kein Produktbild verfügbar"
+              accessibilityRole="image"
+              style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+              <Icon name={{ ios: 'photo', android: 'image_not_supported', web: 'image_not_supported' }} size={32} color={Colors.textSecondary} />
+            </View>
+          ) : (
+            <Image source={product.imageUrl} style={{ flex: 1 }} contentFit="cover" transition={150} cachePolicy="memory-disk" onError={() => setImageFailed(true)} />
+          )}
           {discount ? (
             <View style={{ position: 'absolute', top: 8, left: 8 }}>
               <Pill tone="orange" label={`-${discount} %`} />
