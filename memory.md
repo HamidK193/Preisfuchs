@@ -1,5 +1,20 @@
 # Memory
 
+## Aktueller iOS-Stand (28.11.2026)
+
+- SwiftUI-App unter `ios/Preisfuchs/` mit fünf Tabs: Start, Suche,
+  Einkaufsliste, Favoriten, Profil. Start/Suche zeigen Produkte und bis zu drei
+  Vergleichspreise mit Händler, Ort, Quelle, Beobachtungsdatum und Hinweis bei
+  alten Beobachtungen.
+- Demo-Modus ist Standard ohne Supabase-Konfiguration; Demo-Preise sind sichtbar
+  als Beispiele markiert. Favoriten und Einkaufsliste sind vorerst nur im
+  Arbeitsspeicher der App gespeichert.
+- Domain/Data, Supabase-Preisservice und E-Mail-Code-Verträge liegen in
+  `ios/Packages/PreisfuchsKit/` und `ios/Preisfuchs/Services/`.
+- 28.11.2026: macOS-CI grün (24 Kit-Tests, 3 App-Tests, iPhone-17-Simulator).
+  Für TestFlight stehen Apple Developer Program, App-Symbol sowie App-Store-
+  Connect-Zugangsdaten noch aus.
+
 ## Projektentscheidungen
 
 - App-Name: Preisfuchs

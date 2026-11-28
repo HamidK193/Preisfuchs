@@ -22,12 +22,22 @@ stehen im [Screen-Plan](docs/APP_SCREENS_PLAN.md), das Umsatzmodell (Plus-Abo,
 markierte Anzeigen, Partnerlinks; Preis-Rangliste nie käuflich) in
 [Monetarisierung](docs/MONETARISIERUNG.md).
 
-Die neue App entsteht in `mobile/` mit Expo (React Native) für iOS und Android.
-Testen auf dem iPhone ohne Mac: App „Expo Go“ installieren, PC und iPhone im
-selben WLAN, dann `cd mobile` und `npx expo start --lan`, QR-Code scannen.
-Die App zeigt vorerst Demo-Daten und kennzeichnet sie so.
+Die native SwiftUI-App unter `ios/` ist die aktuelle iOS-Hauptentwicklung;
+`mobile/` mit Expo (React Native) für iOS und Android ist bis dahin eingefroren.
+Die bestehende Expo-App lässt sich weiterhin mit Expo Go testen: PC und iPhone
+im selben WLAN verbinden, `cd mobile` und `npx expo start --lan` ausführen und
+den QR-Code scannen. Ihre Demo-Daten sind gekennzeichnet.
 
-## Arbeitsstand: 6. September 2026
+## Arbeitsstand: 28. November 2026
+
+Die native iOS-App hat jetzt eine erste testbare Oberfläche mit Start,
+Suche, Einkaufsliste, Favoriten und Profil. Die Preisübersicht lädt lokal
+gebündelte Beispieldaten, kennzeichnet sie als Demo und zeigt bei jedem Preis
+Markt, Quelle und Beobachtungsdatum. Favoriten und Einkaufsliste bleiben in
+dieser ersten Version bis zum Schließen der App gespeichert. Der aktuelle
+Linux-/macOS-CI-Lauf ist grün: 24 Pakettests sowie 3 App-Tests und ein Build
+auf dem iPhone-17-Simulator. Für einen iPhone-Test per TestFlight fehlen noch
+Apple Developer Program, App-Symbol und die Zugangsdaten für die Verteilung.
 
 Der ausführliche [Gesamtplan](docs/GESAMTPLAN.md) enthält die Reihenfolge für
 Webdesign, Produktidentität, Quellen, Supabase-Rollout und Betrieb. Die
@@ -56,7 +66,8 @@ Freigaben ohne doppelte Quellen-IDs. Die Demo bleibt separat verfügbar.
 Prüfstand: 33 Webtests, 19 Backendtests, Webbuild, Browserfluss mit echter
 Preisview bei vier Breiten sowie Remote-Rollen- und API-Prüfung bestanden.
 Vite meldet eine Größenwarnung für das etwa 501-kB-JavaScript-Bündel.
-iOS benötigt weiterhin den Modellnachzug und Xcode.
+Für die native iOS-App wird Xcode auf einem Mac benötigt. Der Build- und
+Simulator-Test läuft zusätzlich über GitHub Actions.
 
 Die lokale Gestaltung verwendet `web/src/shop.css`; `styles.css` enthält noch
 den vorherigen Entwurf und wird nicht geladen. Screenshots und Browserbericht
@@ -213,13 +224,13 @@ Preis nicht für diese konkrete Filiale bestätigt ist.
 
 ### Native iOS-App
 
-1. Öffne `ios/Preisfuchs/Preisfuchs.xcodeproj` in Xcode.
-2. Wähle ein iPhone-Simulator-Ziel.
-3. Starte die App.
+1. Führe im Ordner `ios/` den Befehl `xcodegen generate` aus.
+2. Öffne `ios/Preisfuchs.xcodeproj` in Xcode.
+3. Wähle ein iPhone-Simulator-Ziel.
+4. Starte die App. Ohne Supabase-Konfiguration startet sie im Demo-Modus.
 
-Hinweis: Dieser Rechner läuft aktuell unter Windows. Ich kann die Dateien
-erstellen und Git vorbereiten, aber den iOS-Simulator nur auf einem Mac mit
-Xcode ausführen.
+Hinweis: Dieser Rechner läuft unter Windows. Der iOS-Simulator wird lokal auf
+einem Mac mit Xcode oder in GitHub Actions ausgeführt.
 
 ## Supabase Setup
 

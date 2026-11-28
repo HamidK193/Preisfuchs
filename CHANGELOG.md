@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- iOS (`ios/`): Domain- und Datenmodell mit Demo-/Supabase-Preisdiensten,
+  E-Mail-Code-Auth-Verträgen und fünf SwiftUI-Tabs. Start und Suche zeigen
+  Beobachtungspreise mit Markt, Quelle und Datum; Demo-Daten tragen einen
+  sichtbaren Hinweis. Favoriten und Einkaufsliste funktionieren lokal in der
+  laufenden Sitzung. Tests für Datenladen, Suche und Auswahl ergänzt. Der
+  iOS-CI-Lauf ist grün: 24 Pakettests, 3 App-Tests und Build/Test auf dem
+  iPhone-17-Simulator.
+
 - iOS (`ios/`): Phase 0, WP0. Neues Gerüst für die SwiftUI-App mit XcodeGen (`project.yml`),
   xcconfig-Konfiguration mit gitignorierten Secrets (Demo-Modus ohne Werte) und Swift-Paket
   `PreisfuchsKit` (Domain/Data mit Platzhaltern). Das alte Xcode-Projekt und der Stub sind
