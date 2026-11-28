@@ -3,6 +3,7 @@ from datetime import date
 from decimal import Decimal
 
 from kaufda_check import KaufdaChecker, candidate_terms, name_similarity
+import open_prices_de_agent as agent
 from open_prices_de_agent import build_records, category_for, package_for, unit_price_plausible
 
 TODAY = date(2026, 10, 7)
@@ -113,3 +114,23 @@ class KaufdaCheckTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PagingTests(unittest.TestCase):
+    class _Response:
+        def __init__(self, status: int) -> None:
+            self.status_code = status
+
+        def raise_for_status(self) -> None:
+            raise AssertionError("must not raise for 404 past the last page")
+
+    class _Session:
+        def __init__(self, status: int) -> None:
+            self.status = status
+
+        def get(self, *_args, **_kwargs):
+            return PagingTests._Response(self.status)
+
+    def test_404_after_first_page_ends_paging(self) -> None:
+        result = agent.get_page(self._Session(404), {"page": 18})
+        self.assertEqual(result, {"items": []})

@@ -209,6 +209,8 @@ def get_page(session: requests.Session, params: dict[str, Any]) -> dict[str, Any
             last_error = requests.HTTPError(f"HTTP {response.status_code}")
             time.sleep(20 * (attempt + 1))
             continue
+        if response.status_code == 404 and params.get("page", 1) > 1:
+            return {"items": []}  # Open Prices answers 404 past the last page
         response.raise_for_status()
         return response.json()
     raise last_error or RuntimeError("Open Prices unavailable")
