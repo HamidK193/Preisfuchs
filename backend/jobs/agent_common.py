@@ -21,7 +21,7 @@ except ImportError:  # pragma: no cover - handled in CI by requirements.txt
 ROOT = Path(__file__).resolve().parents[2]
 PRODUCTS_FILE = ROOT / "data" / "standard_products.json"
 # Generic project name only: no personal data, as Open Food Facts asks for an identifiable app name.
-USER_AGENT = os.getenv("PRICEFUCHS_USER_AGENT", "Preisfuchs/0.3 (open data price comparison MVP)")
+USER_AGENT = os.getenv("PRICEFUCHS_USER_AGENT", "Korbwert/0.3 (open data price comparison MVP)")
 
 
 def load_dotenv() -> None:

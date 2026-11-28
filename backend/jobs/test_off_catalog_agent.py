@@ -5,6 +5,7 @@ from datetime import UTC, date, datetime, timedelta
 import off_catalog_agent as agent
 import off_products_agent
 import open_prices_de_agent
+import price_update_job
 from agent_common import USER_AGENT, Deadline, close_stale_runs
 
 NOW = "2026-11-28T05:00:00+00:00"
@@ -137,7 +138,9 @@ class PagingTests(unittest.TestCase):
 
 class RunHygieneTests(unittest.TestCase):
     def test_user_agent_is_generic_without_personal_data(self) -> None:
-        self.assertTrue(USER_AGENT.startswith("Preisfuchs"))
+        expected = "Korbwert/0.3 (open data price comparison MVP)"
+        self.assertEqual(USER_AGENT, expected)
+        self.assertEqual(price_update_job.USER_AGENT, expected)
         for forbidden in ("@", "github.com", "HamidK193", "karat"):
             self.assertNotIn(forbidden, USER_AGENT)
 

@@ -31,7 +31,7 @@ PRODUCTS_FILE = ROOT / "data" / "standard_products.json"
 OPEN_PRICES_BASE_URL = os.getenv("OPEN_PRICES_BASE_URL", "https://prices.openfoodfacts.org").rstrip("/")
 USER_AGENT = os.getenv(
     "PRICEFUCHS_USER_AGENT",
-    "Preisfuchs-MVP/0.2 (https://github.com/HamidK193/Preisfuchs)",
+    "Korbwert/0.3 (open data price comparison MVP)",
 )
 
 RETAILER_SLUGS = {
