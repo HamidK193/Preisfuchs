@@ -4,7 +4,6 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
 import { ErrorState } from '@/components/system-states';
-import { LocationSetup } from '@/components/location-setup';
 import { Onboarding } from '@/components/onboarding';
 import { Colors } from '@/constants/theme';
 import { AppStateProvider, useAppState } from '@/state/app-state';
@@ -50,7 +49,7 @@ function sheetOptions(detents: number[]): NativeStackNavigationOptions {
 // der Warenkorb-Badge direkt nach dem Start, und iOS 26 kuerzt die Tab-Beschriftungen
 // (react-native-screens #4749).
 function AppNavigator() {
-  const { loaded, storesFromOsm, onboarded } = useAppState();
+  const { loaded, onboarded } = useAppState();
 
   useEffect(() => {
     if (loaded) {
@@ -64,11 +63,6 @@ function AppNavigator() {
 
   if (!onboarded) {
     return <Onboarding />;
-  }
-
-  // Ohne festgelegten Standort zuerst nach dem Standort fragen.
-  if (!storesFromOsm) {
-    return <LocationSetup />;
   }
 
   return (

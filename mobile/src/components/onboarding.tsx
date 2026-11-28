@@ -3,17 +3,14 @@ import { Pressable, ScrollView, useWindowDimensions, View, type NativeScrollEven
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { LocationSetup } from '@/components/location-setup';
-import { Group, PrimaryButton, SecondaryButton, ToggleRow } from '@/components/settings';
+import { PrimaryButton, SecondaryButton } from '@/components/settings';
 import { AppText, FoxLogo, Icon, StoreBadge, type IconName } from '@/components/ui';
 import { Colors, Inset, Radius, Spacing } from '@/constants/theme';
-import { LoginPanel } from '@/components/login-panel';
 import { useAppState } from '@/state/app-state';
-import { useFamily } from '@/state/family-state';
 
-type Step = 'intro' | 'account' | 'consent' | 'location' | 'stores' | 'notifications';
+type Step = 'intro' | 'location' | 'stores';
 
-// Schritte mit Fortschrittsanzeige (das Intro hat eigene Punkte).
-const PROGRESS_STEPS: Step[] = ['consent', 'location', 'stores', 'notifications'];
+const PROGRESS_STEPS: Step[] = ['location', 'stores'];
 
 const SLIDES: { icon: IconName; title: string; text: string }[] = [
   {
@@ -33,27 +30,24 @@ const SLIDES: { icon: IconName; title: string; text: string }[] = [
   },
 ];
 
-// Erster Start: kurzes Intro, Anmelden (optional), Einwilligung, Standort, Lieblingsmaerkte, Mitteilungen.
+// Kurzer Start: Nutzen zeigen, dann PLZ und Märkte optional einrichten.
 export function Onboarding() {
   const { storesFromOsm, completeOnboarding } = useAppState();
-  const { session } = useFamily();
   const [selectedStep, setStep] = useState<Step>('intro');
-  // Nach der Anmeldung geht es weiter; sobald der Standort gesetzt ist, mit den Maerkten.
-  const step: Step =
-    selectedStep === 'account' && session
-      ? 'consent'
-      : selectedStep === 'location' && storesFromOsm
-        ? 'stores'
-        : selectedStep;
+  const step: Step = selectedStep === 'location' && storesFromOsm ? 'stores' : selectedStep;
 
   if (step === 'intro') {
-    return <Intro onDone={() => setStep('account')} />;
-  }
-  if (step === 'account') {
-    return <AccountStep onSkip={() => setStep('consent')} />;
+    return <Intro onDone={() => setStep('location')} onSkip={completeOnboarding} />;
   }
   if (step === 'location') {
-    return <LocationSetup />;
+    return (
+      <View style={{ flex: 1 }}>
+        <LocationSetup />
+        <View style={{ position: 'absolute', right: 0, bottom: 0, left: 0, padding: Spacing.four, paddingBottom: Spacing.five, backgroundColor: Colors.background }}>
+          <SecondaryButton label="Standort später einrichten" onPress={completeOnboarding} />
+        </View>
+      </View>
+    );
   }
 
   const progress = PROGRESS_STEPS.indexOf(step);
@@ -64,14 +58,12 @@ export function Onboarding() {
           <View key={item} style={{ flex: 1, height: 4, borderRadius: 2, backgroundColor: index <= progress ? Colors.primary : Colors.border }} />
         ))}
       </View>
-      {step === 'consent' ? <ConsentStep onDone={() => setStep(storesFromOsm ? 'stores' : 'location')} /> : null}
-      {step === 'stores' ? <StoresStep onDone={() => setStep('notifications')} /> : null}
-      {step === 'notifications' ? <NotificationsStep onDone={completeOnboarding} /> : null}
+      {step === 'stores' ? <StoresStep onDone={completeOnboarding} onSkip={completeOnboarding} /> : null}
     </SafeAreaView>
   );
 }
 
-function Intro({ onDone }: { onDone: () => void }) {
+function Intro({ onDone, onSkip }: { onDone: () => void; onSkip: () => void }) {
   const { width } = useWindowDimensions();
   const [page, setPage] = useState(0);
   const [scroller, setScroller] = useState<ScrollView | null>(null);
@@ -93,7 +85,7 @@ function Intro({ onDone }: { onDone: () => void }) {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
       <View style={{ flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: Spacing.five, paddingTop: Spacing.two }}>
-        <Pressable onPress={onDone} hitSlop={10}>
+        <Pressable onPress={onSkip} hitSlop={10} accessibilityRole="button">
           <AppText weight="semibold" size={15} color={Colors.textSecondary}>
             Überspringen
           </AppText>
@@ -151,54 +143,14 @@ function StepHeader({ icon, title, text }: { icon: IconName; title: string; text
   );
 }
 
-// Einwilligung wie in den Einstellungen: Ablehnen und Akzeptieren gleichwertig.
-function ConsentStep({ onDone }: { onDone: () => void }) {
-  const { consent, updateConsent } = useAppState();
-  const decide = (accept: boolean) => {
-    updateConsent({ personalizedAds: accept, analytics: accept });
-    onDone();
-  };
-
-  return (
-    <ScrollView contentContainerStyle={{ padding: Spacing.five, gap: Spacing.five }}>
-      <StepHeader
-        icon={{ ios: 'hand.raised.fill', android: 'privacy_tip', web: 'privacy_tip' }}
-        title="Deine Privatsphäre"
-        text="Korbwert ist kostenlos und finanziert sich über klar gekennzeichnete Anzeigen und das optionale Abo Plus. Du entscheidest, was erlaubt ist."
-      />
-      <Group footer="Du kannst deine Auswahl jederzeit unter Profil › Datenschutz & Werbung ändern.">
-        <ToggleRow label="Notwendige Funktionen" subtitle="Warenkorb, Favoriten und Einstellungen speichern" value disabled onValueChange={() => undefined} />
-        <ToggleRow
-          label="Personalisierte Anzeigen"
-          subtitle="Anzeigen passend zu deinen Interessen"
-          value={consent.personalizedAds}
-          onValueChange={(value) => updateConsent({ personalizedAds: value })}
-        />
-        <ToggleRow
-          label="Anonyme Nutzungsstatistik"
-          subtitle="Hilft uns, Suche und Preisvergleich zu verbessern"
-          value={consent.analytics}
-          onValueChange={(value) => updateConsent({ analytics: value })}
-          last
-        />
-      </Group>
-      <View style={{ flexDirection: 'row', gap: Spacing.two }}>
-        <SecondaryButton label="Alle ablehnen" onPress={() => decide(false)} style={{ flex: 1 }} />
-        <SecondaryButton label="Alle akzeptieren" onPress={() => decide(true)} style={{ flex: 1 }} />
-      </View>
-      <PrimaryButton label="Auswahl speichern" onPress={onDone} />
-    </ScrollView>
-  );
-}
-
-function StoresStep({ onDone }: { onDone: () => void }) {
+function StoresStep({ onDone, onSkip }: { onDone: () => void; onSkip: () => void }) {
   const { stores, activeStoreIds, toggleStore, location } = useAppState();
 
   return (
     <ScrollView contentContainerStyle={{ padding: Spacing.five, gap: Spacing.five }}>
       <StepHeader
         icon={{ ios: 'storefront.fill', android: 'storefront', web: 'storefront' }}
-        title="Deine Märkte"
+        title="Deine Märkte (optional)"
         text={`Diese Märkte haben wir im Umkreis von ${location.radiusKm} km gefunden. Wähle, wo du einkaufst – nur diese vergleichen wir.`}
       />
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.three }}>
@@ -242,71 +194,7 @@ function StoresStep({ onDone }: { onDone: () => void }) {
         })}
       </View>
       <PrimaryButton label={`Weiter (${activeStoreIds.length} ausgewählt)`} onPress={onDone} />
+      <SecondaryButton label="Märkte später auswählen" onPress={onSkip} />
     </ScrollView>
-  );
-}
-
-function NotificationsStep({ onDone }: { onDone: () => void }) {
-  const { notifications, updateNotifications } = useAppState();
-
-  return (
-    <ScrollView contentContainerStyle={{ padding: Spacing.five, gap: Spacing.five }}>
-      <StepHeader
-        icon={{ ios: 'bell.badge.fill', android: 'notifications_active', web: 'notifications_active' }}
-        title="Keine Sparchance verpassen"
-        text="Worüber sollen wir dich informieren? Mitteilungen werden in einer späteren Version verschickt – deine Auswahl wird schon gespeichert."
-      />
-      <Group>
-        <ToggleRow
-          icon={{ ios: 'bell.fill', android: 'notifications', web: 'notifications' }}
-          tint="#D9443B"
-          label="Preisalarme"
-          subtitle="Wenn ein Wunschpreis erreicht ist"
-          value={notifications.priceAlerts}
-          onValueChange={(value) => updateNotifications({ priceAlerts: value })}
-        />
-        <ToggleRow
-          icon={{ ios: 'newspaper.fill', android: 'newspaper', web: 'newspaper' }}
-          tint="#3B6FD8"
-          label="Neue Wochenangebote"
-          subtitle="Einmal pro Woche"
-          value={notifications.weeklyOffers}
-          onValueChange={(value) => updateNotifications({ weeklyOffers: value })}
-          last
-        />
-      </Group>
-      <AppText size={13} color={Colors.textSecondary} style={{ textAlign: 'center' }}>
-        Keine Werbung per Mitteilung. Kein Konto nötig – alles bleibt auf deinem Gerät.
-      </AppText>
-      <PrimaryButton label="Fertig" onPress={onDone} />
-    </ScrollView>
-  );
-}
-
-// Willkommen: anmelden mit Google oder E-Mail – oder ohne Konto weiter.
-function AccountStep({ onSkip }: { onSkip: () => void }) {
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1, padding: Spacing.five, gap: Spacing.five, justifyContent: 'center' }} keyboardShouldPersistTaps="handled">
-        <View style={{ alignItems: 'center', gap: Spacing.three }}>
-          <FoxLogo size={96} />
-          <AppText weight="extrabold" size={26} style={{ textAlign: 'center' }}>
-            Willkommen bei Korbwert
-          </AppText>
-          <AppText size={15} color={Colors.textSecondary} style={{ textAlign: 'center', lineHeight: 21 }}>
-            Mit Konto teilst du Einkaufslisten mit Familie, WG oder Freunden und siehst sofort, was schon im Wagen liegt.
-          </AppText>
-        </View>
-        <LoginPanel />
-        <Pressable onPress={onSkip} accessibilityRole="button" style={{ alignItems: 'center', paddingVertical: Inset.compact }}>
-          <AppText weight="bold" size={15} color={Colors.textSecondary}>
-            Ohne Konto weiter
-          </AppText>
-        </Pressable>
-        <AppText size={12} color={Colors.textSecondary} style={{ textAlign: 'center' }}>
-          Preise vergleichen und Listen anlegen geht auch ohne Konto. Anmelden kannst du dich später im Profil.
-        </AppText>
-      </ScrollView>
-    </SafeAreaView>
   );
 }
