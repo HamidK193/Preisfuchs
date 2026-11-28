@@ -103,9 +103,10 @@ struct DataUtilityTests {
     @Test("Ladefehler werden weitergereicht")
     func pageErrorPropagates() async {
         do {
-            _ = try await PagedLoader.loadAll<Int>(pageSize: 2) { _, _ in
-                throw SampleError.failed
-            }
+            _ = try await PagedLoader.loadAll(
+                pageSize: 2,
+                fetchPage: { _, _ -> [Int] in throw SampleError.failed }
+            )
             #expect(Bool(false))
         } catch let error as SampleError {
             #expect(error == .failed)
