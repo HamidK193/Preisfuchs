@@ -1,4 +1,4 @@
-# Preisfuchs – Plan der Unterseiten (App `mobile/`)
+# Korbwert – Plan der Unterseiten (App `mobile/`)
 
 Stand: 05.10.2026. Ergänzt `APP_SCREENS_PLAN.md` um alle Seiten, die von den fünf
 Haupt-Tabs aus erreichbar sind. Erst Design in Google Stitch, dann Umsetzung.
@@ -61,7 +61,7 @@ hochgewischt (alle Details). Unten immer fest: Menge und „Zum Warenkorb“.
     Lizenzen & Marken (inkl. Händlerlogos) → jeweils Textseite.
 19. **Konto anlegen (Sheet):** „Mit Apple“, „Mit Google“, „Mit E-Mail“ gleich groß;
     „Nur nötig zum Teilen und Synchronisieren“.
-20. **Preisfuchs Plus:** Paywall mit Vorteils-Kacheln, Jahres-/Monatsabo,
+20. **Korbwert Plus:** Paywall mit Vorteils-Kacheln, Jahres-/Monatsabo,
     „14 Tage kostenlos testen“, „Käufe wiederherstellen“.
 
 ## C. Weitere Unterseiten von Start, Suche und Warenkorb

@@ -236,7 +236,7 @@ verify_jwt = true   # legacy anon JWT; set false (function validates + rate-limi
 1. Beim Anbieter ein Konto anlegen und den Absender bzw. die Domain verifizieren (SPF/DKIM). SMTP-Zugangsdaten erzeugen.
 2. Supabase Dashboard → Authentication → Emails → **SMTP Settings** → „Enable custom SMTP“ einschalten.
    - Host, Port 587 (STARTTLS) oder 465, Benutzer und Passwort eintragen.
-   - Sender email und Sender name „Preisfuchs“ eintragen.
+   - Sender email und Sender name „Korbwert“ eintragen.
 3. Authentication → **Rate Limits** → „Emails sent per hour“ von der Vorgabe (30 nach Umstellung) auf z. B. 100 erhöhen, passend zum Tageslimit des Anbieters.
 4. Prüfen, ob die vorhandenen Vorlagen aus `backend/supabase/email-templates` noch aktiv sind und den 6-stelligen `{{ .Token }}` enthalten.
 

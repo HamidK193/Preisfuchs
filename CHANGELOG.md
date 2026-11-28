@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Umbenennung in Korbwert: Anzeigenamen und Texte in SwiftUI, Expo und Web sowie
+  Backend-User-Agent aktualisiert. SwiftUI nutzt `de.korbwert.app` mit eigener
+  Test-Bundle-ID; Repo, Swift-Module und Targets behalten den Codenamen Preisfuchs.
+  Bestehende Expo-/EAS-Kennungen, OAuth-Redirects und gespeicherte Daten bleiben
+  kompatibel. Ihre spaetere Migration erfordert eine abgestimmte Umstellung.
+
 - iOS (`ios/`): Domain- und Datenmodell mit Demo-/Supabase-Preisdiensten,
   E-Mail-Code-Auth-Verträgen und fünf SwiftUI-Tabs. Start und Suche zeigen
   Beobachtungspreise mit Markt, Quelle und Datum; Demo-Daten tragen einen

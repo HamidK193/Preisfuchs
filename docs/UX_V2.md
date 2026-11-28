@@ -2,7 +2,7 @@
 
 Stand: 28.11.2026. Anlass: Nutzer-Feedback zur ersten App: Navigation sehr schlecht, zu wenige
 Produkte, keine echten Bilder. Gilt für die SwiftUI-App (`ios/`) und die Expo-App (`mobile/`).
-Platzhalter „‹App-Name›“ in neuen UI-Texten, weil der Name gerade geändert wird.
+App-Name in neuen UI-Texten: „Korbwert“ (entschieden am 28.11.2026).
 
 ## (a) Kurzskizze
 
@@ -92,7 +92,7 @@ SwiftUI (`ios/Preisfuchs/App/`):
 8. `RootTabView.swift:32, 200-214` – Profil ist nur Debug-Info („Modus“, „Produkte“); keine Einstellungen, keine Datenquellen-Seite.
 9. `PriceListModel.swift:15-16` – Favoriten/Einkaufsliste nur im Speicher, gehen beim Beenden verloren.
 10. `RootTabView.swift:53-59` – Demo-Hinweis nur auf Start; auf Suche/Liste fehlt er (Regel „keine Live-Genauigkeit“ nicht überall sichtbar).
-11. `RootTabView.swift:45, 95, 200` – Textlogik fest mit „Preisfuchs“ (Titel, `Über Preisfuchs`) – bei Umbenennung zentral lösen.
+11. `RootTabView.swift:45, 95, 200` – Titel und `Über Korbwert` verwenden den beschlossenen App-Namen Korbwert.
 
 Expo (`mobile/src/`):
 12. `app/(tabs)/_layout.tsx:11-31` – 5 Tabs mit Favoriten als eigenem Tab; Angebote nur als Unterseite (Route `angebote`, `app/_layout.tsx`), also zwei Taps weg.

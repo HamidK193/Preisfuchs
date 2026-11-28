@@ -1,4 +1,4 @@
-# Preisfuchs – Screen-Plan (alle Seiten)
+# Korbwert – Screen-Plan (alle Seiten)
 
 Stand: 04.10.2026 · Design-Konzept in Google Stitch, Projekt "Preisfuchs Grocery Comparison App".
 Referenz-Stil: Screen "Start v2" (Fuchs-Orange, Waldgruen, Creme-Hintergrund, weisse Karten, Radius 16).

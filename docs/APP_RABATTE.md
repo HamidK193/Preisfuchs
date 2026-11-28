@@ -1,8 +1,8 @@
-# App-Rabatte in Preisfuchs
+# App-Rabatte in Korbwert
 
 ## Ziel
 
-Preisfuchs behandelt Händler-App-Rabatte als bedingte Preisbeobachtungen.
+Korbwert behandelt Händler-App-Rabatte als bedingte Preisbeobachtungen.
 Der reduzierte Preis darf in einen Vergleich einfließen, muss aber sichtbar
 mit App, Einlösebedingung, Marktbezug, Gültigkeit und Quelle gekennzeichnet
 sein. Ein App-Preis ist kein allgemein verfügbarer Regalpreis.
@@ -35,7 +35,7 @@ Für App-Rabatte speichert `price_observations` zusätzlich:
    Erkannte Produkt-, Preis- und Gültigkeitsdaten müssen vor Veröffentlichung
    bestätigt werden; personenbezogene Coupon-IDs werden nicht geteilt.
 
-Preisfuchs meldet sich nicht automatisiert in Händlerkonten an und umgeht
+Korbwert meldet sich nicht automatisiert in Händlerkonten an und umgeht
 keine geschützten App-Schnittstellen. Personalisierte Coupons werden niemals
 als für alle Nutzer verfügbar dargestellt.
 

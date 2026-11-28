@@ -72,7 +72,7 @@ Was wegfällt (bleibt in der Git-Historie):
 
 ```yaml
 name: Preisfuchs
-options: { bundleIdPrefix: de.preisfuchs, deploymentTarget: { iOS: "17.0" }, xcodeVersion: "26.0",
+options: { bundleIdPrefix: de.korbwert, deploymentTarget: { iOS: "17.0" }, xcodeVersion: "26.0",
            createIntermediateGroups: true }
 configFiles: { Debug: Config/Debug.xcconfig, Release: Config/Release.xcconfig }
 settings: { base: { SWIFT_VERSION: "6.0", SWIFT_STRICT_CONCURRENCY: complete } }
@@ -87,7 +87,7 @@ targets:
     info:
       path: Preisfuchs/Info.plist
       properties:
-        CFBundleDisplayName: Preisfuchs
+        CFBundleDisplayName: Korbwert
         PFSupabaseHost: $(SUPABASE_HOST)
         PFSupabaseAnonKey: $(SUPABASE_ANON_KEY)
         UILaunchScreen: {}
@@ -97,7 +97,7 @@ targets:
         LSApplicationCategoryType: public.app-category.shopping
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: de.preisfuchs.app
+        PRODUCT_BUNDLE_IDENTIFIER: de.korbwert.app
         TARGETED_DEVICE_FAMILY: "1"
         MARKETING_VERSION: 0.1.0
         CURRENT_PROJECT_VERSION: 1
@@ -280,7 +280,7 @@ Kritischer Pfad: WP0 → WP2 → WP5 → WP6 → grüner `app-macos`-Lauf.
 - Veraltet-Grenze: 30 Tage (Expo) oder 14 Tage (alter Swift-Code)? Vorschlag: 30.
 - Eckenradius 5 oder 16 (`Radius.card`).
 - Dunkle Farbwerte endgültig festlegen.
-- Bundle-ID `de.preisfuchs.app` übernehmen? Vorgesehen ist ja.
+- Bundle-ID (entschieden 28.11.2026): SwiftUI `de.korbwert.app`; Expo bleibt bei `de.preisfuchs.app`.
 
 ### Critical Files for Implementation
 - A:\Codex\Preisfuchs\ios\project.yml (neu)

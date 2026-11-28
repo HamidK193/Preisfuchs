@@ -201,7 +201,7 @@ jobs:
 
 Vor der Aktivierung gibt es einmalig Handarbeit:
 1. App-Eintrag in App Store Connect anlegen.
-2. Bundle-ID registrieren (offene Entscheidung 5 in Teilplan 01).
+2. Bundle-ID `de.korbwert.app` registrieren (Namensentscheidung vom 28.11.2026).
 3. API-Key erzeugen.
 4. Den Upload über `destination=upload` im Spike prüfen. Rückfall ist fastlane `upload_to_testflight`.
 
@@ -216,7 +216,7 @@ Das Secret mit dem Host für die Supabase-URL umgeht die Stolperfalle, dass `//`
 5. Vor dem Push dieselben Prüfungen wie im CI: `xcrun swift-format lint --strict -r Preisfuchs Packages && swiftlint --strict`.
 6. Kostenlose Signierung auf dem eigenen iPhone:
    - Unter Xcode → Settings → Accounts die **Apple-ID des Users** hinzufügen, nicht die des Kollegen.
-   - In `Secrets.xcconfig` lokal `DEVELOPMENT_TEAM = <Personal-Team-ID>` und eine eindeutige `PRODUCT_BUNDLE_IDENTIFIER` setzen, z. B. `de.preisfuchs.app.dev`. Dafür muss `project.yml` die Bundle-ID über eine xcconfig-Variable überschreibbar machen.
+   - In `Secrets.xcconfig` lokal `DEVELOPMENT_TEAM = <Personal-Team-ID>` und eine eindeutige `PRODUCT_BUNDLE_IDENTIFIER` setzen, z. B. `de.korbwert.app.dev`. Dafür muss `project.yml` die Bundle-ID über eine xcconfig-Variable überschreibbar machen.
    - iPhone per Kabel anschließen, „Diesem Computer vertrauen“ bestätigen und am iPhone unter Einstellungen → Datenschutz & Sicherheit den Entwicklermodus einschalten.
    - Nach dem ersten Start unter Einstellungen → Allgemein → VPN und Geräteverwaltung dem Entwickler vertrauen.
    - Grenzen: Das Profil läuft nach **7 Tagen** ab, es gehen höchstens 3 Geräte und kein Push.

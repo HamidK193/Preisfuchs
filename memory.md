@@ -1,5 +1,15 @@
 # Memory
 
+## Namensentscheidung (28.11.2026)
+
+- Die App heißt Korbwert: Namenskonflikt mit „Preisfuchs: Preis-Check“ im Play Store
+  und belegte Domains. Preisfuchs bleibt interner Codename für Repo, Module, Ordner und Targets.
+- SwiftUI: Anzeigename Korbwert, Bundle-ID `de.korbwert.app`; Test-IDs unter derselben Kennung.
+- Expo: nur Anzeigename/Texte ändern; Slug und Scheme `preisfuchs`, Bundle-/Paket-ID
+  `de.preisfuchs.app`, OAuth-Redirects, Google-Clients und EAS-Verknüpfung bleiben erhalten.
+- Bestehende Cloud-Projektnamen, Datenquellen-Werte und lokale Speicher-Schlüssel bleiben
+  technische Kennungen. Ältere Einträge unten dokumentieren den damaligen Stand.
+
 ## Aktueller iOS-Stand (28.11.2026)
 
 - SwiftUI-App unter `ios/Preisfuchs/` mit fünf Tabs: Start, Suche,
@@ -17,7 +27,7 @@
 
 ## Projektentscheidungen
 
-- App-Name: Preisfuchs
+- App-Name: Korbwert (interner Codename Preisfuchs)
 - Zielregion: Baden-Württemberg
 - Erste Märkte: Aldi Süd, Lidl, Rewe, Edeka, Kaufland
 - Produkte: 76 Standard-Lebensmittel und Alltagsprodukte, gruppiert nach Kategorien statt langer

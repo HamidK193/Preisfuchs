@@ -1,7 +1,7 @@
 # SwiftUI-Plan 01: Architektur, Build und Verteilung
 
 Stand: 10. Oktober 2026. Teilplan zu `docs/SWIFTUI_PLAN.md`. Ziel ist eine
-native SwiftUI-iOS-App „Preisfuchs“, die die Expo-App unter `mobile/` als
+native SwiftUI-iOS-App „Korbwert“, die die Expo-App unter `mobile/` als
 primäre App ablöst. `mobile/` bleibt die Feature-Referenz. Das Backend
 (Supabase, Edge Function `report-price`, GitHub-Actions-Agents) bleibt
 unverändert.
@@ -419,9 +419,8 @@ zusätzlicher `ubuntu-latest`-Job für `swift test` im `PreisfuchsKit/Domain`.
    Repo öffentlich?
 4. **Deployment Target:** iOS 17 (Empfehlung) oder iOS 18? Welche iPhones
    haben die Kollegen?
-5. **Bundle-ID:** `de.preisfuchs.app` von Expo übernehmen (Expo-App wird dann
-   nicht mehr parallel in TestFlight/App Store geführt) oder neue ID für die
-   Übergangszeit?
+5. **Bundle-ID (entschieden 28.11.2026):** SwiftUI verwendet `de.korbwert.app`.
+   Expo behält `de.preisfuchs.app`; Module, Targets und Repo behalten Preisfuchs.
 6. **Expo-App/Android:** `mobile/` einfrieren, parallel pflegen oder als
    Android-Variante behalten?
 7. **TestFlight intern vs. extern:** Kollegen als App-Store-Connect-Nutzer

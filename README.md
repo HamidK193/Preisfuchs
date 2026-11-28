@@ -1,10 +1,16 @@
-# Preisfuchs
+# Korbwert
 
-Preisfuchs ist ein iOS- und Web-MVP für Lebensmittel-Preisvergleich in
+Korbwert ist ein iOS- und Web-MVP für Lebensmittel-Preisvergleich in
 ganz Deutschland (der erste Datenpilot lief in Baden-Württemberg). Die App zeigt für Standard-Lebensmittel beobachtete Preise,
 Märkte, Quellen, Aktualität, Filialadressen und Öffnungszeiten an. Warenkörbe
 können gespeichert und per Link geteilt werden; öffentliche App-Rabatte und
 personalisierte Coupons bleiben getrennte, freiwillige Vergleichsoptionen.
+
+Seit 28.11.2026 heißt die App Korbwert. Preisfuchs bleibt der interne Codename
+für Repository, Swift-Module, Ordner und Targets. Die native iOS-App verwendet
+`de.korbwert.app`; Expo behält vorerst `preisfuchs` als Slug und URL-Scheme sowie
+`de.preisfuchs.app` als iOS-/Android-Kennung. OAuth-Redirects, Google-Clients und
+die EAS-Verknüpfung bleiben unverändert und brauchen später eine koordinierte Migration.
 
 Der erste kostenlose Ansatz kombiniert:
 
@@ -176,7 +182,7 @@ zur unvollständigen Teilsumme.
 ### Windows-Testversion im Browser
 
 Die native iOS-App kann auf Windows nicht direkt gebaut oder im iOS-Simulator
-gestartet werden. Damit du Preisfuchs trotzdem sofort testen kannst, gibt es
+gestartet werden. Damit du Korbwert trotzdem sofort testen kannst, gibt es
 zusätzlich eine Web/PWA-Version.
 
 Wenn die Web-App Supabase-Daten laden soll, lege zuerst `web/.env.local` an:
@@ -358,11 +364,11 @@ und Produktions-Build; Dependabot überwacht npm, Python und Actions.
 ## Datenrealität
 
 Kostenlose Quellen liefern keine vollständige Echtzeit-Abdeckung aller
-Supermarkt-Filialpreise. Preisfuchs zeigt deshalb immer Quelle und
+Supermarkt-Filialpreise. Korbwert zeigt deshalb immer Quelle und
 Aktualisierungsdatum. Preise werden als Beobachtungen modelliert, nicht als
 garantierte Live-Preise.
 
 Das gilt besonders für App-Coupons: Sie können marktbezogen,
-aktivierungspflichtig oder personalisiert sein. Preisfuchs zeigt diese
+aktivierungspflichtig oder personalisiert sein. Korbwert zeigt diese
 Bedingungen an und behandelt den App-Preis nicht als allgemein verfügbaren
 Regalpreis.

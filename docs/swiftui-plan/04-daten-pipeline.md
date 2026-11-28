@@ -55,7 +55,7 @@ Gemeinsames Gerüst (`agent_common.py`):
 - Jeder Lauf erzeugt eine `update_runs`-Zeile mit `status` (`succeeded` / `partial` /
   `failed` / `no_data`), `imported_count` und dem JSON-`report`.
 - Die GTIN-Prüfziffer wird geprüft.
-- Der User-Agent lautet `Preisfuchs-MVP/0.2`.
+- Der User-Agent lautet `Korbwert/0.3 (open data price comparison MVP)`.
 
 Vor jedem Lauf führt CI die Unit-Tests aus (`test_*.py`, `test_source_agents`).
 
@@ -338,7 +338,7 @@ Jeder Preis zeigt in Liste, Detail und Warenkorb:
     Abdeckung durch Nutzer.
   - Die 76 Seed-Produkte haben nur 6 Barcodes. Sie werden über die GTIN-Artikel abgedeckt,
     nicht über weitere Seed-Barcodes.
-  - Optional: Preisfuchs-Meldungen mit Zustimmung des Nutzers an Open Prices zurückspielen
+  - Optional: Korbwert-Meldungen mit Zustimmung des Nutzers an Open Prices zurückspielen
     (offene Lizenz, eigener Account bei Open Prices). Entscheidung des Users, siehe 6.
 
 ### 4.6 Suche

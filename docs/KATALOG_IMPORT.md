@@ -154,7 +154,7 @@ Alle Agenten (OSM, OFF, Open Prices) beenden Läufe jetzt sauber: SIGTERM wird a
 Zeitrahmen vor dem Workflow-Timeout, Wiederholungen mit Backoff und `Retry-After`, und
 `close_stale_runs` setzt hängende `running`-Läufe älter als zwei Stunden auf `failed`. Der
 OFF-Auffrischlauf überspringt GTINs, die jünger als 14 Tage sind, und schreibt in 50er-Paketen.
-User-Agent ist generisch (`Preisfuchs/0.3 (open data price comparison MVP)`), ohne persönliche Daten.
+User-Agent ist generisch (`Korbwert/0.3 (open data price comparison MVP)`), ohne persönliche Daten.
 
 Open Prices: Der Tagesagent filtert serverseitig (`location__osm_address_country_code=DE`,
 `date__gte`) statt weltweit zu blättern. Einmaliger Nachlauf der letzten 90 Tage: manueller Start

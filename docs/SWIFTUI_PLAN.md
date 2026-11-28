@@ -1,4 +1,4 @@
-# Preisfuchs SwiftUI – Gesamtplan
+# Korbwert SwiftUI – Gesamtplan
 
 Stand: 10.10.2026. Dieser Plan fuehrt die vier Teilplaene zusammen, die Details stehen dort:
 

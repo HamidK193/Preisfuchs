@@ -1,4 +1,4 @@
-# MVP-Plan Preisfuchs
+# MVP-Plan Korbwert
 
 Der aktuelle, ausführliche [Gesamtplan vom 05.09.2026](GESAMTPLAN.md)
 konkretisiert Produktregeln, Webdesign, Quellen, Supabase-Rollout und Betrieb.
@@ -6,7 +6,7 @@ Der folgende ursprüngliche MVP-Plan bleibt als Grundlage erhalten.
 
 ## Ziel
 
-Preisfuchs soll Nutzern in Baden-Wuerttemberg zeigen, wo Standard-Lebensmittel
+Korbwert soll Nutzern in Baden-Wuerttemberg zeigen, wo Standard-Lebensmittel
 aktuell oder zuletzt beobachtet guenstig waren.
 
 ## Datenquellen

@@ -397,7 +397,7 @@ Preview-Strategie: jede Komponente mit `#Preview` in Hell, Dunkel und `.accessib
 | **Widget** "Preisalarm / Angebot" | Produkt, Preis, Markt, **Stand-Datum** | Alarme sichtbar ohne Push | P2 | Daten nur so frisch wie letzter App-Abruf; Text "Stand: …" Pflicht |
 | **Interaktives Widget** | Artikel abhaken (App Intent im Widget) | – | spaeter | erst nach stabilem Listen-Sync |
 | **Live Activity (ActivityKit)** im Einkaufsmodus | Markt, "7 von 15 abgehakt", geschaetzte Summe; Dynamic Island kompakt | Fortschritt auf dem Sperrbildschirm beim Einkaufen | P2 | lokal gestartet, keine Push-Updates noetig; Ende bei "Einkauf abgeschlossen" |
-| **App Intents / Siri / Kurzbefehle** | "Fuege Milch zu Preisfuchs hinzu", "Oeffne meine Einkaufsliste", "Wo ist Butter am guenstigsten?" | Hinzufuegen per Sprache | P2 (Hinzufuegen, Oeffnen), spaeter (Preisfrage) | Preisantwort muss Quelle und Datum nennen; App Shortcuts fuer Spotlight |
+| **App Intents / Siri / Kurzbefehle** | "Fuege Milch zu Korbwert hinzu", "Oeffne meine Einkaufsliste", "Wo ist Butter am guenstigsten?" | Hinzufuegen per Sprache | P2 (Hinzufuegen, Oeffnen), spaeter (Preisfrage) | Preisantwort muss Quelle und Datum nennen; App Shortcuts fuer Spotlight |
 | **Share Extension** | Text oder Liste aus anderer App (z. B. Rezept, Notizen) teilen → Artikel erkennen → in Liste | Listen schnell fuellen | spaeter | Erkennung nur gegen eigenen Katalog, Rest als "nicht erkannt"; kein KI-Einsatz im ersten Schritt |
 | **Spotlight (Core Spotlight)** | Produkte und Listen durchsuchbar | – | spaeter | – |
 | **VisionKit DataScanner** | Barcode-Scanner nativ | ersetzt expo-camera | MVP | Fallback AVFoundation fuer aeltere Geraete |

@@ -1,4 +1,4 @@
-# Preisfuchs – neues Farbschema (Entwurf)
+# Korbwert – neues Farbschema (Entwurf)
 
 Stand: 06.10.2026. Anlass: Feedback „mehr Rot statt Orange, Angebote in Rot, moderner
 und cooler“. Vorbilder auf Mobbin: **DoorDash** (weißer Grund, Rot nur gezielt, schwarze

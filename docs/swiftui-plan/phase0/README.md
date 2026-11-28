@@ -15,7 +15,7 @@ Diese Punkte gelten vor den Teilplaenen:
 3. **.gitignore:** gezielt `ios/Config/Secrets.xcconfig`, `ios/*.xcodeproj/`, `ios/Preisfuchs/Info.plist`, `ios/.spm/`, `xcuserdata/` und Signier-Dateien. Ausdruecklich **nicht** `*.xcconfig`.
 4. **CI (`ios-checks.yml`):** Job `kit-linux` (Container `swift:6.1`, `swift test` fuer das Kit) plus Job `app-macos` aus Teilplan 02. Lint und Format laufen in Phase 0 nur als Hinweis (`continue-on-error: true`), bis die Formatter-Entscheidung gefallen ist.
 5. **Veraltet-Grenze:** 30 Tage, wie in der Expo-App.
-6. **Eckenradius:** vorlaeufig 5, wie in der Expo-App. Bundle-ID `de.preisfuchs.app`.
+6. **Eckenradius:** vorlaeufig 5, wie in der Expo-App. SwiftUI-Bundle-ID `de.korbwert.app`; Expo behält `de.preisfuchs.app`.
 7. **BW-Seed-Job:** standardmaessig aus. Er laesst sich ueber die Repo-Variable `ENABLE_BW_SEED_JOB=true` wieder einschalten (Teilplan 03, Punkt 3).
 8. **OFF-Agent:** kein manueller Lauf. Der Cron am Montag, 12.10., verarbeitet ohnehin alle rund 1.400 GTINs.
 9. **report-price:** `verify_jwt = true` wird ausdruecklich in `supabase/config.toml` festgehalten. Die App nutzt den Legacy-anon-Key.

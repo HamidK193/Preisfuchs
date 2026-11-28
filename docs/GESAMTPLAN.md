@@ -1,11 +1,11 @@
-# Preisfuchs: Gesamtplan
+# Korbwert: Gesamtplan
 
 Stand: 6. September 2026. Dieser Plan konkretisiert den Wiedereinstieg aus
 `memory.md:135` und ergänzt den ursprünglichen iOS-MVP-Plan.
 
 ## Ziel und Grenzen
 
-Preisfuchs hilft, einen tatsächlichen Einkauf bei Lidl, Aldi Süd, Rewe, Edeka
+Korbwert hilft, einen tatsächlichen Einkauf bei Lidl, Aldi Süd, Rewe, Edeka
 und Kaufland in Baden-Württemberg zu vergleichen. Der Nutzer wählt Produkte,
 Mengen und erlaubte Alternativen und erhält einen vollständigen Ein-Laden-Plan
 oder eine Aufteilung. Fehlende Preise bleiben fehlend; historische Beobachtungen
@@ -119,7 +119,7 @@ Preise erhalten tabellarische Ziffern. Das funktioniert ohne externe Fontabrufe.
 ```text
 Desktop
 ┌ Kategorien ┬ Suche                    PLZ / Umkreis     Einkauf ┐
-│ Preisfuchs │ Datenstand / Demo sichtbar                         │
+│ Korbwert   │ Datenstand / Demo sichtbar                         │
 │            │ Dein Einkauf. Gut verglichen.                     │
 │ Bereiche   │ Produkte / Angebote       Händlerabdeckung        │
 │            ├ Produktkarten              ┬ Dein Einkaufszettel  │
@@ -128,7 +128,7 @@ Desktop
 └────────────┴────────────────────────────┴───────────────────────┘
 
 Mobil
-┌ Preisfuchs                                  Einkauf ┐
+┌ Korbwert                                    Einkauf ┐
 │ Suche                                               │
 │ PLZ / Umkreis                 Kategorien horizontal │
 │ Datenstand / Demo                                   │
@@ -140,7 +140,7 @@ Mobil
 
 Nicht funktionsfähige Filter werden aus der Hauptbedienung entfernt. Suche,
 Kategorie, Produktart und Rabattoptionen müssen tatsächliche Wirkung haben.
-Der Begriff „Kasse“ wird durch „Einkauf vergleichen“ ersetzt, weil Preisfuchs
+Der Begriff „Kasse“ wird durch „Einkauf vergleichen“ ersetzt, weil Korbwert
 keine Waren verkauft. Leere Ergebnisse nennen einen nächsten sinnvollen Schritt.
 Der Datenstatus steht auch mobil im Hauptbereich; Datenbanknamen gehören nicht
 in die normale Kaufentscheidung. Quellen und Beobachtungsdatum bleiben bei
@@ -165,7 +165,7 @@ bekommen einen ruhigen, verständlichen Fallback. Keine falschen Markenkartons.
 
 Open Prices stellt API, JSONL-Exporte und einen Parquet-Datensatz bereit; die
 offizielle Dokumentation nennt ODbL und die Trennung nicht frei weitergebbarer
-Daten. Daraus folgt für Preisfuchs: Quellenfreigaben pro Beobachtung erhalten,
+Daten. Daraus folgt für Korbwert: Quellenfreigaben pro Beobachtung erhalten,
 keine pauschale Freigabe alter Prospektimporte.
 [Open-Prices-Datendokumentation](https://github.com/openfoodfacts/open-prices/blob/main/docs/guides/data.md)
 

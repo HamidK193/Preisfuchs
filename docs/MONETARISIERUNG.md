@@ -1,4 +1,4 @@
-# Preisfuchs – Monetarisierung
+# Korbwert – Monetarisierung
 
 Stand: 04.10.2026 · Entwurf, noch nicht umgesetzt.
 
@@ -14,7 +14,7 @@ von Marken-Budgets – Lehre aus der Smhaggle-Insolvenz 09/2026).
 
 | Phase | Wann | Einnahmequelle | Aufwand |
 |---|---|---|---|
-| 1 | ab Launch | Abo "Preisfuchs Plus" (Freemium, Kern bleibt kostenlos) | mittel |
+| 1 | ab Launch | Abo "Korbwert Plus" (Freemium, Kern bleibt kostenlos) | mittel |
 | 1 | ab Launch | Native Werbebanner ("Anzeige") ueber Werbenetzwerk | gering |
 | 1 | ab Launch | Affiliate-Links zu Online-Lieferdiensten ("Partnerlink") | gering |
 | 2 | ab einigen tausend Nutzern | Direkte lokale Werbepartner (selbststaendige Kaufleute, Getraenkemaerkte, Bioläden) | mittel |
@@ -54,7 +54,7 @@ von Marken-Budgets – Lehre aus der Smhaggle-Insolvenz 09/2026).
    lokales Marketingbudget), dann Getraenkemaerkte, Bioläden, Baeckereien; spaeter Marken/Agenturen
    und Retail-Media-Abteilungen der Haendler.
 
-## Phase 1 – Preisfuchs Plus
+## Phase 1 – Korbwert Plus
 
 - **Preis:** 1,99 EUR/Monat oder 14,99 EUR/Jahr, 14 Tage kostenlos testen.
 - **Kostenlos bleibt:** Suche, Preisvergleich, Warenkorb, Marktvergleich, 3 Preisalarme, 8 Wochen Preisverlauf.
@@ -77,7 +77,7 @@ von Marken-Budgets – Lehre aus der Smhaggle-Insolvenz 09/2026).
 ## Benoetigte Screens (Block 8 im Screen-Plan)
 
 1. Datenschutz-Einwilligung (Onboarding)
-2. Preisfuchs Plus – Paywall / Vorteile
+2. Korbwert Plus – Paywall / Vorteile
 3. Plus verwalten (Profil)
 4. Werbe-Slot-Varianten auf Start und in Suchergebnissen
 5. "Online bestellen"-Partnerlink auf Produktdetail

@@ -2,10 +2,11 @@
 
 ## Zweck
 
-Diese Datei beschreibt die Arbeitsregeln fuer das Projekt Preisfuchs.
-Preisfuchs ist ein MVP fuer Lebensmittel-Preisvergleich in ganz
+Diese Datei beschreibt die Arbeitsregeln fuer das Projekt Korbwert.
+Korbwert ist ein MVP fuer Lebensmittel-Preisvergleich in ganz
 Deutschland. Der erste Datenpilot lief in Baden-Wuerttemberg; Code, Texte und
 Design duerfen keine Region fest voraussetzen.
+Der interne Codename Preisfuchs bleibt fuer Repository, Module, Ordner und Targets erhalten.
 
 ## Arbeitsregeln
 
@@ -27,7 +28,7 @@ Design duerfen keine Region fest voraussetzen.
 
 ## MVP-Ziel
 
-- App "Preisfuchs" mit Suche nach Standard-Lebensmitteln
+- App "Korbwert" mit Suche nach Standard-Lebensmitteln
 - Preisvergleich fuer Standard-Supermaerkte in ganz Deutschland (Standort per PLZ und Radius)
 - Demo-Daten lokal in der App
 - Supabase-Schema fuer Produkte, Maerkte, Filialen und Preisbeobachtungen

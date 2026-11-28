@@ -312,11 +312,14 @@ try await client.auth.verifyOTP(email: email.trimmed, token: code, type: .email)
 
 Referenz: `lib/google-auth.ts`, `constants/app.ts`, `app.json`.
 
-- Bundle-ID: `de.preisfuchs.app` (wie `mobile/app.json`). URL-Scheme `preisfuchs`.
+- SwiftUI-Bundle-ID: `de.korbwert.app` (entschieden 28.11.2026). Expo bleibt bei
+  `de.preisfuchs.app` (`mobile/app.json`); das bestehende URL-Scheme `preisfuchs` bleibt erhalten.
 - Client-IDs: Web-Client "Preisfuchs Supabase (Web)" und iOS-Client "Preisfuchs iOS" im
   Google-Cloud-Projekt "Preisfuchs"; die IDs stehen in `mobile/src/constants/app.ts` und werden in
-  die Swift-Konfiguration uebernommen (Client-IDs sind oeffentlich, das Client-Secret nicht).
-  Der iOS-Client muss auf die Bundle-ID `de.preisfuchs.app` lauten.
+  der Expo-Konfiguration verwendet (Client-IDs sind oeffentlich, das Client-Secret nicht).
+  Der bestehende iOS-Client bleibt an Expo (`de.preisfuchs.app`) gebunden. Fuer natives
+  Google Sign-In in SwiftUI ist ein eigener Client fuer `de.korbwert.app` einzurichten;
+  ihn vor Freigabe separat in Supabase erlauben und testen. Bestehende Redirects bleiben erhalten.
 - Paket: `GoogleSignIn-iOS` (SPM). In `Info.plist`: `GIDClientID` (iOS-Client),
   `GIDServerClientID` (Web-Client, damit das ID-Token die Web-Client-ID als `aud` enthaelt) und
   den **umgekehrten iOS-Client-ID** als URL-Scheme.
@@ -596,7 +599,7 @@ App-Privacy-Angaben anpassen; Alarme ohne Push-Wunsch bleiben lokal.
 
 **L4 – Versand-Function `send-notifications`.** Liest neue Beobachtungen seit dem letzten Lauf aus
 `current_price_observations`, gleicht mit `price_alerts` ab, sendet ueber APNs (Secrets:
-`APNS_KEY_P8`, `APNS_KEY_ID`, `APNS_TEAM_ID`, `APNS_BUNDLE_ID=de.preisfuchs.app`), entfernt Tokens bei
+`APNS_KEY_P8`, `APNS_KEY_ID`, `APNS_TEAM_ID`, `APNS_BUNDLE_ID=de.korbwert.app`), entfernt Tokens bei
 APNs-Status 410. Ausloeser: letzter Schritt in `.github/workflows/daily-price-update.yml`
 (`curl` mit Service-Role-Secret) oder `pg_cron` + `pg_net`. Ruhezeiten beachten. Voraussetzung:
 Apple Developer Program.

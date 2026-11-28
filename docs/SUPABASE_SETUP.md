@@ -1,4 +1,4 @@
-# Supabase Setup fuer Preisfuchs
+# Supabase Setup fuer Korbwert
 
 Stand 06.09.2026: Das bestehende Preisfuchs-Projekt ist wieder aktiv. Die sieben
 lokalen Migrationsversionen einschließlich Initial-Baseline sind registriert;
@@ -11,7 +11,7 @@ Der [BW-Pilot](PILOT_2026-09-06.md) ergänzt drei bestätigte Artikel und sechs
 ## 1. Projekt erstellen
 
 1. Oeffne https://supabase.com/dashboard/projects
-2. Erstelle ein neues Projekt, z.B. `Preisfuchs`
+2. Erstelle ein neues Projekt, z.B. `Korbwert`
 3. Region: am besten `Central EU` oder die naechste verfuegbare EU-Region
 4. Warte, bis das Projekt bereit ist
 
