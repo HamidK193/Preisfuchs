@@ -39,7 +39,15 @@ jobs:
         run: swift --version
 
       - name: Test PreisfuchsKit (swift test)
-        run: swift test --package-path ios/Packages/PreisfuchsKit
+        shell: bash
+        run: |
+          set -o pipefail
+          swift test --package-path ios/Packages/PreisfuchsKit 2>&1 | tee "$RUNNER_TEMP/kit-test.log"
+
+      - name: Annotate failures
+        if: failure()
+        shell: bash
+        run: bash ios/scripts/ci-annotate.sh "$RUNNER_TEMP/kit-test.log"
 
   app-macos:
     runs-on: macos-26
@@ -96,7 +104,9 @@ jobs:
           restore-keys: spm-${{ runner.os }}-xcode26.6-
 
       - name: Test PreisfuchsKit (swift test)
-        run: swift test --package-path Packages/PreisfuchsKit --parallel
+        run: |
+          set -o pipefail
+          swift test --package-path Packages/PreisfuchsKit --parallel 2>&1 | tee "$RUNNER_TEMP/kit-test.log"
 
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
@@ -148,7 +158,13 @@ jobs:
             -clonedSourcePackagesDirPath .spm \
             -resultBundlePath TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
-            | tee xcodebuild.log
+            2>&1 | tee xcodebuild.log
+
+      - name: Annotate failures
+        if: failure()
+        run: |
+          bash scripts/ci-annotate.sh "$RUNNER_TEMP/kit-test.log"
+          if [ -f xcodebuild.log ]; then bash scripts/ci-annotate.sh xcodebuild.log; fi
 
       - name: Upload test results
         if: failure()
