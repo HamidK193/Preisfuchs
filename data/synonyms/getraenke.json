@@ -1,0 +1,140 @@
+[
+  {
+    "canonical": "wasser",
+    "terms": [
+      "wasser",
+      "stilles wasser",
+      "leitungswasser",
+      "mineralwasser"
+    ]
+  },
+  {
+    "canonical": "sprudelwasser",
+    "terms": [
+      "sprudelwasser",
+      "sprudelwasser natur",
+      "sprudelwasser mit gas"
+    ]
+  },
+  {
+    "canonical": "saft",
+    "terms": [
+      "saft",
+      "apfelsaft",
+      "orangensaft",
+      "birnensaft"
+    ]
+  },
+  {
+    "canonical": "limonade",
+    "terms": [
+      "limonade",
+      "cola",
+      "orange limonade",
+      "zitrone limonade"
+    ]
+  },
+  {
+    "canonical": "bier",
+    "terms": [
+      "bier",
+      "pilsner",
+      "weizenbier",
+      "dunkelbier"
+    ]
+  },
+  {
+    "canonical": "wein",
+    "terms": [
+      "wein",
+      "rotwein",
+      "weisswein",
+      "rosewein"
+    ]
+  },
+  {
+    "canonical": "sekt",
+    "terms": [
+      "sekt",
+      "sekt brut",
+      "prosecco",
+      "sekt rose"
+    ]
+  },
+  {
+    "canonical": "kaffee",
+    "terms": [
+      "kaffee",
+      "espresso",
+      "filterkaffee",
+      "kaffeebohnen"
+    ]
+  },
+  {
+    "canonical": "tee",
+    "terms": [
+      "tee",
+      "gruner tee",
+      "schwarzer tee",
+      "fruchttee"
+    ]
+  },
+  {
+    "canonical": "eistee",
+    "terms": [
+      "eistee",
+      "eistee zitrone",
+      "eistee apfel",
+      "eistee beer"
+    ]
+  },
+  {
+    "canonical": "heisse schokolade",
+    "terms": [
+      "heisse schokolade",
+      "schoko getraenk",
+      "kakao"
+    ]
+  },
+  {
+    "canonical": "milchshake",
+    "terms": [
+      "milchshake",
+      "vanille shake",
+      "schoko shake",
+      "eiskaffee"
+    ]
+  },
+  {
+    "canonical": "energiedrink",
+    "terms": [
+      "energiedrink",
+      "red bull",
+      "energiedrink orange"
+    ]
+  },
+  {
+    "canonical": "radler",
+    "terms": [
+      "radler",
+      "radler zitrone",
+      "radler lime"
+    ]
+  },
+  {
+    "canonical": "teegetraenk",
+    "terms": [
+      "teegetraenk",
+      "teegetraenk zitrone",
+      "teegetraenk apfel"
+    ]
+  },
+  {
+    "canonical": "kakaopulver",
+    "terms": [
+      "kakaopulver",
+      "kakaopulver natur",
+      "kakaopulver suess"
+    ]
+  }
+]

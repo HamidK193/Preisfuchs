@@ -98,12 +98,16 @@ jobs:
               else:
                   summary.write('Import stopped before a report was written. Check the failed step.\n')
 
-      - name: Create issue for failed price update
+      - name: Create issue for failed price update (once while one is open)
         if: failure()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          gh issue create \
-            --title "Daily price update failed" \
-            --body "Workflow run failed: $RUN_URL"
+          open=$(gh issue list --state open --search '"Daily price update failed" in:title' --json number --jq length)
+          if [ "$open" = "0" ]; then
+            gh issue create \
+              --title "Daily price update failed" \
+              --body "Workflow run failed: $RUN_URL (further failures are not reported again while this issue is open)"
+          fi

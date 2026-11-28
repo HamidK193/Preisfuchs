@@ -1,0 +1,217 @@
+[
+  {
+    "canonical": "rindfleisch",
+    "terms": [
+      "rindfleisch",
+      "rindergulasch",
+      "roastbeef",
+      "filet vom rind",
+      "rindersteak",
+      "rindroulade"
+    ]
+  },
+  {
+    "canonical": "hackfleisch",
+    "terms": [
+      "hackfleisch",
+      "rinderhackfleisch",
+      "hackbulette",
+      "hackfleisch aus rind",
+      "hackfleisch aus schwein"
+    ]
+  },
+  {
+    "canonical": "schweinefleisch",
+    "terms": [
+      "schweinefleisch",
+      "schweinebraten",
+      "schweinefilet",
+      "schweineschnitzel",
+      "schweinebauch"
+    ]
+  },
+  {
+    "canonical": "lammfleisch",
+    "terms": [
+      "lammfleisch",
+      "lammkotelett",
+      "lammhaxe",
+      "lammkeule",
+      "lammruecken"
+    ]
+  },
+  {
+    "canonical": "kalbfleisch",
+    "terms": [
+      "kalbfleisch",
+      "kalbsbraten",
+      "kalbshaxe",
+      "kalbsfilet"
+    ]
+  },
+  {
+    "canonical": "wildfleisch",
+    "terms": [
+      "wildfleisch",
+      "rehruecken",
+      "wildschweinschnitzel",
+      "hasenbraten"
+    ]
+  },
+  {
+    "canonical": "bratwurst",
+    "terms": [
+      "bratwurst",
+      "schwabische bratwurst",
+      "bayrische bratwurst",
+      "thueringer roestwurst"
+    ]
+  },
+  {
+    "canonical": "leberkaese",
+    "terms": [
+      "leberkaese",
+      "leberkaes",
+      "bayrische leberkaese",
+      "oberfranken leberkaese"
+    ]
+  },
+  {
+    "canonical": "kassler",
+    "terms": [
+      "kassler",
+      "kasslerbraten",
+      "kasslerhals",
+      "kasslerschinken"
+    ]
+  },
+  {
+    "canonical": "mettwurst",
+    "terms": [
+      "mettwurst",
+      "mettwuerstchen",
+      "mettwurst scheiben",
+      "mettwurst natur"
+    ]
+  },
+  {
+    "canonical": "aufschnitt",
+    "terms": [
+      "aufschnitt",
+      "fleischwuerstchen",
+      "aufschnittwuerste",
+      "geraeucherte fleischwuerste"
+    ]
+  },
+  {
+    "canonical": "schinken",
+    "terms": [
+      "schinken",
+      "kochschinken",
+      "geraeucherter schinken",
+      "schinkenscheiben",
+      "schinkenbrust"
+    ]
+  },
+  {
+    "canonical": "salami",
+    "terms": [
+      "salami",
+      "salami scheiben",
+      "salami aufschnitt",
+      "salami aus schweinefleisch"
+    ]
+  },
+  {
+    "canonical": "lachs",
+    "terms": [
+      "lachs",
+      "lachsfilet",
+      "lachs scheiben",
+      "geraeucherter lachs",
+      "lachs roe"
+    ]
+  },
+  {
+    "canonical": "hering",
+    "terms": [
+      "hering",
+      "heringsfilet",
+      "heringscheiben",
+      "hering geraeuchert"
+    ]
+  },
+  {
+    "canonical": "makrele",
+    "terms": [
+      "makrele",
+      "makrelenfilet",
+      "makrelensteak",
+      "makrele geraeuchert"
+    ]
+  },
+  {
+    "canonical": "thunfisch",
+    "terms": [
+      "thunfisch",
+      "thunfischdose",
+      "thunfisch im eigenen saft",
+      "thunfisch in olivenoel"
+    ]
+  },
+  {
+    "canonical": "kabeljau",
+    "terms": [
+      "kabeljau",
+      "kabeljaufilet",
+      "kabeljaustreifen"
+    ]
+  },
+  {
+    "canonical": "garnelen",
+    "terms": [
+      "garnelen",
+      "garnelen cocktail",
+      "garnelen roh",
+      "tigergarnelen"
+    ]
+  },
+  {
+    "canonical": "huhn",
+    "terms": [
+      "huhn",
+      "huhnfilet",
+      "huhnkeule",
+      "huhnbrust",
+      "huhnfluegel"
+    ]
+  },
+  {
+    "canonical": "pute",
+    "terms": [
+      "pute",
+      "putenbrust",
+      "putenkeule",
+      "putenfilet",
+      "putenschnitzel"
+    ]
+  },
+  {
+    "canonical": "ente",
+    "terms": [
+      "ente",
+      "entenbrust",
+      "entenkeule",
+      "entenfilet"
+    ]
+  },
+  {
+    "canonical": "gans",
+    "terms": [
+      "gans",
+      "gansbrust",
+      "ganskeule",
+      "gansfluegel"
+    ]
+  }
+]

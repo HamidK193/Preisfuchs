@@ -1,0 +1,186 @@
+[
+  {
+    "canonical": "milch",
+    "terms": [
+      "milch",
+      "vollmilch",
+      "halbfettmilch",
+      "fettarme milch",
+      "laktosefreie milch",
+      "bio vollmilch"
+    ]
+  },
+  {
+    "canonical": "joghurt",
+    "terms": [
+      "joghurt",
+      "jogurt",
+      "naturjoghurt",
+      "joghurt naturell",
+      "griechischer joghurt",
+      "joghurt mit fruechten",
+      "butterjoghurt"
+    ]
+  },
+  {
+    "canonical": "skyr",
+    "terms": [
+      "skyr",
+      "skyr naturell",
+      "skyr light",
+      "skyr natur"
+    ]
+  },
+  {
+    "canonical": "quark",
+    "terms": [
+      "quark",
+      "magerquark",
+      "quark naturell",
+      "quark light",
+      "quark 20 prozent"
+    ]
+  },
+  {
+    "canonical": "kaese",
+    "terms": [
+      "kaese",
+      "harter kaese",
+      "weicher kaese",
+      "geraeucherter kaese",
+      "kaese gerieben"
+    ]
+  },
+  {
+    "canonical": "mozzarella",
+    "terms": [
+      "mozzarella",
+      "mozzarella kugel",
+      "mozzarella stange",
+      "frische mozzarella",
+      "mozzarella gerieben"
+    ]
+  },
+  {
+    "canonical": "feta",
+    "terms": [
+      "feta",
+      "feta kaese",
+      "feta light",
+      "feta aus kuhmilch"
+    ]
+  },
+  {
+    "canonical": "parmesan",
+    "terms": [
+      "parmesan",
+      "parmesan gerieben",
+      "parmigiano",
+      "parmesan stueck"
+    ]
+  },
+  {
+    "canonical": "brie",
+    "terms": [
+      "brie",
+      "brie laisonne",
+      "brie kaese"
+    ]
+  },
+  {
+    "canonical": "camembert",
+    "terms": [
+      "camembert",
+      "camembert laisonne",
+      "camembert kaese"
+    ]
+  },
+  {
+    "canonical": "gouda",
+    "terms": [
+      "gouda",
+      "gouda gerieben",
+      "gouda kaese",
+      "halbfetter gouda"
+    ]
+  },
+  {
+    "canonical": "edamer",
+    "terms": [
+      "edamer",
+      "edamer gerieben",
+      "edamer kaese"
+    ]
+  },
+  {
+    "canonical": "halloumi",
+    "terms": [
+      "halloumi",
+      "halloumi kaese",
+      "halloumi stange"
+    ]
+  },
+  {
+    "canonical": "kuesenkaese",
+    "terms": [
+      "kuesenkaese",
+      "kuesenkaese natur",
+      "kuesenkaese light"
+    ]
+  },
+  {
+    "canonical": "frischkaese",
+    "terms": [
+      "frischkaese",
+      "frischkaese natur",
+      "cottage cheese",
+      "quarkcreme"
+    ]
+  },
+  {
+    "canonical": "butter",
+    "terms": [
+      "butter",
+      "salzbutter",
+      "suessbutter",
+      "halbbutter",
+      "butter light",
+      "bio butter"
+    ]
+  },
+  {
+    "canonical": "sahne",
+    "terms": [
+      "sahne",
+      "kochsahne",
+      "schlagsahne",
+      "sahne zum schlagen",
+      "sahne light",
+      "vegetarische saehne"
+    ]
+  },
+  {
+    "canonical": "buttermilch",
+    "terms": [
+      "buttermilch",
+      "buttermilch naturell",
+      "buttermilch light"
+    ]
+  },
+  {
+    "canonical": "trinkjoghurt",
+    "terms": [
+      "trinkjoghurt",
+      "trinkjoghurt naturell",
+      "trinkjoghurt mit fruechten"
+    ]
+  },
+  {
+    "canonical": "sahnemilch",
+    "terms": [
+      "sahnemilch",
+      "sahnemilch 10 prozent",
+      "sahnemilch 15 prozent"
+    ]
+  }
+]

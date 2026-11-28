@@ -1,0 +1,232 @@
+[
+  {
+    "canonical": "kartoffel",
+    "terms": [
+      "kartoffel",
+      "kartoffeln",
+      "erdapfel",
+      "erdapfelchen",
+      "pommern",
+      "drillinge",
+      "knoeper",
+      "salzkartoffeln"
+    ]
+  },
+  {
+    "canonical": "salat",
+    "terms": [
+      "salat",
+      "salatblatt",
+      "salatmischung",
+      "kopfsalat",
+      "eissalat",
+      "feldsalat",
+      "pfluecksalat",
+      "romanesco"
+    ]
+  },
+  {
+    "canonical": "pilze",
+    "terms": [
+      "pilze",
+      "pilz",
+      "champignons",
+      "braune champignons",
+      "weisse champignons",
+      "portobello",
+      "pilze frisch",
+      "pilze mix"
+    ]
+  },
+  {
+    "canonical": "tomate",
+    "terms": [
+      "tomate",
+      "tomaten",
+      "cocktailtomaten",
+      "cherrytomaten",
+      "tomate bio"
+    ]
+  },
+  {
+    "canonical": "gurke",
+    "terms": [
+      "gurke",
+      "salatgurke",
+      "gurkenscheiben",
+      "gurke bio"
+    ]
+  },
+  {
+    "canonical": "paprika",
+    "terms": [
+      "paprika",
+      "rote paprika",
+      "gloeckchenpaprika",
+      "paprika bio"
+    ]
+  },
+  {
+    "canonical": "zwiebel",
+    "terms": [
+      "zwiebel",
+      "zwiebeln",
+      "rote zwiebel",
+      "zwiebel bio"
+    ]
+  },
+  {
+    "canonical": "lauch",
+    "terms": [
+      "lauch",
+      "porree",
+      "boerner lauch",
+      "lauch bio"
+    ]
+  },
+  {
+    "canonical": "brokkoli",
+    "terms": [
+      "brokkoli",
+      "brokkolo",
+      "brokkoli bio"
+    ]
+  },
+  {
+    "canonical": "kohl",
+    "terms": [
+      "kohl",
+      "weisskohl",
+      "rotkohl",
+      "spitzkohl",
+      "kohl bio"
+    ]
+  },
+  {
+    "canonical": "moehre",
+    "terms": [
+      "moehre",
+      "moehren",
+      "karotte",
+      "karotten",
+      "moehre bio"
+    ]
+  },
+  {
+    "canonical": "sellerie",
+    "terms": [
+      "sellerie",
+      "stangensellerie",
+      "sellerieblatt",
+      "sellerie bio"
+    ]
+  },
+  {
+    "canonical": "zucchini",
+    "terms": [
+      "zucchini",
+      "zucchini bio",
+      "zucchini klein"
+    ]
+  },
+  {
+    "canonical": "aubergine",
+    "terms": [
+      "aubergine",
+      "auberginen",
+      "aubergine bio"
+    ]
+  },
+  {
+    "canonical": "spargel",
+    "terms": [
+      "spargel",
+      "weisser spargel",
+      "gruener spargel",
+      "spargel bio"
+    ]
+  },
+  {
+    "canonical": "ruebe",
+    "terms": [
+      "ruebe",
+      "rote ruebe",
+      "ruebe bio"
+    ]
+  },
+  {
+    "canonical": "knoblauch",
+    "terms": [
+      "knoblauch",
+      "knoblauchzehe",
+      "schoenknoblauch",
+      "knoblauch bio"
+    ]
+  },
+  {
+    "canonical": "petersilie",
+    "terms": [
+      "petersilie",
+      "glatte petersilie",
+      "petersilienblatt",
+      "petersilie bio"
+    ]
+  },
+  {
+    "canonical": "spinat",
+    "terms": [
+      "spinat",
+      "jungspinat",
+      "spinat bio"
+    ]
+  },
+  {
+    "canonical": "fenchel",
+    "terms": [
+      "fenchel",
+      "fenchelknolle",
+      "fenchel bio"
+    ]
+  },
+  {
+    "canonical": "kuerbis",
+    "terms": [
+      "kuerbis",
+      "suerkuerbis",
+      "butterkuerbis",
+      "kuerbis bio"
+    ]
+  },
+  {
+    "canonical": "mais",
+    "terms": [
+      "mais",
+      "maiskolben",
+      "mais bio"
+    ]
+  },
+  {
+    "canonical": "erbsen",
+    "terms": [
+      "erbsen",
+      "gruene erbsen",
+      "erbsen bio"
+    ]
+  },
+  {
+    "canonical": "radieschen",
+    "terms": [
+      "radieschen",
+      "radieschen rot",
+      "radieschen bio"
+    ]
+  },
+  {
+    "canonical": "mangold",
+    "terms": [
+      "mangold",
+      "mangoldblatter",
+      "mangold bio"
+    ]
+  }
+]

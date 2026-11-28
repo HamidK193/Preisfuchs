@@ -1,0 +1,153 @@
+[
+  {
+    "canonical": "brot",
+    "terms": [
+      "brot",
+      "weizenbrot",
+      "roggenbrot",
+      "vollkornbrot",
+      "mischbrot",
+      "dinkelbrot"
+    ]
+  },
+  {
+    "canonical": "broetchen",
+    "terms": [
+      "broetchen",
+      "semmel",
+      "schrippe",
+      "weckerl",
+      "kaisersemmel"
+    ]
+  },
+  {
+    "canonical": "toast",
+    "terms": [
+      "toast",
+      "toastbrot",
+      "toastbroetchen",
+      "toastbrot natur"
+    ]
+  },
+  {
+    "canonical": "schwedenbrot",
+    "terms": [
+      "schwedenbrot",
+      "schwedenbrot stueck",
+      "schwedenbrot natur"
+    ]
+  },
+  {
+    "canonical": "brezel",
+    "terms": [
+      "brezel",
+      "laugenbrezel",
+      "brezel mit salz"
+    ]
+  },
+  {
+    "canonical": "croissant",
+    "terms": [
+      "croissant",
+      "croissant natur",
+      "croissant mit zucker"
+    ]
+  },
+  {
+    "canonical": "krapfen",
+    "terms": [
+      "krapfen",
+      "berliner",
+      "krapfen mit marmelade"
+    ]
+  },
+  {
+    "canonical": "strudel",
+    "terms": [
+      "strudel",
+      "apfelstrudel",
+      "zimtstrudel"
+    ]
+  },
+  {
+    "canonical": "kuchen",
+    "terms": [
+      "kuchen",
+      "ruehrkuchen",
+      "apfelkuchen",
+      "kuchen stueck"
+    ]
+  },
+  {
+    "canonical": "plaetzchen",
+    "terms": [
+      "plaetzchen",
+      "weihnachtsplaetzchen",
+      "vanilleplaetzchen"
+    ]
+  },
+  {
+    "canonical": "keks",
+    "terms": [
+      "keks",
+      "butterkeks",
+      "schoko keks"
+    ]
+  },
+  {
+    "canonical": "waffeln",
+    "terms": [
+      "waffeln",
+      "waffel",
+      "waffel mit marmelade"
+    ]
+  },
+  {
+    "canonical": "baguette",
+    "terms": [
+      "baguette",
+      "baguette stueck",
+      "franzoesisches brot"
+    ]
+  },
+  {
+    "canonical": "bagel",
+    "terms": [
+      "bagel",
+      "bagel mit sesam",
+      "bagel mit leinsamen"
+    ]
+  },
+  {
+    "canonical": "brioche",
+    "terms": [
+      "brioche",
+      "brioche natur",
+      "brioche mit zucker"
+    ]
+  },
+  {
+    "canonical": "zwieback",
+    "terms": [
+      "zwieback",
+      "zwieback stueck",
+      "zwieback mit zucker"
+    ]
+  },
+  {
+    "canonical": "flaemmchen",
+    "terms": [
+      "flaemmchen",
+      "flaemmchen mit marmelade",
+      "flaemmchen natur"
+    ]
+  },
+  {
+    "canonical": "muffin",
+    "terms": [
+      "muffin",
+      "muffin stueck",
+      "muffin mit schokolade"
+    ]
+  }
+]
