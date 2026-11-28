@@ -26,7 +26,7 @@ struct SupabaseAuthClient: PreisfuchsData.AuthClient {
         } catch {
             throw map(error)
         }
-        guard let user = response.session?.user else {
+        guard let user = response.session?.user, user.isAnonymous == false, user.email != nil else {
             throw AuthFailure.unknown("Für dieses Konto ist noch eine Bestätigung nötig")
         }
         return PreisfuchsData.AuthUser(id: user.id, email: user.email)
@@ -45,7 +45,10 @@ struct SupabaseAuthClient: PreisfuchsData.AuthClient {
         return AsyncStream { continuation in
             let task = Task {
                 for await (_, session) in changes {
-                    let user = session.map { PreisfuchsData.AuthUser(id: $0.user.id, email: $0.user.email) }
+                    let user = session.flatMap { session -> PreisfuchsData.AuthUser? in
+                        guard session.user.isAnonymous == false, session.user.email != nil else { return nil }
+                        return PreisfuchsData.AuthUser(id: session.user.id, email: session.user.email)
+                    }
                     continuation.yield(user)
                 }
             }

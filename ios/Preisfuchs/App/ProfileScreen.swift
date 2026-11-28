@@ -7,6 +7,17 @@ struct ProfileScreen: View {
 
     var body: some View {
         List {
+            Section("Konto und Beiträge") {
+                if let user = model.account.user {
+                    Text("Angemeldet: \(user.email ?? "E-Mail-Konto")")
+                    Button("Abmelden") { Task { await model.account.signOut() } }
+                        .disabled(model.account.isWorking)
+                    if let message = model.account.message { Text(message).foregroundStyle(.red) }
+                } else {
+                    NavigationLink("Mit E-Mail anmelden") { LoginScreen(account: model.account) }
+                }
+                PriceReportButton(model: model)
+            }
             Section("Standort") { LocationButton() }
             Section("Darstellung") {
                 Picker("Farbschema", selection: $appearance) {

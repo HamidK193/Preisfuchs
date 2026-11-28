@@ -7,6 +7,8 @@ import PreisfuchsDomain
 @Observable
 final class PriceListModel {
     private let environment: AppEnvironment
+    let account: AccountModel
+    var reportService: (any PriceReportServicing)? { environment.reports }
     private let defaults: UserDefaults
     private var searchIndex = CatalogSearch(products: [])
     private let selectionStore: LocalSelectionStore
@@ -29,6 +31,7 @@ final class PriceListModel {
 
     init(environment: AppEnvironment, defaults: UserDefaults = .standard) {
         self.environment = environment
+        account = AccountModel(auth: environment.auth)
         self.defaults = defaults
         selectionStore = LocalSelectionStore(defaults: defaults, namespace: environment.origin == .demo ? "demo" : "observations")
         searchHistory = defaults.stringArray(forKey: "korbwert.searchHistory") ?? []

@@ -42,6 +42,7 @@ targets:
         CFBundleURLTypes:
           - CFBundleURLSchemes: [preisfuchs]
         ITSAppUsesNonExemptEncryption: false
+        NSCameraUsageDescription: Korbwert nutzt die Kamera zum Scannen des Produkt-Barcodes für deine Preismeldung.
         LSApplicationCategoryType: public.app-category.shopping
     settings:
       base:

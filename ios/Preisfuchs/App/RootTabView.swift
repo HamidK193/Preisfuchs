@@ -28,6 +28,7 @@ struct RootTabView: View {
                 .presentationDragIndicator(.visible)
         }
         .task { await model.loadIfNeeded() }
+        .task { await model.account.observe() }
         .preferredColorScheme((AppearancePreference(rawValue: appearance) ?? .system).colorScheme)
     }
 }

@@ -5,6 +5,7 @@ struct AppEnvironment: Sendable {
     let origin: DataOrigin
     let prices: any PriceServicing
     let auth: (any PreisfuchsData.AuthClient)?
+    var reports: (any PriceReportServicing)? = nil
 
     static let demo = AppEnvironment(origin: .demo, prices: DemoPriceService(), auth: nil)
 
@@ -13,7 +14,8 @@ struct AppEnvironment: Sendable {
         return AppEnvironment(
             origin: .live,
             prices: SupabasePriceService(client: client),
-            auth: SupabaseAuthClient(client: client)
+            auth: SupabaseAuthClient(client: client),
+            reports: SupabasePriceReportService(client: client, config: config)
         )
     }
 

@@ -23,6 +23,7 @@ struct ProductDetailSheet: View {
                     }
                     Text("Preisbeobachtungen · Preise und Verfügbarkeit können je Filiale abweichen.")
                         .font(.footnote).foregroundStyle(.secondary)
+                    PriceReportButton(model: model)
                     Text("Preise je Markt").font(.headline)
                     if prices.isEmpty {
                         Text("Noch keine vergleichbaren Preise beobachtet.")
