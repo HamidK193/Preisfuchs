@@ -1,6 +1,7 @@
 import { categories, type PriceObservation, type Product, type ProductInfo } from '@/data/products';
 import { chains, type StoreId } from '@/data/stores';
 import { supabase } from '@/lib/supabase';
+import { loadCatalog, mergeCatalog } from '@/lib/catalog';
 
 // Oeffentliche, freigegebene Preise (View current_price_observations, Quelle meist Open Prices, ODbL).
 type PriceRow = {
@@ -129,6 +130,11 @@ function gtinOf(row: PriceRow): string | undefined {
 export async function loadRealProducts(): Promise<Product[]> {
   const client = supabase;
   if (!client) return [];
+  // Start both public reads together. Any failed read falls back to the saved
+  // complete catalog in app-state; partial failures must not erase that cache.
+  const catalogPromise = loadCatalog();
+  // Attach a rejection handler immediately while the price pages are read.
+  const catalogResult = catalogPromise.then((data) => ({ data }), (error: unknown) => ({ error }));
 
   // Seitenweise, weil Supabase je Abfrage hoechstens 1000 Zeilen liefert.
   const rows: PriceRow[] = [];
@@ -180,7 +186,7 @@ export async function loadRealProducts(): Promise<Product[]> {
         storeId,
         price: Number(row.price),
         regularPrice: row.regular_price ? Number(row.regular_price) : undefined,
-        source: row.source === 'Preisfuchs Nutzermeldung' ? 'Community' : 'Open Prices',
+        source: row.source === 'Preisfuchs Nutzermeldung' ? 'Community' : row.source ?? 'Quelle unbekannt',
         observedAt: row.observed_at.slice(0, 10),
         validUntil: row.valid_until ?? undefined,
         demo: false,
@@ -199,7 +205,8 @@ export async function loadRealProducts(): Promise<Product[]> {
     const offRow = gtin ? offByGtin.get(gtin) : undefined;
     const reviewedImage = offRow?.image_reviewed && offRow.image_url ? offRow.image_url : undefined;
     result.push({
-      id: first.product_id,
+      // product_id is a comparison group, not the identity of a packaged article.
+      id: first.article_id,
       gtin,
       name: first.article_name ?? productInfo.get(first.product_id)?.name ?? first.product_id,
       brand: first.brand_name ?? '',
@@ -215,5 +222,7 @@ export async function loadRealProducts(): Promise<Product[]> {
       history: prices.map((price) => price.price),
     });
   }
-  return result;
+  const catalog = await catalogResult;
+  if ('error' in catalog) throw catalog.error;
+  return mergeCatalog(catalog.data, result);
 }

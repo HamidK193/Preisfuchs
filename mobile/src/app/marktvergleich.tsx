@@ -2,17 +2,17 @@ import { useState } from 'react';
 import { Linking, Pressable, View } from 'react-native';
 
 import { Page, PrimaryButton } from '@/components/settings';
-import { AppText, Icon, StoreBadge } from '@/components/ui';
+import { AppText, Icon, SourceLine, StoreBadge } from '@/components/ui';
 import { Colors, Inset, Radius, Spacing } from '@/constants/theme';
-import { DEMO_DATA_DATE, products } from '@/data/products';
+import { products, catalogProducts, getProduct } from '@/data/products';
 import type { Store } from '@/data/stores';
-import { bestTwoStoreSplit, formatDate, formatEuro, totalsPerStore } from '@/lib/pricing';
+import { bestTwoStoreSplit, formatEuro, totalsPerStore } from '@/lib/pricing';
 import { useAppState } from '@/state/app-state';
 
 type Mode = 'ein-markt' | 'aufteilen';
 
 const productName = (id: string) => {
-  const product = products.find((item) => item.id === id);
+  const product = getProduct(id);
   return product ? `${product.brand} ${product.name}` : id;
 };
 
@@ -35,8 +35,9 @@ export default function ComparisonScreen() {
     );
   }
 
-  const totals = totalsPerStore(cart, products, activeStoreIds);
-  const split = bestTwoStoreSplit(cart, products, activeStoreIds);
+  const allProducts = [...new Map([...products, ...catalogProducts].map((p) => [p.id, p])).values()];
+  const totals = totalsPerStore(cart, allProducts, activeStoreIds);
+  const split = bestTwoStoreSplit(cart, allProducts, activeStoreIds);
   const singleBest = totals.find((item) => item.missingProductIds.length === 0);
   const saving = split && singleBest ? singleBest.total - split.total : 0;
 
@@ -106,7 +107,11 @@ export default function ComparisonScreen() {
         <View style={{ gap: Spacing.three }}>
           {totals.map((item, index) => {
             const store = getStore(item.storeId);
-            const isBest = index === 0;
+            const isBest = index === 0 && item.availableCount > 0;
+            const observations = cart.flatMap((line) => {
+              const price = getProduct(line.productId)?.prices.find((p) => p.storeId === item.storeId);
+              return price ? [price] : [];
+            });
             const open = expanded === item.storeId;
             return (
               <Pressable
@@ -129,11 +134,11 @@ export default function ComparisonScreen() {
                     </AppText>
                     <AppText size={12} color={item.missingProductIds.length ? Colors.warning : Colors.textSecondary}>
                       {item.availableCount} von {cart.length} Artikeln
-                      {item.missingProductIds.length ? ' · nicht alles vorrätig' : ''}
+                      {item.missingProductIds.length ? ' · Preise fehlen' : ''}
                     </AppText>
                   </View>
                   <AppText weight="extrabold" size={18} color={isBest ? Colors.green : Colors.text}>
-                    {formatEuro(item.total)}
+                    {item.availableCount ? `${formatEuro(item.total)} geschätzt` : 'Keine Preisbeobachtung'}
                   </AppText>
                   {item.missingProductIds.length ? (
                     <Icon
@@ -143,6 +148,7 @@ export default function ComparisonScreen() {
                     />
                   ) : null}
                 </View>
+                {observations.map((observation, observationIndex) => <SourceLine key={observationIndex} observation={observation} />)}
                 {open && item.missingProductIds.length ? (
                   <View style={{ gap: 4 }}>
                     <AppText weight="bold" size={12} color={Colors.textSecondary}>
@@ -163,8 +169,7 @@ export default function ComparisonScreen() {
       )}
 
       <AppText size={12} color={Colors.textSecondary}>
-        Summen basieren auf beobachteten Preisen (Demo, Stand {formatDate(DEMO_DATA_DATE)}). Fehlende Artikel sind nicht
-        eingerechnet.
+        Summen sind geschätzt und basieren auf Preisbeobachtungen. Fehlende Preise sind nicht eingerechnet.
       </AppText>
     </Page>
   );

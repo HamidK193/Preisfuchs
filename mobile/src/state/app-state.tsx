@@ -146,9 +146,14 @@ async function fetchPrices(): Promise<Omit<PriceDataStatus, 'reloading'>> {
   } catch {
     const raw = await AsyncStorage.getItem(PRICE_CACHE_KEY).catch(() => null);
     if (!raw) return { kind: 'offline' };
-    const cache = JSON.parse(raw) as PriceCache;
-    addRealProducts(cache.products);
-    return { kind: 'cached', loadedAt: cache.loadedAt };
+    try {
+      const cache = JSON.parse(raw) as PriceCache;
+      if (!Array.isArray(cache.products) || !cache.loadedAt) return { kind: 'offline' };
+      addRealProducts(cache.products);
+      return { kind: 'cached', loadedAt: cache.loadedAt };
+    } catch {
+      return { kind: 'offline' };
+    }
   }
 }
 

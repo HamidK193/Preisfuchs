@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { Link } from 'expo-router';
 import { Pressable, View } from 'react-native';
 
-import { AppText, Pill, StoreBadge } from '@/components/ui';
+import { AppText, Pill, StoreBadge, SourceLine } from '@/components/ui';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 import type { Product } from '@/data/products';
 import type { StoreId } from '@/data/stores';
@@ -69,6 +69,7 @@ export function ProductCard({ product, width = 156, storeId }: { product: Produc
               <Pill tone="green" label={`${formatEuro(best.regularPrice - best.price)} gespart`} />
             ) : null}
           </View>
+          <SourceLine observation={best} />
         </View>
       </Pressable>
     </Link>

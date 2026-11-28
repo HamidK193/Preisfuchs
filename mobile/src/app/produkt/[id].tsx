@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Linking, Pressable, ScrollView, Share, View } from 'react-native';
 
 import { PriceChart } from '@/components/price-chart';
+import { CatalogProductSheet } from '@/components/catalog-product-sheet';
 import { SheetScroll } from '@/components/sheet';
 import { ProductCard } from '@/components/product-card';
 import { AppText, Card, Icon, Pill, PriceLevelPill, SourceLine, sourceText, StoreBadge } from '@/components/ui';
@@ -50,6 +51,8 @@ export default function ProductSheet() {
       </View>
     );
   }
+
+  if (!product.prices.length) return <CatalogProductSheet product={product} />;
 
   const best = cheapestPrice(product, activeStoreIds);
   const discount = discountPercent(best);

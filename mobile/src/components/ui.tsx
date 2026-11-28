@@ -92,7 +92,7 @@ export function sourceText(observation: PriceObservation): string {
 }
 
 export function SourceLine({ observation }: { observation: PriceObservation }) {
-  const stale = !observation.demo && isStale(observation.observedAt);
+  const stale = isStale(observation.observedAt);
   return (
     <AppText size={11} color={stale ? Colors.warning : Colors.textSecondary}>
       {sourceText(observation)}

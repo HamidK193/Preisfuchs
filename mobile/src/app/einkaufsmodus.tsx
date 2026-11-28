@@ -2,9 +2,9 @@ import { Image } from 'expo-image';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { Pressable, ScrollView, View } from 'react-native';
 
-import { AppText, Icon, StoreBadge } from '@/components/ui';
+import { AppText, Icon, SourceLine, StoreBadge } from '@/components/ui';
 import { Colors, Inset, Radius, Spacing } from '@/constants/theme';
-import { categories, products } from '@/data/products';
+import { categories, getProduct } from '@/data/products';
 import type { StoreId } from '@/data/stores';
 import { formatEuro } from '@/lib/pricing';
 import { useAppState } from '@/state/app-state';
@@ -16,7 +16,7 @@ export default function ShoppingModeScreen() {
   const store = getStore(markt);
 
   const lines = cart
-    .map((line) => ({ line, product: products.find((item) => item.id === line.productId) }))
+    .map((line) => ({ line, product: getProduct(line.productId) }))
     .filter((entry) => entry.product !== undefined);
   const done = lines.filter(({ line }) => checked.includes(line.productId)).length;
   const estimate = lines.reduce((sum, { line, product }) => {
@@ -56,7 +56,8 @@ export default function ShoppingModeScreen() {
             {items.map(({ line, product }) => {
               if (!product) return null;
               const isChecked = checked.includes(product.id);
-              const price = product.prices.find((item) => item.storeId === markt)?.price;
+              const observation = product.prices.find((item) => item.storeId === markt);
+              const price = observation?.price;
               return (
                 <Pressable
                   key={product.id}
@@ -98,6 +99,7 @@ export default function ShoppingModeScreen() {
                       {product.packageSize}
                       {price ? ` · ${formatEuro(price)}` : ` · bei ${store.name} kein Preis bekannt`}
                     </AppText>
+                    {observation ? <SourceLine observation={observation} /> : null}
                   </View>
                 </Pressable>
               );

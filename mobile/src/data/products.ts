@@ -1,6 +1,6 @@
 import type { StoreId } from './stores';
 
-export type PriceSource = 'Prospekt' | 'Open Prices' | 'Community';
+export type PriceSource = string;
 
 export type PriceObservation = {
   storeId: StoreId;
@@ -47,6 +47,8 @@ export type Product = {
   imageUrl: string;
   // Gesetzt, wenn das Bild aus Open Food Facts stammt (CC BY-SA, Hinweis anzeigen).
   imageCredit?: string;
+  imageThumbUrl?: string;
+  imageSourcePage?: string;
   keywords?: string[];
   info?: ProductInfo;
   prices: PriceObservation[];
@@ -344,17 +346,17 @@ export const products: Product[] = seeds.map((seed) => ({
 }));
 
 // Ersetzt bzw. ergaenzt Produkte durch echte Beobachtungen aus Supabase (beim App-Start).
+export const catalogProducts: Product[] = [...products];
+
 export function addRealProducts(realProducts: Product[]) {
-  for (const real of realProducts) {
-    const index = products.findIndex((product) => product.id === real.id);
-    if (index >= 0) {
-      products[index] = real;
-    } else {
-      products.unshift(real);
-    }
-  }
+  // Existing list/offer consumers need a price. Search also includes genuine catalog
+  // entries without observations; never make up a price to fill that gap.
+  const priced = new Map(products.map((product) => [product.id, product]));
+  for (const real of realProducts) if (real.prices.length) priced.set(real.id, real);
+  products.splice(0, products.length, ...priced.values());
+  catalogProducts.splice(0, catalogProducts.length, ...realProducts);
 }
 
 export function getProduct(id: string): Product | undefined {
-  return products.find((product) => product.id === id);
+  return catalogProducts.find((product) => product.id === id) ?? products.find((product) => product.id === id);
 }

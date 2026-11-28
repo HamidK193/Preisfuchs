@@ -27,7 +27,7 @@ const SOURCES: Source[] = [
   {
     name: 'Open Food Facts',
     provides: 'Produktdaten wie Zutaten, Nährwerte, Nutri-Score und Bilder.',
-    license: 'ODbL',
+    license: 'Daten: ODbL · Bilder: CC BY-SA 3.0',
     icon: { ios: 'barcode', android: 'barcode', web: 'barcode' },
     tint: '#1F7A4D',
     url: 'https://world.openfoodfacts.org',
