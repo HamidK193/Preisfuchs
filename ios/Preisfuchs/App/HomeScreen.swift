@@ -3,20 +3,19 @@ import SwiftUI
 
 struct HomeScreen: View {
     @Bindable var model: PriceListModel
-    @State private var showsCoverage = false
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
-                Button { showsCoverage = true } label: {
-                    Label("Deutschland · Standortinfo", systemImage: "mappin.and.ellipse")
-                        .font(.subheadline.weight(.semibold))
-                        .frame(minHeight: 44)
-                }
+                LocationButton()
                 SearchField(text: $model.searchText)
                     .submitLabel(.search)
                     .onSubmit { model.selectedTab = .search }
                 CatalogFeedback(model: model)
+
+                if model.origin == .demo && ProcessInfo.processInfo.arguments.contains("--preview-ad-slot") {
+                    AdSlot()
+                }
 
                 if !model.products.isEmpty {
                     CategoryStrip(model: model)
@@ -43,7 +42,6 @@ struct HomeScreen: View {
         .navigationTitle("Korbwert")
         .navigationBarTitleDisplayMode(.inline)
         .refreshable { await model.reload() }
-        .sheet(isPresented: $showsCoverage) { LocationCoverageSheet() }
     }
 }
 
@@ -105,23 +103,6 @@ private struct HomeOffersSection: View {
             }
         }
         .accessibilityIdentifier("home.offers")
-    }
-}
-
-private struct LocationCoverageSheet: View {
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            List {
-                Label("Deutschland", systemImage: "mappin.and.ellipse")
-                Text("Die Übersicht umfasst alle erfassten Beobachtungen in Deutschland. Es ist kein Standortfilter gesetzt.")
-                Text("Der Ort der Beobachtung steht an jedem Preis. Preise und Verfügbarkeit können je Filiale abweichen.")
-            }
-            .navigationTitle("Standort der Beobachtungen")
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Fertig") { dismiss() } } }
-        }
-        .presentationDetents([.medium, .large])
     }
 }
 

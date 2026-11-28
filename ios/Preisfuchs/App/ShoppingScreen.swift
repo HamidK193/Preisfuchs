@@ -5,7 +5,7 @@ struct ShoppingScreen: View {
     let model: PriceListModel
 
     private var products: [GroceryProduct] {
-        model.products.filter { model.shoppingIDs.contains($0.id) }
+        model.shoppingProducts
     }
 
     var body: some View {
@@ -16,6 +16,7 @@ struct ShoppingScreen: View {
                 }
             } else {
                 List {
+                    BasketSummary(estimates: model.basketEstimates)
                     ForEach(products) { product in
                         ProductListRow(model: model, product: product, showListAction: true)
                     }

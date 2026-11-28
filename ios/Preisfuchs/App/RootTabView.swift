@@ -6,6 +6,7 @@ enum AppTab: String, CaseIterable, Hashable {
 
 struct RootTabView: View {
     @Bindable var model: PriceListModel
+    @AppStorage(AppearancePreference.storageKey) private var appearance = AppearancePreference.system.rawValue
 
     var body: some View {
         TabView(selection: $model.selectedTab) {
@@ -27,5 +28,6 @@ struct RootTabView: View {
                 .presentationDragIndicator(.visible)
         }
         .task { await model.loadIfNeeded() }
+        .preferredColorScheme((AppearancePreference(rawValue: appearance) ?? .system).colorScheme)
     }
 }

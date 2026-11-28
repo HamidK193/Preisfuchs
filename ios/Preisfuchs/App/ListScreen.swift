@@ -10,6 +10,9 @@ struct ListScreen: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            if let error = model.selectionError {
+                Text(error).font(.footnote).foregroundStyle(.red).padding()
+            }
             Picker("Liste auswählen", selection: $selection) {
                 ForEach(Selection.allCases, id: \.self) { Text($0.rawValue).tag($0) }
             }

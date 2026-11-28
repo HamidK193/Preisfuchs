@@ -3,25 +3,26 @@ import SwiftUI
 
 struct ProfileScreen: View {
     let model: PriceListModel
+    @AppStorage(AppearancePreference.storageKey) private var appearance = AppearancePreference.system.rawValue
 
     var body: some View {
         List {
-            Section("Daten") {
-                LabeledContent("Modus", value: model.origin == .demo ? "Demo" : "Online")
-                if let loadedAt = model.loadedAt {
-                    LabeledContent("Geladen am", value: PriceFormatting.date(loadedAt))
+            Section("Standort") { LocationButton() }
+            Section("Darstellung") {
+                Picker("Farbschema", selection: $appearance) {
+                    ForEach(AppearancePreference.allCases) { preference in
+                        Text(preference.title).tag(preference.rawValue)
+                    }
                 }
-                LabeledContent("Produkte", value: "\(model.products.count)")
+                .accessibilityIdentifier("profile.appearance")
             }
-
-            Section("Produktbilder") {
-                Text("Open Food Facts · CC BY-SA 3.0")
-                Text("Bilder werden anhand der EAN zugeordnet. Ohne passendes Bild erscheint ein Kategorie-Symbol.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+            Section("Informationen") {
+                NavigationLink("Datenquellen") { DataSourcesScreen(model: model) }
+                NavigationLink("Rechtliches") { LegalInformationScreen() }
             }
-
             Section("Über Korbwert") {
+                LabeledContent("Daten", value: model.origin == .demo ? "Demo" : "Preisbeobachtungen")
+                LabeledContent("Produkte", value: "\(model.products.count)")
                 Text("Preise sind Beobachtungen aus angegebenen Quellen und können sich ändern. Quelle und Beobachtungsdatum stehen direkt beim jeweiligen Preis.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)

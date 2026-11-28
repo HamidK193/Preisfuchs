@@ -84,13 +84,15 @@ public struct GroceryProduct: Identifiable, Codable, Hashable, Sendable {
     public let imageSourceURL: URL?
     public let imageLicense: String?
     public let imageAttribution: String?
+    public let brandName: String?
+    public let brandType: String?
 
     // Compatible with both ordinary Codable and snake_case cache encoders/decoders.
     private enum CodingKeys: String, CodingKey {
         case id, name, category, packageSize, symbolName, prices
         case imageURL = "imageUrl"
         case imageSourceURL = "imageSourceUrl"
-        case imageLicense, imageAttribution
+        case imageLicense, imageAttribution, brandName, brandType
     }
 
     public init(
@@ -103,7 +105,9 @@ public struct GroceryProduct: Identifiable, Codable, Hashable, Sendable {
         imageURL: URL? = nil,
         imageSourceURL: URL? = nil,
         imageLicense: String? = nil,
-        imageAttribution: String? = nil
+        imageAttribution: String? = nil,
+        brandName: String? = nil,
+        brandType: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -115,6 +119,8 @@ public struct GroceryProduct: Identifiable, Codable, Hashable, Sendable {
         self.imageSourceURL = imageSourceURL
         self.imageLicense = imageLicense
         self.imageAttribution = imageAttribution
+        self.brandName = brandName
+        self.brandType = brandType
     }
 
     public func cheapestPrice(

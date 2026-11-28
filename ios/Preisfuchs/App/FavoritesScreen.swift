@@ -5,7 +5,7 @@ struct FavoritesScreen: View {
     let model: PriceListModel
 
     private var products: [GroceryProduct] {
-        model.products.filter { model.favoriteIDs.contains($0.id) }
+        model.favoriteProducts
     }
 
     var body: some View {

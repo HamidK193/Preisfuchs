@@ -29,7 +29,10 @@ struct AppEnvironmentTests {
     @Test("Suche, Favoriten und Einkaufsliste reagieren auf Auswahl")
     @MainActor
     func searchAndSelectionsWork() async {
-        let model = PriceListModel(environment: .demo)
+        let suite = "search-selection-test-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let model = PriceListModel(environment: .demo, defaults: defaults)
         await model.loadIfNeeded()
 
         model.searchText = "milch"

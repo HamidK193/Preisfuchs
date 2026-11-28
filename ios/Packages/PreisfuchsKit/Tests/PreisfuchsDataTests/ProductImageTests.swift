@@ -49,6 +49,8 @@ struct ProductImageTests {
         #expect(product.imageLicense == "CC BY-SA 3.0")
         #expect(product.imageAttribution == "Open Food Facts contributors")
         #expect(product.prices.count == 1)
+        #expect(product.brandName == row.brandName)
+        #expect(product.brandType == row.brandType)
         let unrelated = try decodeImage(["gtin": "00012345", "image_url": "https://example.org/other.jpg"])
         #expect(PriceProductMapper.products(from: [row], images: [unrelated]).first?.imageURL == nil)
     }

@@ -27,7 +27,9 @@ public enum PriceProductMapper {
                 imageURL: image?.preferredImageURL,
                 imageSourceURL: image?.sourceURL,
                 imageLicense: image?.preferredImageURL == nil ? nil : (image?.imageLicense ?? "CC BY-SA 3.0"),
-                imageAttribution: image?.imageAttribution
+                imageAttribution: image?.imageAttribution,
+                brandName: first.brandName,
+                brandType: first.brandType
             )
         }.sorted {
             let comparison = $0.name.localizedStandardCompare($1.name)

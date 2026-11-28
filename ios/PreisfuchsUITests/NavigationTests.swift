@@ -38,10 +38,10 @@ final class NavigationTests: XCTestCase {
         app.launchArguments = ["--demo-data"]
         app.launch()
         app.tabBars.buttons["Suche"].tap()
-        let search = app.textFields["Lebensmittel suchen"]
+        let search = app.searchFields["Lebensmittel suchen"]
         XCTAssertTrue(search.waitForExistence(timeout: 5))
         search.tap()
-        search.typeText("milch")
+        search.typeText("milch\n")
         let product = app.buttons["product.open.milk_15"]
         XCTAssertTrue(product.waitForExistence(timeout: 10))
         product.tap()
@@ -52,8 +52,13 @@ final class NavigationTests: XCTestCase {
         attachment.name = "S5-Produkt-Sheet-Demo"
         attachment.lifetime = .keepAlways
         add(attachment)
+        if listAction.label == "Von der Liste entfernen" { listAction.tap() }
         listAction.tap()
         app.buttons["Schließen"].tap()
+        app.tabBars.buttons["Liste"].tap()
+        XCTAssertTrue(app.buttons["product.open.milk_15"].waitForExistence(timeout: 5))
+        app.terminate()
+        app.launch()
         app.tabBars.buttons["Liste"].tap()
         XCTAssertTrue(app.buttons["product.open.milk_15"].waitForExistence(timeout: 5))
     }
