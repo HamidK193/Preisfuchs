@@ -4,13 +4,14 @@ import { Pressable, ScrollView, View } from 'react-native';
 
 import { AppText, Icon, PriceLevelPill, SourceLine, StoreBadge } from '@/components/ui';
 import { Colors, Radius, Spacing, Inset } from '@/constants/theme';
-import { products } from '@/data/products';
+import { catalogProducts, products } from '@/data/products';
 import { cheapestPrice, formatEuro, priceLevel } from '@/lib/pricing';
 import { useAppState } from '@/state/app-state';
 
 export default function FavoritesScreen() {
   const { favorites, toggleFavorite, addToCart, activeStoreIds } = useAppState();
-  const items = products.filter((product) => favorites.includes(product.id));
+  const items = [...new Map([...products, ...catalogProducts].map((product) => [product.id, product])).values()]
+    .filter((product) => favorites.includes(product.id));
 
   return (
     <ScrollView
@@ -39,8 +40,8 @@ export default function FavoritesScreen() {
       ) : null}
 
       {items.map((product) => {
-        const best = cheapestPrice(product, activeStoreIds);
-        const { level, percentVsAverage } = priceLevel(product, activeStoreIds);
+        const best = product.prices.length ? cheapestPrice(product, activeStoreIds) : undefined;
+        const level = best && product.history.length ? priceLevel(product, activeStoreIds) : undefined;
         return (
           <Link key={product.id} href={{ pathname: '/produkt/[id]', params: { id: product.id } }} asChild>
             <Pressable style={{ backgroundColor: Colors.card, borderRadius: Radius.large, padding: Inset.card, borderWidth: 1, borderColor: Colors.border, gap: Spacing.three }}>
@@ -50,20 +51,20 @@ export default function FavoritesScreen() {
                   <AppText weight="bold" size={15} numberOfLines={1}>
                     {product.brand} {product.name}
                   </AppText>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  {best ? <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                     <AppText weight="extrabold" size={18} color={best.regularPrice ? Colors.deal : Colors.text}>
                       {formatEuro(best.price)}
                     </AppText>
                     <StoreBadge storeId={best.storeId} />
-                  </View>
-                  <SourceLine observation={best} />
+                  </View> : <AppText size={12} color={Colors.textSecondary}>Keine Preisbeobachtung</AppText>}
+                  {best ? <SourceLine observation={best} /> : null}
                 </View>
                 <Pressable onPress={() => toggleFavorite(product.id)} hitSlop={10} accessibilityLabel="Aus Favoriten entfernen">
                   <Icon name={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }} size={22} color={Colors.primary} />
                 </Pressable>
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <PriceLevelPill level={level} percent={Math.abs(percentVsAverage)} />
+                {level ? <PriceLevelPill level={level.level} percent={Math.abs(level.percentVsAverage)} /> : null}
                 <Pressable
                   onPress={() => addToCart(product.id)}
                   hitSlop={6}

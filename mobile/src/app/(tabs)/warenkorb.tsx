@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 
 import { EmptyState } from '@/components/system-states';
-import { AppText, Card, DemoNotice, Icon, StoreBadge } from '@/components/ui';
+import FavoritesScreen from '@/components/list-favorites';
+import { AppText, Card, DemoNotice, Icon, SourceLine, StoreBadge } from '@/components/ui';
 import { Colors, Radius, Spacing, Inset } from '@/constants/theme';
-import { products } from '@/data/products';
+import { catalogProducts, products } from '@/data/products';
 import { bestTwoStoreSplit, cheapestPrice, formatEuro, totalsPerStore } from '@/lib/pricing';
 import { useAppState } from '@/state/app-state';
 import { useFamily } from '@/state/family-state';
@@ -121,6 +122,7 @@ function EmptyCart() {
                   {product.packageSize} · ab {formatEuro(cheapestPrice(product, activeStoreIds).price)}
                   {favorites.includes(product.id) ? ' · Favorit' : ''}
                 </AppText>
+                <SourceLine observation={cheapestPrice(product, activeStoreIds)} />
               </View>
               <Pressable
                 onPress={() => addToCart(product.id)}
@@ -137,7 +139,24 @@ function EmptyCart() {
   );
 }
 
-export default function CartScreen() {
+export default function ListScreen() {
+  const [segment, setSegment] = useState<'Einkauf' | 'Favoriten'>('Einkauf');
+  return (
+    <View style={{ flex: 1, backgroundColor: Colors.background }}>
+      <View accessibilityRole="tablist" style={{ flexDirection: 'row', padding: Spacing.four, gap: Spacing.two }}>
+        {(['Einkauf', 'Favoriten'] as const).map((item) => (
+          <Pressable key={item} accessibilityRole="tab" accessibilityState={{ selected: segment === item }} onPress={() => setSegment(item)}
+            style={{ flex: 1, alignItems: 'center', padding: Spacing.three, borderRadius: Radius.pill, backgroundColor: segment === item ? Colors.card : Colors.tile }}>
+            <AppText weight="bold">{item}</AppText>
+          </Pressable>
+        ))}
+      </View>
+      {segment === 'Einkauf' ? <CartScreen /> : <FavoritesScreen />}
+    </View>
+  );
+}
+
+function CartScreen() {
   const { cart, checked, setQuantity, toggleChecked, clearChecked, activeStoreIds, getStore, activeList } = useAppState();
   const { itemMeta, memberName, session } = useFamily();
   const meta = activeList.shared ? itemMeta[activeList.shared.listId] : undefined;
@@ -155,12 +174,17 @@ export default function CartScreen() {
   }
 
   const storeIds = activeStoreIds;
-  const totals = totalsPerStore(cart, products, storeIds);
-  const best = totals[0];
-  const split = bestTwoStoreSplit(cart, products, storeIds);
+  const allProducts = [...new Map([...products, ...catalogProducts].map((product) => [product.id, product])).values()];
+  const totals = totalsPerStore(cart, allProducts, storeIds);
+  const best = totals.find((item) => item.availableCount > 0);
+  const split = bestTwoStoreSplit(cart, allProducts, storeIds);
   const completeStores = totals.filter((item) => item.missingProductIds.length === 0);
   const singleBest = completeStores[0];
   const splitSaving = split && singleBest ? singleBest.total - split.total : 0;
+  const splitObservations = split ? [...new Map(cart.flatMap((line) => {
+    const observation = allProducts.find((product) => product.id === line.productId)?.prices.find((price) => price.storeId === split.assignments[line.productId]);
+    return observation ? [[`${observation.source}|${observation.observedAt}|${observation.demo}`, observation] as const] : [];
+  })).values()] : [];
 
   return (
     <ScrollView
@@ -179,11 +203,11 @@ export default function CartScreen() {
       {/* Artikel */}
       <View style={{ gap: Spacing.two }}>
         {cart.map((line) => {
-          const product = products.find((item) => item.id === line.productId);
+          const product = allProducts.find((item) => item.id === line.productId);
           if (!product) return null;
           const isChecked = checked.includes(product.id);
           const assignedStore = mode === 'aufteilen' && split ? split.assignments[product.id] : undefined;
-          const price = cheapestPrice(product, activeStoreIds);
+          const price = product.prices.length ? cheapestPrice(product, activeStoreIds) : undefined;
           return (
             <View
               key={line.productId}
@@ -226,10 +250,11 @@ export default function CartScreen() {
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                   {assignedStore ? <StoreBadge storeId={assignedStore} /> : null}
                   <AppText size={12} color={Colors.textSecondary}>
-                    {product.packageSize} · ab {formatEuro(price.price)}
+                    {product.packageSize} · {price ? `ab ${formatEuro(price.price)}` : 'Keine Preisbeobachtung'}
                     {personLabel(meta?.[product.id], isChecked)}
                   </AppText>
                 </View>
+                {price ? <SourceLine observation={price} /> : null}
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', borderRadius: Radius.pill, borderWidth: 1, borderColor: Colors.border }}>
                 <Pressable onPress={() => setQuantity(product.id, line.quantity - 1)} hitSlop={6} style={{ paddingHorizontal: Inset.stepperH, paddingVertical: Inset.stepperV }}>
@@ -271,8 +296,9 @@ export default function CartScreen() {
               FUCHS-TIPP
             </AppText>
             <AppText weight="extrabold" size={20} color="#FFFFFF">
-              {getStore(split.storeIds[0]).name} + {getStore(split.storeIds[1]).name}: {formatEuro(split.total)}
+              {getStore(split.storeIds[0]).name} + {getStore(split.storeIds[1]).name}: {formatEuro(split.total)} geschätzt
             </AppText>
+            {splitObservations.map((observation) => <SourceLine key={`${observation.source}|${observation.observedAt}|${observation.demo}`} observation={observation} />)}
             <AppText size={13} color="#DCEFE4">
               {splitSaving > 0
                 ? `Spart ca. ${formatEuro(splitSaving)} gegenüber dem günstigsten Einzelmarkt.`
@@ -286,7 +312,11 @@ export default function CartScreen() {
           ? totals.map((item, index) => {
               const store = getStore(item.storeId);
               const isBest = item === best;
-              const extra = item.total - best.total;
+              const extra = best ? item.total - best.total : 0;
+              const observations = [...new Map(cart.flatMap((line) => {
+                const observation = allProducts.find((product) => product.id === line.productId)?.prices.find((price) => price.storeId === item.storeId);
+                return observation ? [[`${observation.source}|${observation.observedAt}|${observation.demo}`, observation] as const] : [];
+              })).values()];
               return (
                 <View
                   key={item.storeId}
@@ -307,16 +337,17 @@ export default function CartScreen() {
                   <View style={{ flex: 1 }}>
                     <AppText weight="bold" size={15}>
                       {store.name}
-                      {isBest ? '  · Bester Einzelpreis' : ''}
+                      {isBest ? '  · Günstigste Schätzung' : ''}
                     </AppText>
                     <AppText size={12} color={item.missingProductIds.length ? Colors.warning : Colors.textSecondary}>
                       {item.availableCount} von {cart.length} Artikeln
-                      {item.missingProductIds.length ? ' · nicht alles vorrätig' : ''}
+                      {item.missingProductIds.length ? ' · Preise fehlen' : ''}
                     </AppText>
+                    {observations.map((observation) => <SourceLine key={`${observation.source}|${observation.observedAt}|${observation.demo}`} observation={observation} />)}
                   </View>
                   <View style={{ alignItems: 'flex-end' }}>
                     <AppText weight="extrabold" size={17} color={isBest ? Colors.green : Colors.text}>
-                      {formatEuro(item.total)}
+                      {item.availableCount ? `${formatEuro(item.total)} geschätzt` : 'Keine Preisbeobachtung'}
                     </AppText>
                     {!isBest && item.missingProductIds.length === 0 && extra > 0.004 ? (
                       <AppText size={11} weight="semibold" color={Colors.deal}>
@@ -345,7 +376,7 @@ export default function CartScreen() {
           </Pressable>
         </Link>
 
-        <Link href={{ pathname: '/einkaufsmodus', params: { markt: best.storeId } }} asChild>
+        {best ? <Link href={{ pathname: '/einkaufsmodus', params: { markt: best.storeId } }} asChild>
           <Pressable
             style={({ pressed }) => ({
               borderRadius: Radius.pill,
@@ -357,14 +388,14 @@ export default function CartScreen() {
               Einkaufsmodus starten · {getStore(best.storeId).name}
             </AppText>
           </Pressable>
-        </Link>
+        </Link> : null}
 
         <AppText size={11} color={Colors.textSecondary}>
-          Summen basieren auf beobachteten Preisen (Demo, Stand 02.10.2026). Fehlende Artikel sind nicht eingerechnet.
+          Summen sind Schätzungen aus den angegebenen Preisbeobachtungen. Artikel ohne Preisbeobachtung sind nicht eingerechnet.
         </AppText>
       </View>
 
-      <DemoNotice />
+      {cart.some((line) => allProducts.find((product) => product.id === line.productId)?.prices.some((price) => price.demo)) ? <DemoNotice /> : null}
     </ScrollView>
   );
 }

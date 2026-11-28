@@ -6,7 +6,7 @@ import { AppText, StoreBadge } from '@/components/ui';
 import { Colors, Inset, Radius, Spacing } from '@/constants/theme';
 import { products } from '@/data/products';
 import type { StoreId } from '@/data/stores';
-import { discountPercent, offerWeekLabel } from '@/lib/pricing';
+import { discountPercent } from '@/lib/pricing';
 import { useAppState } from '@/state/app-state';
 
 type Sort = 'rabatt' | 'preis';
@@ -56,7 +56,7 @@ export default function OffersScreen() {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic" style={{ backgroundColor: Colors.background }} contentContainerStyle={{ paddingBottom: Spacing.six, gap: Spacing.four }}>
       <AppText size={14} color={Colors.textSecondary} style={{ paddingHorizontal: Spacing.four }}>
-        Angebotswoche {offerWeekLabel()} · {offers.length} Angebote · Prospekte (Demo)
+        Beobachtete Angebote · {offers.length} Artikel
       </AppText>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: Spacing.two, paddingHorizontal: Spacing.four }}>
@@ -94,7 +94,7 @@ export default function OffersScreen() {
 
       {offers.length === 0 ? (
         <AppText size={14} color={Colors.textSecondary} style={{ paddingHorizontal: Spacing.four }}>
-          In diesem Markt gibt es diese Woche keine Angebote in unseren Daten.
+          Für diesen Markt liegen keine Angebotsbeobachtungen vor.
         </AppText>
       ) : null}
 
@@ -105,7 +105,7 @@ export default function OffersScreen() {
       </View>
 
       <AppText size={12} color={Colors.textSecondary} style={{ paddingHorizontal: Spacing.four }}>
-        Angebote zeigen den Aktionspreis im jeweiligen Markt. Den günstigsten Preis über alle Märkte siehst du im Produkt.
+        Preise sind Beobachtungen zum angegebenen Stand. Aktionen können inzwischen beendet sein.
       </AppText>
     </ScrollView>
   );

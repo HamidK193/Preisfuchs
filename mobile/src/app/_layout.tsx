@@ -91,7 +91,6 @@ function AppNavigator() {
       <Stack.Screen name="familie/neu" options={{ title: 'Gruppe erstellen', headerLargeTitle: false }} />
       <Stack.Screen name="familie/beitreten" options={{ title: 'Gruppe beitreten', headerLargeTitle: false }} />
       <Stack.Screen name="familie/[id]" options={{ title: 'Gruppe' }} />
-      <Stack.Screen name="angebote" options={{ title: 'Angebote' }} />
       <Stack.Screen name="kategorie/[id]" options={{ title: 'Kategorie' }} />
       <Stack.Screen name="marktvergleich" options={{ title: 'Marktvergleich' }} />
       <Stack.Screen name="einkaufsmodus" options={{ title: 'Einkaufsmodus' }} />

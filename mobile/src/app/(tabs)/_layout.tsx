@@ -16,14 +16,14 @@ export default function TabLayout() {
         <NativeTabs.Trigger.Label>Suche</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="magnifyingglass" md="search" />
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="angebote">
+        <NativeTabs.Trigger.Label>Angebote</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf={{ default: 'tag', selected: 'tag.fill' }} md="local_offer" />
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="warenkorb">
-        <NativeTabs.Trigger.Label>Warenkorb</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>Liste</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf={{ default: 'basket', selected: 'basket.fill' }} md="shopping_basket" />
         {cartCount > 0 ? <NativeTabs.Trigger.Badge>{String(cartCount)}</NativeTabs.Trigger.Badge> : null}
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="favoriten">
-        <NativeTabs.Trigger.Label>Favoriten</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf={{ default: 'heart', selected: 'heart.fill' }} md="favorite" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="profil">
         <NativeTabs.Trigger.Label>Profil</NativeTabs.Trigger.Label>
