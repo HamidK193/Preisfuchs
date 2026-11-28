@@ -1,8 +1,8 @@
-# XcodeGen-Spezifikation fuer die SwiftUI-App Preisfuchs.
+# XcodeGen-Spezifikation fuer Korbwert (interner Codename: Preisfuchs).
 # Erzeugen: cd ios && xcodegen generate  (das .xcodeproj ist gitignored)
 name: Preisfuchs
 options:
-  bundleIdPrefix: de.preisfuchs
+  bundleIdPrefix: de.korbwert
   deploymentTarget:
     iOS: "17.0"
   xcodeVersion: "26.0"
@@ -25,12 +25,14 @@ packages:
 targets:
   Preisfuchs:
     type: application
+    productName: Korbwert
     platform: iOS
     sources: [Preisfuchs]
     info:
       path: Preisfuchs/Info.plist
       properties:
-        CFBundleDisplayName: Preisfuchs
+        CFBundleDisplayName: Korbwert
+        CFBundleName: Korbwert
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         PFSupabaseHost: $(SUPABASE_HOST)
@@ -45,6 +47,9 @@ targets:
       base:
         # Ueberschreibbar ueber PF_BUNDLE_ID / DEVELOPMENT_TEAM in Config/Secrets.xcconfig.
         PRODUCT_BUNDLE_IDENTIFIER: $(PF_BUNDLE_ID)
+        PRODUCT_NAME: Korbwert
+        # App-Modul und Test-Imports behalten den internen Codenamen.
+        PRODUCT_MODULE_NAME: Preisfuchs
         TARGETED_DEVICE_FAMILY: "1"
         MARKETING_VERSION: 0.1.0
         CURRENT_PROJECT_VERSION: 1
@@ -64,6 +69,8 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: $(PF_BUNDLE_ID).tests
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/Korbwert.app/Korbwert
     dependencies:
       - target: Preisfuchs
 schemes:

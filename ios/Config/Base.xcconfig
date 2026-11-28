@@ -9,6 +9,6 @@ SUPABASE_ANON_KEY =
 // Signierung: leer = keine Team-ID. Fuer kostenlose Signierung auf dem eigenen
 // iPhone in Secrets.xcconfig die Personal-Team-ID und eine eigene Bundle-ID setzen.
 DEVELOPMENT_TEAM =
-PF_BUNDLE_ID = de.preisfuchs.app
+PF_BUNDLE_ID = de.korbwert.app
 
 #include? "Secrets.xcconfig"

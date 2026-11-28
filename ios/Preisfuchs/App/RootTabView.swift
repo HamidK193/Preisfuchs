@@ -93,7 +93,7 @@ private struct HomeScreen: View {
             .padding(.bottom, 24)
         }
         .background(Color(uiColor: .secondarySystemBackground).opacity(0.5))
-        .navigationTitle("Preisfuchs")
+        .navigationTitle("Korbwert")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -190,7 +190,7 @@ private struct ProfileScreen: View {
                 LabeledContent("Produkte", value: "\(model.products.count)")
             }
 
-            Section("Über Preisfuchs") {
+            Section("Über Korbwert") {
                 Text("Preise sind Beobachtungen aus angegebenen Quellen und können sich ändern. Quelle und Beobachtungsdatum stehen direkt beim jeweiligen Preis.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)

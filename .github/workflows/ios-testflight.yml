@@ -5,7 +5,7 @@
 # Secrets: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8_BASE64, APPLE_TEAM_ID,
 #          SUPABASE_HOST (Host ohne https://), SUPABASE_ANON_KEY,
 #          GOOGLE_IOS_CLIENT_ID, GOOGLE_REVERSED_CLIENT_ID
-# Variablen: IOS_TESTFLIGHT_ENABLED, PF_BUNDLE_ID (Default de.preisfuchs.app)
+# Variablen: IOS_TESTFLIGHT_ENABLED, PF_BUNDLE_ID (Default de.korbwert.app)
 # UNGEPRUEFT: Cloud-Signierung per API-Key, ExportOptions.plist
 #             (method=app-store-connect, destination=upload).
 name: iOS TestFlight
@@ -66,7 +66,7 @@ jobs:
           GOOGLE_REVERSED_CLIENT_ID: ${{ secrets.GOOGLE_REVERSED_CLIENT_ID }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
-          PF_BUNDLE_ID: ${{ vars.PF_BUNDLE_ID || 'de.preisfuchs.app' }}
+          PF_BUNDLE_ID: ${{ vars.PF_BUNDLE_ID || 'de.korbwert.app' }}
         run: |
           {
             echo "SUPABASE_HOST = $SUPABASE_HOST"
