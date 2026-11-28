@@ -7,8 +7,10 @@ from __future__ import annotations
 import json
 import os
 import re
+import signal
+import time
 import uuid
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 try:
@@ -18,10 +20,8 @@ except ImportError:  # pragma: no cover - handled in CI by requirements.txt
 
 ROOT = Path(__file__).resolve().parents[2]
 PRODUCTS_FILE = ROOT / "data" / "standard_products.json"
-USER_AGENT = os.getenv(
-    "PRICEFUCHS_USER_AGENT",
-    "Preisfuchs-MVP/0.2 (https://github.com/HamidK193/Preisfuchs)",
-)
+# Generic project name only: no personal data, as Open Food Facts asks for an identifiable app name.
+USER_AGENT = os.getenv("PRICEFUCHS_USER_AGENT", "Preisfuchs/0.3 (open data price comparison MVP)")
 
 
 def load_dotenv() -> None:
@@ -71,6 +71,42 @@ def finish_update_run(client, run_id: str, *, status: str, report: dict) -> None
         "imported_count": report.get("imported", 0),
         "report": report,
     }).eq("id", run_id).execute()
+
+
+def close_stale_runs(client, source: str, *, older_than_minutes: int = 120) -> int:
+    """Marks runs of this source that never finished (job killed by timeout) as failed."""
+    cutoff = (datetime.now(UTC) - timedelta(minutes=older_than_minutes)).isoformat()
+    rows = (client.table("update_runs").select("id").eq("source", source).eq("status", "running")
+            .lt("started_at", cutoff).execute().data)
+    for row in rows:
+        client.table("update_runs").update({
+            "status": "failed", "finished_at": datetime.now(UTC).isoformat(),
+            "report": {"status": "failed", "error_type": "abandoned_run"},
+        }).eq("id", row["id"]).execute()
+    return len(rows)
+
+
+class Terminated(Exception):
+    """Raised on SIGTERM (GitHub cancels or times out a job) so `finally` can close the run."""
+
+
+def install_sigterm_handler() -> None:
+    def handler(signum, frame):  # noqa: ARG001
+        raise Terminated("terminated by signal")
+    try:
+        signal.signal(signal.SIGTERM, handler)
+    except (ValueError, OSError):  # pragma: no cover - not the main thread
+        pass
+
+
+class Deadline:
+    """Wall-clock budget so a run ends itself cleanly before the workflow timeout."""
+
+    def __init__(self, seconds: float) -> None:
+        self.end = time.monotonic() + seconds
+
+    def expired(self) -> bool:
+        return time.monotonic() >= self.end
 
 
 def is_valid_gtin(value: str) -> bool:

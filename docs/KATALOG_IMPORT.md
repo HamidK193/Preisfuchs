@@ -131,6 +131,37 @@ Supabase CLI 2.116.0 wurde über `npx` verwendet. Docker/psql sind lokal nicht
 vorhanden; ein kompletter Neuaufbau mit lokalem Supabase und pgTAP wurde deshalb
 nicht ausgeführt. Remote-DDL, Rollenprüfungen und API-Zugriff sind separat geprüft.
 
+## Katalog aus Open Food Facts (täglich, seit 28.11.2026)
+
+Ursache der leeren App: `off_products_agent` kannte nur GTINs, die schon einen Preis hatten,
+rief sie einzeln ab und schrieb erst am Ende. Bei etwa 2.000 GTINs lief der Wochenjob in das
+Timeout (60 min), wurde ohne `finally` beendet und hinterließ sieben Läufe auf `running`;
+nichts war gespeichert. Der Katalog wuchs nur um die wenigen deutschen Open-Prices-Funde pro Tag.
+
+`backend/jobs/off_catalog_agent.py` (Schritt im täglichen Workflow) entdeckt Produkte selbst:
+Die Suche `search.openfoodfacts.org` liefert je Kette (Lidl, Aldi, REWE, Edeka, Kaufland, Penny,
+dm u. a.) deutsche Produkte nach Beliebtheit (`unique_scans_n`). Je Seite werden `off_products`
+(Name, Marke, Menge, Kategorien, GTIN, Bild-URL und Vorschaubild, ODbL 1.0, Bildlizenz
+CC BY-SA 3.0 mit Namensnennung "Open Food Facts contributors", `image_plausible` als Hinweis,
+nicht als Prüfung), `products` und `catalog_articles` geschrieben. Bestehende Produkte und
+Artikel (kuratiert durch die Preisagenten) werden nie überschrieben; die Artikel-ID ist dieselbe
+wie die des Preisagenten. Eine Seite wird erst nach dem Speichern der vorigen angefordert (6,5 s
+Pause, API-Limit 10 Anfragen je Minute). Position (Kette, Seite) steht im Laufbericht und wird vom
+nächsten Lauf fortgesetzt; nach der letzten Kette beginnt ein neuer Durchlauf. Grenzen je Lauf:
+150 Seiten oder 30 Minuten, danach `succeeded` mit `stopped_reason`.
+
+Alle Agenten (OSM, OFF, Open Prices) beenden Läufe jetzt sauber: SIGTERM wird abgefangen, eigener
+Zeitrahmen vor dem Workflow-Timeout, Wiederholungen mit Backoff und `Retry-After`, und
+`close_stale_runs` setzt hängende `running`-Läufe älter als zwei Stunden auf `failed`. Der
+OFF-Auffrischlauf überspringt GTINs, die jünger als 14 Tage sind, und schreibt in 50er-Paketen.
+User-Agent ist generisch (`Preisfuchs/0.3 (open data price comparison MVP)`), ohne persönliche Daten.
+
+Open Prices: Der Tagesagent filtert serverseitig (`location__osm_address_country_code=DE`,
+`date__gte`) statt weltweit zu blättern. Einmaliger Nachlauf der letzten 90 Tage: manueller Start
+des Workflows "Daily price update" mit `backfill_days = 90` (bereits bekannte Preise werden
+übersprungen). Preise bleiben Beobachtungen mit Quelle und Datum; Veröffentlichung unverändert
+nur nach den Regeln oben (höchstens 90 Tage alt, Packung eindeutig, plausibler Preis).
+
 ## Nächste Arbeit
 
 Aktuellere BW-Beobachtungen und weitere Artikel kategorieweise ergänzen.

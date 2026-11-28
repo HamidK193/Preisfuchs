@@ -10,20 +10,25 @@ from __future__ import annotations
 import json
 import os
 import time
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import requests
 
 from agent_common import (
-    USER_AGENT, finish_update_run, is_dry_run, is_valid_gtin, load_dotenv, require_client, seed_barcodes,
-    start_update_run,
+    USER_AGENT, Deadline, Terminated, close_stale_runs, finish_update_run, install_sigterm_handler, is_dry_run,
+    is_valid_gtin, load_dotenv, require_client, seed_barcodes, start_update_run,
 )
 
 SOURCE = "Open Food Facts"
 OFF_BASE_URL = os.getenv("OFF_BASE_URL", "https://world.openfoodfacts.org").rstrip("/")
 # Open Food Facts allows 100 product reads per minute.
 REQUEST_PAUSE_SECONDS = float(os.getenv("OFF_PAUSE_SECONDS", "0.7"))
+# The job stops itself before the workflow timeout; GTINs fetched recently are skipped, so the
+# next run continues where this one stopped instead of starting from the first GTIN again.
+MAX_SECONDS = float(os.getenv("OFF_MAX_SECONDS", "2700"))
+REFRESH_AFTER_DAYS = int(os.getenv("OFF_REFRESH_AFTER_DAYS", "14"))
+UPSERT_BATCH = 50
 FIELDS = ",".join([
     "code", "product_name", "product_name_de", "brands", "quantity", "image_front_url",
     "nutriments", "nutriscore_grade", "categories_tags", "labels_tags", "allergens_tags", "last_modified_t",
@@ -88,45 +93,82 @@ def known_gtins(client) -> list[str]:
     return sorted(gtin for gtin in gtins if is_valid_gtin(gtin))
 
 
+def stale_gtins(client, gtins: list[str], now: datetime) -> list[str]:
+    """GTINs never fetched or fetched longer ago than the refresh interval, oldest first."""
+    if not client:
+        return gtins
+    cutoff = now - timedelta(days=REFRESH_AFTER_DAYS)
+    fetched: dict[str, datetime] = {}
+    for offset in range(0, 100_000, 1000):
+        rows = client.table("off_products").select("gtin,fetched_at").range(offset, offset + 999).execute().data
+        fetched.update({row["gtin"]: datetime.fromisoformat(row["fetched_at"]) for row in rows})
+        if len(rows) < 1000:
+            break
+    due = [gtin for gtin in gtins if gtin not in fetched or fetched[gtin] < cutoff]
+    return sorted(due, key=lambda gtin: fetched.get(gtin, datetime.min.replace(tzinfo=UTC)))
+
+
 def main() -> None:
     load_dotenv()
+    install_sigterm_handler()
     dry_run = is_dry_run()
     client = require_client()
-    fetched_at = datetime.now(UTC).isoformat()
+    deadline = Deadline(MAX_SECONDS)
+    now = datetime.now(UTC)
+    fetched_at = now.isoformat()
     report: dict[str, Any] = {"status": "failed", "dry_run": dry_run, "requested": 0, "imported": 0,
-                              "not_found": 0, "errors": []}
-    run_id = start_update_run(client, SOURCE) if client else None
+                              "not_found": 0, "with_image": 0, "errors": [], "error_count": 0}
+    run_id = None
+    batch: list[dict[str, Any]] = []
+
+    def flush() -> None:
+        if client and batch:
+            client.table("off_products").upsert(batch).execute()
+        batch.clear()
+
     try:
-        gtins = known_gtins(client)
+        if client:
+            report["closed_stale_runs"] = close_stale_runs(client, SOURCE)
+            run_id = start_update_run(client, SOURCE)
+        gtins = stale_gtins(client, known_gtins(client), now)
         report["requested"] = len(gtins)
-        rows = []
         with requests.Session() as session:
             session.headers.update({"User-Agent": USER_AGENT, "Accept": "application/json"})
             for index, gtin in enumerate(gtins):
+                if deadline.expired():
+                    report["stopped_reason"] = "time_budget"
+                    break
                 if index:
                     time.sleep(REQUEST_PAUSE_SECONDS)
                 try:
                     product = fetch_product(session, gtin)
                 except (requests.RequestException, ValueError) as error:
-                    report["errors"].append({"gtin": gtin, "error_type": type(error).__name__})
+                    report["error_count"] += 1
+                    report["errors"] = (report["errors"] + [{"gtin": gtin, "error_type": type(error).__name__}])[:20]
                     continue
                 row = product_row(gtin, product, fetched_at) if product else None
                 if row:
-                    rows.append(row)
+                    batch.append(row)
+                    report["imported"] += 1
+                    report["with_image"] += bool(row["image_url"])
+                    if len(batch) >= UPSERT_BATCH:
+                        flush()
                 else:
                     report["not_found"] += 1
-        if client:
-            for offset in range(0, len(rows), 200):
-                client.table("off_products").upsert(rows[offset:offset + 200]).execute()
-        report["imported"] = len(rows)
-        report["with_image"] = sum(bool(row["image_url"]) for row in rows)
-        report["status"] = ("failed" if report["errors"] and not rows else
-                            "partial" if report["errors"] else "succeeded")
-    except Exception as error:
+            flush()
+        # Single bad GTINs do not fail a run; no product at all although requested does.
+        report["status"] = "failed" if report["error_count"] and not report["imported"] and not report["not_found"]             else "succeeded"
+    except BaseException as error:  # includes Terminated: the run must always be closed
         report["error_type"] = type(error).__name__
-        raise
+        report["status"] = "failed"
+        if not isinstance(error, (Terminated, KeyboardInterrupt)):
+            raise
     finally:
         if client and run_id:
+            try:
+                flush()
+            except Exception:  # noqa: BLE001 - closing the run matters more than the last batch
+                pass
             finish_update_run(client, run_id, status=report["status"], report=report)
         print(json.dumps(report, ensure_ascii=False, indent=2))
     if report["status"] != "succeeded":

@@ -23,7 +23,8 @@ from typing import Any
 import requests
 
 from agent_common import (
-    USER_AGENT, finish_update_run, is_dry_run, is_valid_gtin, load_dotenv, require_client, start_update_run,
+    USER_AGENT, Terminated, close_stale_runs, finish_update_run, install_sigterm_handler, is_dry_run,
+    is_valid_gtin, load_dotenv, require_client, start_update_run,
 )
 from catalog_identity import parse_package, stable_id
 from kaufda_check import KaufdaChecker
@@ -34,6 +35,8 @@ RUN_SOURCE = "Open Prices DE"
 OPEN_PRICES_URL = os.getenv("OPEN_PRICES_BASE_URL", "https://prices.openfoodfacts.org").rstrip("/") + "/api/v1/prices"
 FIRST_RUN_DAYS = int(os.getenv("OPEN_PRICES_FIRST_RUN_DAYS", "60"))
 PAGE_LIMIT = int(os.getenv("OPEN_PRICES_PAGE_LIMIT", "400"))
+# > 0: ignore the cursor once and load all German prices of the last N days (already known ones are skipped).
+BACKFILL_DAYS = min(int(os.getenv("OPEN_PRICES_BACKFILL_DAYS", "0") or 0), 90)
 KAUFDA_CHECK_DAYS = 14
 OBSERVATION_ONLY_REASONS = {"too_old", "kaufda_price_mismatch"}
 MAX_AGE_DAYS = 90  # Older observations stay internal; the app marks >30 days as possibly outdated.
@@ -187,16 +190,34 @@ def build_records(item: dict[str, Any], stores: dict[str, dict], checker: Kaufda
     }
 
 
-def fetch_new_items(session: requests.Session, cursor: int | None, cutoff: date) -> tuple[list[dict], int | None]:
+def list_params(page: int, oldest: date) -> dict[str, Any]:
+    """Open Prices filters server-side: only shops in Germany, nothing older than the publication limit."""
+    return {"order_by": "-id", "size": 100, "page": page, "location__osm_address_country_code": "DE",
+            "date__gte": oldest.isoformat()}
+
+
+def get_page(session: requests.Session, params: dict[str, Any]) -> dict[str, Any]:
+    last_error: Exception | None = None
+    for attempt in range(3):
+        try:
+            response = session.get(OPEN_PRICES_URL, params=params, timeout=90)
+        except (requests.ConnectionError, requests.Timeout) as error:
+            last_error = error
+            time.sleep(20 * (attempt + 1))
+            continue
+        if response.status_code in {429, 502, 503, 504}:
+            last_error = requests.HTTPError(f"HTTP {response.status_code}")
+            time.sleep(20 * (attempt + 1))
+            continue
+        response.raise_for_status()
+        return response.json()
+    raise last_error or RuntimeError("Open Prices unavailable")
+
+
+def fetch_new_items(session: requests.Session, cursor: int | None, oldest: date) -> tuple[list[dict], int | None]:
     items, newest = [], None
     for page in range(1, PAGE_LIMIT + 1):
-        for attempt in range(3):
-            response = session.get(OPEN_PRICES_URL, params={"order_by": "-id", "size": 100, "page": page}, timeout=90)
-            if response.status_code not in {429, 502, 503, 504}:
-                break
-            time.sleep(20 * (attempt + 1))
-        response.raise_for_status()
-        batch = response.json().get("items", [])
+        batch = get_page(session, list_params(page, oldest)).get("items", [])
         if not batch:
             break
         newest = newest or batch[0]["id"]
@@ -204,8 +225,6 @@ def fetch_new_items(session: requests.Session, cursor: int | None, cutoff: date)
             if cursor is not None and item["id"] <= cursor:
                 return items, newest
             items.append(item)
-        if cursor is None and all(date.fromisoformat(item["created"][:10]) < cutoff for item in batch):
-            break
         time.sleep(0.3)
     return items, newest
 
@@ -238,13 +257,22 @@ def main() -> None:
     dry_run = is_dry_run()
     client = require_client()
     today = datetime.now(UTC).date()
+    install_sigterm_handler()
     report: dict[str, Any] = {"status": "failed", "dry_run": dry_run, "imported": 0, "published": 0}
-    run_id = start_update_run(client, RUN_SOURCE) if client else None
+    run_id = None
     try:
+        if client:
+            report["closed_stale_runs"] = close_stale_runs(client, RUN_SOURCE, older_than_minutes=90)
+            run_id = start_update_run(client, RUN_SOURCE)
         cursor = last_cursor(client) if client else None
+        # First run: FIRST_RUN_DAYS back; backfill: the whole publication window, cursor ignored.
+        window = BACKFILL_DAYS or (FIRST_RUN_DAYS if cursor is None else MAX_AGE_DAYS)
         with requests.Session() as session:
             session.headers.update({"User-Agent": USER_AGENT, "Accept": "application/json"})
-            items, newest = fetch_new_items(session, cursor, today - timedelta(days=FIRST_RUN_DAYS))
+            items, newest = fetch_new_items(session, None if BACKFILL_DAYS else cursor, today - timedelta(days=window))
+        if BACKFILL_DAYS:
+            report["backfill_days"] = BACKFILL_DAYS
+            newest = max(filter(None, [newest, cursor]), default=None)
         german = [item for item in items if (item.get("location") or {}).get("osm_address_country_code") == "DE"]
         report.update(fetched=len(items), german=len(german), cursor=newest or cursor, previous_cursor=cursor)
         refs = {f"{(i.get('location_osm_type') or '').lower()}/{i.get('location_osm_id')}" for i in german}
@@ -279,13 +307,17 @@ def main() -> None:
                       kaufda_check=checker.stats, status="succeeded")
         if dry_run:
             report["samples"] = observations[:3]
-    except Exception as error:
+    except BaseException as error:  # includes Terminated: the run must always be closed as failed
         report["error_type"] = type(error).__name__
-        raise
+        report["status"] = "failed"
+        if not isinstance(error, (Terminated, KeyboardInterrupt)):
+            raise
     finally:
         if client and run_id:
             finish_update_run(client, run_id, status=report["status"], report=report)
         print(json.dumps(report, ensure_ascii=False, indent=2, default=str))
+    if report["status"] != "succeeded":
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

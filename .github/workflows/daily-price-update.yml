@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: "0 5 * * *"
   workflow_dispatch:
+    inputs:
+      backfill_days:
+        description: "Reload all German Open Prices of the last N days once (0 = normal run, max 90)"
+        required: false
+        default: "0"
+        type: string
 
 permissions:
   contents: read
@@ -16,7 +22,7 @@ concurrency:
 jobs:
   update-prices:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 75
     steps:
       - name: Check out repository
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
@@ -51,7 +57,20 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OPEN_PRICES_BACKFILL_DAYS: ${{ inputs.backfill_days || '0' }}
         run: python open_prices_de_agent.py
+
+      # Fills the catalog: German supermarket products with name, brand, quantity, category, GTIN and
+      # front image from Open Food Facts (ODbL, images CC BY-SA). Stops itself after 30 minutes and
+      # continues at the saved position on the next run.
+      - name: Run Open Food Facts catalog agent
+        if: always()
+        working-directory: backend/jobs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OFF_CATALOG_MAX_SECONDS: "1800"
+        run: python off_catalog_agent.py
 
       # Public prices older than 90 days become non-public (review reason too_old).
       - name: Expire stale public prices
